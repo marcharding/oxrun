@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$application = new \Oxrun\Application;
+
+$commandSourceDir = __DIR__ . '/../src/';
+$recursiveIteratorIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($commandSourceDir));
+$regexIterator = new RegexIterator($recursiveIteratorIterator, '/.*Command\.php$/');
+
+foreach ($regexIterator as $commandPath) {
+    $commandClass = str_replace(array($commandSourceDir, '/', '.php'), array('', '\\', ''), $commandPath);
+    $application->add(new $commandClass);
+}
+
+$application->run();
+
+__HALT_COMPILER();

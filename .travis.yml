@@ -1,0 +1,24 @@
+language: php
+
+branches:
+  only:
+    - master
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+
+env:
+  - OXID_VERSION="4.9.3"
+  - OXID_VERSION="4.8.9"
+  - OXID_VERSION="4.7.14"
+
+before_script:
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install --prefer-source
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'
+  - bin/oxrun install:shop --oxidVersion="${OXID_VERSION}" --dbUser=root --installationFolder=../ --shopURL=http://local.oxrun --adminUser=admin@local.oxrun --adminPassword=oxrunpassword
+
+script:
+  - vendor/bin/phpunit --debug --stop-on-error --stop-on-failure

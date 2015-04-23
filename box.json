@@ -1,0 +1,21 @@
+{
+    "alias": "oxrun.phar",
+    "chmod": "0755",
+    "directories": [
+        "src"
+     ],
+    "finder": [
+        {
+            "name": "*.php",
+            "exclude": [
+                "test",
+                "tests",
+                "docs"
+            ],
+            "in": "vendor"
+        }
+    ],
+    "stub": true,
+    "main": "bin/oxrun",
+    "output": "oxrun.phar"
+}
