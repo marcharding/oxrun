@@ -1,7 +1,16 @@
 #!/usr/bin/env php
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+// composer bin autoload
+if( is_file( __DIR__ . '/../../../autoload.php' ) ) {
+    echo "t";
+    require_once __DIR__ . '/../../../autoload.php';
+}
+
+// default autoload
+if( is_file( __DIR__ . '/../vendor/autoload.php' ) ) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
 
 $application = new \Oxrun\Application;
 
