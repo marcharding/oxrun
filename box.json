@@ -17,5 +17,6 @@
     ],
     "stub": true,
     "main": "bin/oxrun",
-    "output": "oxrun.phar"
+    "output": "oxrun.phar",
+    "git-version": "package_version"
 }
