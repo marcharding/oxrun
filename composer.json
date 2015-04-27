@@ -18,7 +18,8 @@
     "nikic/php-parser": "v1.2.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "4.6.4"
+    "phpunit/phpunit": "4.6.4",
+    "satooshi/php-coveralls": "dev-master"
   },
   "autoload": {
     "psr-4": {
