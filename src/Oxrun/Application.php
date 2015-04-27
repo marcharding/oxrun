@@ -44,6 +44,9 @@ class Application extends BaseApplication
                 // is it the oxid bootstrap.php?
                 if (strpos(file_get_contents($oxBootstrap), 'OX_BASE_PATH') !== false) {
                     require_once $oxBootstrap;
+                    // we must call this once, otherwise there are no modules visible in a fresh shop
+                    $oModuleList = oxNew("oxModuleList");
+                    $oModuleList->getModulesFromDir(\oxRegistry::getConfig()->getModulesDir());
                     return true;
                     break;
                 }
