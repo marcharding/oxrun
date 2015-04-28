@@ -45,6 +45,9 @@ class GetCommand extends Command
         if (is_array($shopConfVar)) {
             $shopConfVar = json_encode($shopConfVar, true);
         }
+        if( empty($shopConfVar)){
+            $shopConfVar = 0;
+        }
         $output->writeln("<info>{$input->getArgument('variableName')} has value {$shopConfVar}</info>");
     }
 
