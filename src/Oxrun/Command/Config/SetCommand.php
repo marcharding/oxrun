@@ -58,31 +58,13 @@ class SetCommand extends Command
             $variableValue = $input->getArgument('variableValue');
         }
 
-        if (!$input->getOption('shopId') && !$input->getOption('moduleId')) {
-            $oxConfig->saveShopConfVar(
-                $variableType,
-                $input->getArgument('variableName'),
-                $variableValue
-            );
-        }
-
-        if ($input->getOption('shopId') && !$input->getOption('moduleId')) {
-            $oxConfig->saveShopConfVar(
-                $variableType,
-                $input->getArgument('variableName'),
-                $variableValue,
-                $input->getOption('shopId')
-            );
-        }
-        if ($input->getOption('shopId') && !$input->getOption('moduleId')) {
-            $oxConfig->saveShopConfVar(
-                $variableType,
-                $input->getArgument('variableName'),
-                $variableValue,
-                $input->getOption('shopId'),
-                'module:' . $input->getOption('moduleId')
-            );
-        }
+        $oxConfig->saveShopConfVar(
+            $variableType,
+            $input->getArgument('variableName'),
+            $variableValue,
+            $input->getOption('shopId'),
+            $input->getOption('moduleId')
+        );
 
         $output->writeln("<info>Config {$input->getArgument('variableName')} set to {$input->getArgument('variableValue')}</info>");
     }
