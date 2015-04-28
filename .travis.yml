@@ -10,9 +10,9 @@ php:
   - 5.6
 
 env:
-  - OXID_VERSION="4.9.3"
-  - OXID_VERSION="4.8.9"
-  - OXID_VERSION="4.7.14"
+  - OXID_VERSION="v4.9.3"
+  - OXID_VERSION="v4.8.9"
+  - OXID_VERSION="v4.7.14"
 
 before_script:
   - curl -s https://getcomposer.org/installer | php

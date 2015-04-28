@@ -14,6 +14,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class InstallCommand
@@ -27,17 +28,14 @@ class InstallCommand extends Command
      *
      * @var array
      */
-    protected $oxidVersions = array(
-        "4.9.3" => "http://support.oxid-esales.com/versions/CE/index.php?php=5.2&target=4.9.3",
-        "4.8.9" => "http://support.oxid-esales.com/versions/CE/index.php?php=5.2&target=4.8.9",
-        "4.7.14" => "http://wiki.oxidforge.org/download/OXID_ESHOP_CE_4.7.14.zip"
-    );
+    protected $oxidVersions = array();
 
     /**
      * Configures the current command.
      */
     protected function configure()
     {
+        $this->oxidVersions = $this->getOxidVersions();
         $this
             ->setName('install:shop')
             ->addOption('oxidVersion', null, InputOption::VALUE_OPTIONAL, 'Oxid version', key($this->oxidVersions))
@@ -62,11 +60,15 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if (!isset($this->oxidVersions[$input->getOption('oxidVersion')])) {
+            $output->writeln("<error>Oxid {$input->getOption('oxidVersion')} not available</error>");
+            return;
+        }
+
         $output->writeln("<info>Downloading oxid {$input->getOption('oxidVersion')}</info>");
 
-        $oxidUrl = $this->oxidVersions[$input->getOption('oxidVersion')];
-
-        $archiveFile = $this->downloadOxid($output, $oxidUrl);
+        $oxidVersion = $this->oxidVersions[$input->getOption('oxidVersion')];
+        $archiveFile = $this->downloadOxid($output, $oxidVersion);
 
         $target = $input->getOption('installationFolder');
         if (!is_dir($target)) {
@@ -75,7 +77,7 @@ class InstallCommand extends Command
         $target = realpath($input->getOption('installationFolder'));
 
         $output->writeLn("<info>Extracting archive</info>");
-        $this->extractArchive($output, $archiveFile, $target);
+        $this->extractArchive($output, $archiveFile, $target, $oxidVersion);
 
 
         $output->writeLn("<info>Patching installation</info>");
@@ -173,13 +175,36 @@ class InstallCommand extends Command
     }
 
     /**
+     * @return mixed
+     */
+    protected function getOxidVersions()
+    {
+        $client = new Client();
+        $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags')->json();
+        return array_reduce(
+            $tagsArray,
+            function ($result, $item) {
+                $result[$item['name']] = array(
+                    'zip' => $item['zipball_url'],
+                    'folder' => 'OXID-eSales-oxideshop_ce-' . substr($item['commit']['sha'], 0, 7),
+                    'hash' => 'OXID-eSales-oxideshop_ce-' . $item['commit']['sha'],
+                    'tag' => $item['name'],
+                    'versionTag' => substr($item['name'], 1),
+                );
+                return $result;
+            },
+            array()
+        );
+    }
+
+    /**
      * Downloads the oxid archive
      *
      * @param OutputInterface $output
      * @param $url
      * @return string
      */
-    protected function downloadOxid(OutputInterface $output, $url)
+    protected function downloadOxid(OutputInterface $output, $version)
     {
         $file = sys_get_temp_dir() . '/oxrun-' . time() . '.zip';
 
@@ -189,7 +214,7 @@ class InstallCommand extends Command
 
         try {
 
-            $request = $client->createRequest('GET', $url, array('save_to' => $file));
+            $request = $client->createRequest('GET', $version['zip'], array('save_to' => $file));
             $request->getEmitter()->on('progress', function (ProgressEvent $e) use (&$progressBar, $output) {
 
                 if (null === $progressBar && $e->downloadSize !== 0) {
@@ -239,19 +264,31 @@ class InstallCommand extends Command
         return $file;
     }
 
-
     /**
      * Extracts the archive
      *
      * @param OutputInterface $output
      * @param $file
      * @param $target
+     * @param $oxidVersion
      */
-    protected function extractArchive(OutputInterface $output, $file, $target)
+    protected function extractArchive(OutputInterface $output, $file, $target, $oxidVersion)
     {
         $distill = new Distill();
         $output->writeLn("Extracting");
         $distill->extract($file, $target);
+        $filesystem = new Filesystem();
+        $filesystem->mirror($target . '/' . $oxidVersion['folder'] . '/source', $target);
+        $filesystem->remove($target . '/' . $oxidVersion['folder']);
+        $pkgInfo = <<<EOT
+[Package info]
+revision = "{$oxidVersion['hash']}"
+edition = "CE"
+version = "{$oxidVersion['versionTag']}"
+encoder-version = ""
+timestamp = "{timestamp()}"
+EOT;
+        file_put_contents($target . '/pkg.info', $pkgInfo);
     }
 
 }
