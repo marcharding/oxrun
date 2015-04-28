@@ -1,6 +1,7 @@
 # Oxrun
 
 [![Build Status](https://travis-ci.org/marcharding/oxrun.svg)](https://travis-ci.org/marcharding/oxrun)
+[![Coverage Status](https://coveralls.io/repos/marcharding/oxrun/badge.svg?branch=master)](https://coveralls.io/r/marcharding/oxrun?branch=master)
 
 Oxrun provides a cli toolset for the OXID eShop Community Edition.
 
@@ -10,22 +11,22 @@ Thanks to the [netz98 magerun](https://github.com/netz98/n98-magerun) project wh
 
 PHP 5.4 is required.
 
-You can install oxrun by simply downloading the phar file
+If you are using composer (which you probably are), just add `"marcharding/oxrun": "dev-master"` to your composer.json and run composer install.
+
+You can then use oxrun by calling `vendor/bin/oxrun` or add `vendor/bin` to your $PATH to be able to just call `oxrun`.
+
+You can also install oxrun by simply downloading the phar file
 
     wget --no-check-certificate https://raw.githubusercontent.com/marcharding/oxrun/master/oxrun.phar
 
-You can oxrun now via
+You can oxrun now via `php oxrun.phar`
 
-    php oxrun.phar
-
-You can also make the phar itself executable and copy it to your /usr/local/bin/ directory for global usage.
+Alternatively you can also make the phar itself executable and copy it to your /usr/local/bin/ directory for global usage.
 
     chmod +x oxrun.phar
     sudo mv oxrun.phar /usr/local/bin/oxrun
 
-You can then run oxrun by just calling
-
-    oxrun
+You can then run oxrun by just calling `oxrun`
 
 # Usage
 
