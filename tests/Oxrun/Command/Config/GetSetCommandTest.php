@@ -42,6 +42,66 @@ class GetSetCommandTest extends TestCase
         );
 
         $this->assertContains('aSortCols has value ' . $randomColumnsJson, $commandTester->getDisplay());
+
+        $commandTester = new CommandTester($setCommand);
+        $commandTester->execute(
+            array(
+                'command' => $setCommand->getName(),
+                'variableName' => 'bl_perfLoadAktion',
+                'variableValue' => false
+            )
+        );
+
+        $commandTester = new CommandTester($getCommand);
+        $commandTester->execute(
+            array(
+                'command' => $getCommand->getName(),
+                'variableName' => 'bl_perfLoadAktion',
+            )
+        );
+
+        $this->assertContains('bl_perfLoadAktion has value 0', $commandTester->getDisplay());
+
+        $commandTester = new CommandTester($setCommand);
+        $commandTester->execute(
+            array(
+                'command' => $setCommand->getName(),
+                'variableName' => 'bl_perfLoadAktion',
+                'variableValue' => true
+            )
+        );
+
+        $commandTester = new CommandTester($getCommand);
+        $commandTester->execute(
+            array(
+                'command' => $getCommand->getName(),
+                'variableName' => 'bl_perfLoadAktion',
+            )
+        );
+
+        $this->assertContains('bl_perfLoadAktion has value 1', $commandTester->getDisplay());
+
+        $commandTester = new CommandTester($setCommand);
+        $commandTester->execute(
+            array(
+                'command' => $setCommand->getName(),
+                'variableName' => 'iTopNaviCatCount',
+                'variableValue' => 99,
+                '--moduleId' => 'theme:azure'
+            )
+        );
+
+        $commandTester = new CommandTester($getCommand);
+        $commandTester->execute(
+            array(
+                'command' => $getCommand->getName(),
+                'variableName' => 'iTopNaviCatCount',
+                '--moduleId' => 'theme:azure'
+            )
+        );
+
+        $this->assertContains('iTopNaviCatCount has value 99', $commandTester->getDisplay());
+
     }
 
 }
