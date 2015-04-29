@@ -180,7 +180,12 @@ class InstallCommand extends Command
     protected function getOxidVersions()
     {
         $client = new Client();
-        $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags')->json();
+        $githubToken = getenv('GITHUB_TOKEN');
+        if( $githubToken ) {
+            $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags?access_token='.$githubToken)->json();
+        } else {
+            $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags')->json();
+        }
         return array_reduce(
             $tagsArray,
             function ($result, $item) {
