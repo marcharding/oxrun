@@ -219,7 +219,13 @@ class InstallCommand extends Command
 
         try {
 
-            $request = $client->createRequest('GET', $version['zip'], array('save_to' => $file));
+            $githubToken = getenv('GITHUB_TOKEN');
+            if( $githubToken ) {
+                $request = $client->createRequest('GET', $version['zip'].'?access_token='.$githubToken, array('save_to' => $file));
+            } else {
+                $request = $client->createRequest('GET', $version['zip'], array('save_to' => $file));
+            }
+
             $request->getEmitter()->on('progress', function (ProgressEvent $e) use (&$progressBar, $output) {
 
                 if (null === $progressBar && $e->downloadSize !== 0) {
