@@ -56,9 +56,8 @@ class Application extends BaseApplication
     public function bootstrapOxid()
     {
         $input = new ArgvInput;
-        $input->bind( $this->getDefinition() );
-        if( $input->getOption('shopDir') ) {
-            $oxBootstrap = $input->getOption('shopDir'). '/bootstrap.php';
+        if($input->getParameterOption('--shopDir')) {
+            $oxBootstrap = $input->getParameterOption('--shopDir'). '/bootstrap.php';
             if( $this->checkBootstrapOxidInclude( $oxBootstrap ) === true ) {
                 return true;
             }
