@@ -24,6 +24,13 @@ class Application extends BaseApplication
     const APP_VERSION = '@package_version@';
 
     /**
+     * Oxid eshop shop dir
+     *
+     * @var string
+     */
+    protected $shopDir;
+
+    /**
      * @param \Composer\Autoload\ClassLoader $autoloader
      */
     public function __construct($autoloader = null)
@@ -88,6 +95,7 @@ class Application extends BaseApplication
         if (is_file($oxBootstrap)) {
             // is it the oxid bootstrap.php?
             if (strpos(file_get_contents($oxBootstrap), 'OX_BASE_PATH') !== false) {
+                $this->shopDir = dirname($oxBootstrap);
                 require_once $oxBootstrap;
                 // we must call this once, otherwise there are no modules visible in a fresh shop
                 $oModuleList = oxNew("oxModuleList");
@@ -106,6 +114,14 @@ class Application extends BaseApplication
         $oxConfig = oxNew('oxConfig');
         $pkgInfo = parse_ini_file($oxConfig->getConfigParam('sShopDir') . 'pkg.info');
         return $pkgInfo['version'];
+    }
+
+    /**
+     * @return Shop directory string
+     */
+    public function getShopDir()
+    {
+        return $this->shopDir;
     }
 
 }
