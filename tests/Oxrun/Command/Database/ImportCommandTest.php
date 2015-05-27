@@ -50,6 +50,18 @@ EOD;
         );
 
         $this->assertContains('DROP TABLE IF EXISTS `oxrun_db_import_test`;', $commandTester->getDisplay());
+
+        $command = $app->find('db:import');
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(
+            array(
+                'command' => $command->getName(),
+                'file' => 'file_does_not_exist',
+            )
+        );
+
+        $this->assertContains("File file_does_not_exist does not exist.", $commandTester->getDisplay());
     }
 
 }

@@ -35,6 +35,28 @@ class ActivateCommandTest extends TestCase
         );
 
         $this->assertContains('Module invoicepdf activated.', $commandTester->getDisplay());
+
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(
+            array(
+                'command' => $command->getName(),
+                'module' => 'invoicepdf'
+            )
+        );
+
+        $this->assertContains('Module invoicepdf already activated.', $commandTester->getDisplay());
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(
+            array(
+                'command' => $command->getName(),
+                'module' => 'not_and_existing_module'
+            )
+        );
+
+        $this->assertContains('Cannot load module not_and_existing_module.', $commandTester->getDisplay());
+
     }
 
 }

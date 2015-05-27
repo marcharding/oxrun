@@ -43,7 +43,7 @@ HELP;
     {
         $file = $input->getArgument('file');
         if (!is_file($file)) {
-            $output->writeln("<error>File $file does not exist</error>");
+            $output->writeln("<error>File $file does not exist.</error>");
             return;
         }
 
