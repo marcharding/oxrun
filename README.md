@@ -42,6 +42,8 @@ cache:clear
 * Description: Clears the cache
 * Usage: `cache:clear`
 
+### Options:
+
 cms:update
 ----------
 
@@ -230,6 +232,8 @@ Requires php exec and MySQL CLI tools installed on your system.
 * Name: file
 * Description: The sql file which is to be imported
 
+### Options:
+
 db:query
 --------
 
@@ -272,14 +276,14 @@ install:shop
 * Name: `--oxidVersion`
 * Is value required: no
 * Description: Oxid version
-* Default: `'4.9.3'`
+* Default: `'v4.9.5'`
 
 **installationFolder:**
 
 * Name: `--installationFolder`
 * Is value required: no
 * Description: Installation folder
-* Default: `'/var/www/project/web/oxrun'`
+* Default: `'/vagrant/web/oxrun'`
 
 **dbHost:**
 
@@ -354,11 +358,15 @@ misc:generate:documentation
 * Name: command
 * Description: The command to execute
 
+### Options:
+
 misc:phpstorm:metadata
 ----------------------
 
 * Description: Generate a PhpStorm metadata file for autocompletion
 * Usage: `misc:phpstorm:metadata`
+
+### Options:
 
 module:activate
 ---------------
@@ -373,6 +381,8 @@ module:activate
 * Name: module
 * Description: Module name
 
+### Options:
+
 module:deactivate
 -----------------
 
@@ -385,6 +395,8 @@ module:deactivate
 
 * Name: module
 * Description: Module name
+
+### Options:
 
 module:fix
 ----------
@@ -399,6 +411,8 @@ module:fix
 * Name: module
 * Description: Module name
 
+### Options:
+
 module:generate
 ---------------
 
@@ -412,11 +426,35 @@ module:generate
 * Name: module
 * Description: Module name
 
+### Options:
+
 module:list
 -----------
 
 * Description: Lists all modules
 * Usage: `module:list`
+
+### Options:
+
+user:password
+-------------
+
+* Description: Sets a new password
+* Usage: `user:password username password`
+
+### Arguments:
+
+**username:**
+
+* Name: username
+* Description: Username
+
+**password:**
+
+* Name: password
+* Description: New password
+
+### Options:
 
 views:update
 ------------
