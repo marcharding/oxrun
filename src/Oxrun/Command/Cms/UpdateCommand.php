@@ -22,7 +22,7 @@ class UpdateCommand extends Command
     {
         $this
             ->setName('cms:update')
-            ->setDescription('Gets a config value')
+            ->setDescription('Updates a cms page')
             ->addArgument('ident', InputArgument::REQUIRED, 'Content ident')
             ->addOption('title', null, InputOption::VALUE_OPTIONAL, 'Content title')
             ->addOption('content', null, InputOption::VALUE_OPTIONAL, 'Content body')
