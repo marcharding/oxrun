@@ -45,7 +45,7 @@ cache:clear
 cms:update
 ----------
 
-* Description: Gets a config value
+* Description: Updates a cms page
 * Usage: `cms:update [--title[="..."]] [--content[="..."]] [--language="..."] [--active="..."] ident`
 
 ### Arguments:
