@@ -107,7 +107,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * @return Version tring
+     * @return string
      */
     public function getOxidVersion()
     {
@@ -117,7 +117,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * @return Shop directory string
+     * @return string
      */
     public function getShopDir()
     {
