@@ -2,6 +2,7 @@
 
 namespace Oxrun;
 
+use Composer\Autoload\ClassLoader;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputOption;
@@ -12,17 +13,6 @@ use Symfony\Component\Console\Input\InputOption;
  */
 class Application extends BaseApplication
 {
-
-    /**
-     * @var string
-     */
-    const APP_NAME = 'oxrun';
-
-    /**
-     * @var string
-     */
-    const APP_VERSION = '@package_version@';
-
     /**
      * Oxid eshop shop dir
      *
@@ -31,12 +21,14 @@ class Application extends BaseApplication
     protected $shopDir;
 
     /**
-     * @param \Composer\Autoload\ClassLoader $autoloader
+     * @param ClassLoader   $autoloader
+     * @param string $name
+     * @param string $version
      */
-    public function __construct($autoloader = null)
+    public function __construct($autoloader = null, $name = 'UNKNOWN', $version = 'UNKNOWN')
     {
         $this->autoloader = $autoloader;
-        parent::__construct(self::APP_NAME, self::APP_VERSION);
+        parent::__construct($name, $version);
     }
 
     /**
@@ -107,7 +99,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * @return Version tring
+     * @return string
      */
     public function getOxidVersion()
     {
@@ -117,7 +109,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * @return Shop directory string
+     * @return string
      */
     public function getShopDir()
     {
