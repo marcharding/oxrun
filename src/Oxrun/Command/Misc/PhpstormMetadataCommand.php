@@ -126,21 +126,25 @@ namespace PHPSTORM_META {
      * @noinspection PhpUnusedLocalVariableInspection
      * @noinspection PhpIllegalArrayKeyTypeInspection
      */
-    $STATIC_METHOD_TYPES = array(
-        \oxNew('') => array(
+    $STATIC_METHOD_TYPES = [
+        \oxNew('') => [
             CLASSES_PLACEHOLDER
-        ),
-    );
+        ],
+        \oxRegistry::get('') => [
+            CLASSES_PLACEHOLDER
+        ],
+    ];
 
 }
+
 EXTENDS_PLACEHOLDER
 EOT;
 
         $metaContent = str_replace('CLASSES_PLACEHOLDER', ltrim($STATIC_METHOD_TYPES), $metaContent);
-        $metaContent = str_replace('EXTENDS_PLACEHOLDER', implode("\n", $classExtensions), $metaContent);
+        $metaContent = str_replace('EXTENDS_PLACEHOLDER', implode("\n\n", $classExtensions), $metaContent);
 
-        if ($input->hasOption('output-dir')) {
-            file_put_contents($input->getOption('output-dir') . '/.phpstorm.meta.php', $metaContent);
+        if ($input->hasOption('output-dir') && (null !== ($outputDir = $input->getOption('output-dir')))) {
+            file_put_contents("{$outputDir}/.phpstorm.meta.php", $metaContent);
             return;
         }
 
