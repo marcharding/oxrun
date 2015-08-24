@@ -2,20 +2,20 @@
 <?php
 
 // composer bin autoload
-if( is_file( __DIR__ . '/../../../autoload.php' ) ) {
-    require_once __DIR__ . '/../../../autoload.php';
+if (is_file(__DIR__ . '/../../../autoload.php')) {
+    $autoloader = require_once __DIR__ . '/../../../autoload.php';
 }
 
 // default autoload
-if( is_file( __DIR__ . '/../vendor/autoload.php' ) ) {
-    require_once __DIR__ . '/../vendor/autoload.php';
+if (is_file(__DIR__ . '/../vendor/autoload.php')) {
+    $autoloader = require_once __DIR__ . '/../vendor/autoload.php';
 }
 
-$application = new \Oxrun\Application;
+$application = new \Oxrun\Application($autoloader, 'oxrun', '@package_version@');
 
-$commandSourceDir = __DIR__ . '/../src/';
+$commandSourceDir          = __DIR__ . '/../src/';
 $recursiveIteratorIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($commandSourceDir));
-$regexIterator = new RegexIterator($recursiveIteratorIterator, '/.*Command\.php$/');
+$regexIterator             = new RegexIterator($recursiveIteratorIterator, '/.*Command\.php$/');
 
 foreach ($regexIterator as $commandPath) {
     $commandClass = str_replace(array($commandSourceDir, '/', '.php'), array('', '\\', ''), $commandPath);

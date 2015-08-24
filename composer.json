@@ -12,13 +12,15 @@
     "cli"
   ],
   "require": {
-    "symfony/console": "v2.6.6",
-    "guzzlehttp/guzzle": "5.2.0",
-    "raulfraile/distill": "v0.9.8",
-    "nikic/php-parser": "v1.2.2"
+    "symfony/console": "2.7.*",
+    "symfony/event-dispatcher":"2.7.*",
+    "symfony/finder":"2.7.*",
+    "guzzlehttp/guzzle": "5.*",
+    "raulfraile/distill": "0.9.*",
+    "nikic/php-parser": "1.4.*"
   },
   "require-dev": {
-    "phpunit/phpunit": "4.6.4",
+    "phpunit/phpunit": "4.6.*",
     "satooshi/php-coveralls": "dev-master"
   },
   "autoload": {
@@ -33,6 +35,10 @@
     {
       "name": "Marc Harding",
       "email": "info@marcharding.de"
+    },
+    {
+      "name":"Stefan Krenz",
+      "email":"info@kyoya.de"
     }
   ],
   "bin": ["bin/oxrun"]
