@@ -22,7 +22,7 @@ before_script:
   - bin/oxrun install:shop --oxidVersion="${OXID_VERSION}" --dbUser=root --installationFolder=../ --shopURL=http://local.oxrun --adminUser=admin@local.oxrun --adminPassword=oxrunpassword
 
 script:
-  - mkdir -p build/logs
+  - mkdir -p phpunit/logs
   - vendor/bin/phpunit --debug --stop-on-error --stop-on-failure
 
 after_success:
