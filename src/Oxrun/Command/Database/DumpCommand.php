@@ -24,7 +24,8 @@ class DumpCommand extends Command
         $this
             ->setName('db:dump')
             ->setDescription('Dumps the the current shop database')
-            ->addOption('file', null, InputOption::VALUE_REQUIRED, 'Dump sql in to this file');
+            ->addOption('file', null, InputOption::VALUE_REQUIRED, 'Dump sql in to this file')
+            ->addOption('ignoreViews', null, InputOption::VALUE_NONE, 'Ignore views');
 
         $help = <<<HELP
 Dumps the the current shop database.
@@ -55,12 +56,23 @@ HELP;
             $file = "";
         }
 
+        if($input->getOption('ignoreViews')) {
+            $dbName = \oxRegistry::getConfig()->getConfigParam('dbName');
+            $viewsResultArray = \oxDb::getDb()->getArray("SHOW FULL TABLES IN {$dbName} WHERE TABLE_TYPE LIKE 'VIEW'");
+            $ignoreViewTables = array();
+            foreach($viewsResultArray as $viewArray) {
+                $ignoreViewTables[] = '--ignore-table=' . $dbName . '.' . $viewArray[0];
+            }
+            $ignoreViewTables = implode(' ', $ignoreViewTables);
+        }
+
         $exec = sprintf(
-            "mysqldump -h%s %s -u%s %s %s 2>&1",
+            "mysqldump -h%s %s -u%s %s %s %s 2>&1",
             \oxRegistry::getConfig()->getConfigParam('dbHost'),
             $dbPwd,
             \oxRegistry::getConfig()->getConfigParam('dbUser'),
             \oxRegistry::getConfig()->getConfigParam('dbName'),
+            $ignoreViewTables,
             $file
         );
 
