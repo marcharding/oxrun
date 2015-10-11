@@ -47,8 +47,8 @@ class InstallCommand extends Command
             ->addOption('dbPort', null, InputOption::VALUE_OPTIONAL, 'Database port', 3306)
             ->addOption('installSampleData', null, InputOption::VALUE_OPTIONAL, 'Install sample data', true)
             ->addOption('shopURL', null, InputOption::VALUE_REQUIRED, 'Installation base url')
-            ->addOption('adminUser', null, InputOption::VALUE_REQUIRED, 'Admin user email/login')
-            ->addOption('adminPassword', null, InputOption::VALUE_REQUIRED, 'Admin password')
+            ->addOption('adminUser', null, InputOption::VALUE_REQUIRED, 'Admin user email/login', 'admin@example.com')
+            ->addOption('adminPassword', null, InputOption::VALUE_REQUIRED, 'Admin password', 'oxid-123456')
             ->setDescription('Installs the shop');
     }
 
@@ -78,7 +78,6 @@ class InstallCommand extends Command
 
         $output->writeLn("<info>Extracting archive</info>");
         $this->extractArchive($output, $archiveFile, $target, $oxidVersion);
-
 
         $output->writeLn("<info>Patching installation</info>");
         $this->patchOxSetup($target);
@@ -115,7 +114,7 @@ class InstallCommand extends Command
 
         $oxSetupSession = new \oxSetupSession;
         $oxSetupSession->setSessionParam('aDB', $_POST["aDB"]);
-        $oxSetupSession->setSessionParam('setup_lang', 'de');
+        $oxSetupSession->setSessionParam('setup_lang', 'en');
         $oxSetupSession->setSessionParam('sShopLang', 'de');
         $oxSetupSession->setSessionParam('aSetupConfig', $_POST["aSetupConfig"]);
 
@@ -123,6 +122,14 @@ class InstallCommand extends Command
         $oxSetupController->dbConnect();
         $oxSetupController->dbCreate();
         $oxSetupController->dirsWrite();
+        $aMessages = $oxSetupController->getView()->getMessages();
+        foreach($aMessages as $message) {
+            $cleanMessage = str_replace(array('ERROR:','FEHLER:'), '', $message);
+            if($cleanMessage !== $message) {
+                $cleanMessage = trim($cleanMessage);
+                $output->writeln("<error>An error occured during the installation: {$cleanMessage}</error>");
+            }
+        }
         $oxSetupController->finish();
 
         $oxSetupView = new \oxSetupView;
