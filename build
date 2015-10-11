@@ -35,7 +35,11 @@ $finder->files()
 foreach ($finder as $fileInfo) {
     $file = str_replace(__DIR__, '', $fileInfo->getRealPath());
     echo "Add file: " . $file . "\n";
-    $phar->addFile($fileInfo->getRealPath(), $file);
+    if($fileInfo->getExtension() === 'php'){
+        $phar->addFromString($file, php_strip_whitespace($fileInfo->getRealPath()));
+    } else {
+        $phar->addFile($fileInfo->getRealPath(), $file);
+    }
 }
 // Add bin/dep file
 $depContent = file_get_contents(__DIR__ . '/bin/oxrun');
