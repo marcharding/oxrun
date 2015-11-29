@@ -210,10 +210,9 @@ class InstallCommand extends Command
         );
         $tagsArray = array_filter(
             $tagsArray,
-            function($key) {
-                return preg_match('#^v\d+\.\d+\.\d+$#', $key);
-            },
-            ARRAY_FILTER_USE_KEY
+            function($tagArray) {
+                return preg_match('#^v\d+\.\d+\.\d+$#', $tagArray['tag']);
+            }
         );
         return $tagsArray;
     }
