@@ -193,13 +193,14 @@ class InstallCommand extends Command
         } else {
             $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags')->json();
         }
-        return array_reduce(
+        $tagsArray = array_reduce(
             $tagsArray,
             function ($result, $item) {
                 $result[$item['name']] = array(
                     'zip' => $item['zipball_url'],
                     'folder' => 'OXID-eSales-oxideshop_ce-' . substr($item['commit']['sha'], 0, 7),
                     'hash' => 'OXID-eSales-oxideshop_ce-' . $item['commit']['sha'],
+                    'sha' => $item['commit']['sha'],
                     'tag' => $item['name'],
                     'versionTag' => substr($item['name'], 1),
                 );
@@ -207,6 +208,14 @@ class InstallCommand extends Command
             },
             array()
         );
+        $tagsArray = array_filter(
+            $tagsArray,
+            function($key) {
+                return preg_match('#^v\d+\.\d+\.\d+$#', $key);
+            },
+            ARRAY_FILTER_USE_KEY
+        );
+        return $tagsArray;
     }
 
     /**
@@ -298,15 +307,21 @@ class InstallCommand extends Command
         $filesystem = new Filesystem();
         $filesystem->mirror($target . '/' . $oxidVersion['folder'] . '/source', $target);
         $filesystem->remove($target . '/' . $oxidVersion['folder']);
+        $oxidVersion['timestamp'] = date('Y-m-d H:i:s');
+        $oxidVersion['build'] = preg_replace('/[^\d]+/', '', $oxidVersion['versionTag']);
         $pkgInfo = <<<EOT
+[Builder]
+build = {$oxidVersion['build']}
+
 [Package info]
-revision = "{$oxidVersion['hash']}"
+revision = "{$oxidVersion['sha']}"
 edition = "CE"
 version = "{$oxidVersion['versionTag']}"
 encoder-version = ""
-timestamp = "{timestamp()}"
+timestamp = "{$oxidVersion['timestamp']}"
 EOT;
         file_put_contents($target . '/pkg.info', $pkgInfo);
+        file_put_contents($target . '/pkg.rev', $oxidVersion['sha']);
     }
 
 }
