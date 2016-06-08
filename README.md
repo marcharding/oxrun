@@ -368,6 +368,13 @@ misc:phpstorm:metadata
 
 ### Options:
 
+**output-dir:**
+
+* Name: `--output-dir`, `-o`
+* Accept value: yes
+* Is value required: yes
+* Description: Writes the metadata for PhpStorm to the specified directory.
+
 module:activate
 ---------------
 
