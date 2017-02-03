@@ -21,6 +21,11 @@ class Application extends BaseApplication
     protected $shopDir;
 
     /**
+     * @var ClassLoader|null
+     */
+    protected $autoloader;
+
+    /**
      * @param ClassLoader   $autoloader
      * @param string $name
      * @param string $version
@@ -32,7 +37,7 @@ class Application extends BaseApplication
     }
 
     /**
-     * @return \Symfony\Component\Console\Input\InputDefinition|void
+     * @return \Symfony\Component\Console\Input\InputDefinition
      */
     protected function getDefaultInputDefinition()
     {
@@ -54,7 +59,7 @@ class Application extends BaseApplication
      */
     public function bootstrapOxid()
     {
-        $input = new ArgvInput;
+        $input = new ArgvInput();
         if($input->getParameterOption('--shopDir')) {
             $oxBootstrap = $input->getParameterOption('--shopDir'). '/bootstrap.php';
             if( $this->checkBootstrapOxidInclude( $oxBootstrap ) === true ) {
@@ -88,13 +93,23 @@ class Application extends BaseApplication
             // is it the oxid bootstrap.php?
             if (strpos(file_get_contents($oxBootstrap), 'OX_BASE_PATH') !== false) {
                 $this->shopDir = dirname($oxBootstrap);
+
                 require_once $oxBootstrap;
+
+                // If we've an autoloader we must re-register it to avoid conflicts with a composer autoloader from shop
+                if (null !== $this->autoloader) {
+                    $this->autoloader->unregister();
+                    $this->autoloader->register(true);
+                }
+
                 // we must call this once, otherwise there are no modules visible in a fresh shop
                 $oModuleList = oxNew("oxModuleList");
                 $oModuleList->getModulesFromDir(\oxRegistry::getConfig()->getModulesDir());
+
                 return true;
             }
         }
+
         return false;
     }
 
