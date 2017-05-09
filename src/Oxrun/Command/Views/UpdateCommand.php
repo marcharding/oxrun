@@ -31,6 +31,9 @@ class UpdateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $myConfig = \oxRegistry::getConfig();
+        $myConfig->setConfigParam('blSkipViewUsage', true);
+        
         $oMetaData = \oxNew('oxDbMetaDataHandler');
         if ($oMetaData->updateViews()) {
             $output->writeln('<info>Views updated.</info>');
