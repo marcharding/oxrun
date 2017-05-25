@@ -47,7 +47,9 @@ class UpdateCommand extends Command
      */
     public function isEnabled()
     {
-        return $this->getApplication()->bootstrapOxid();
+        /** @var \Oxrun\Application $application */
+        $application = $this->getApplication();
+        return $application->bootstrapOxid(true);
     }
 
 }
