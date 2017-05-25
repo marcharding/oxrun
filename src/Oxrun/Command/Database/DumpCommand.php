@@ -51,7 +51,7 @@ HELP;
 
         $file = $input->getOption('file');
         if (!empty($file)) {
-            $file = "> " . $file;
+            $file = "--result-file=" . $file;
         } else {
             $file = "";
         }
