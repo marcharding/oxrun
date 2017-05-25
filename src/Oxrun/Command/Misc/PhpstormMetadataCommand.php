@@ -60,7 +60,11 @@ class PhpstormMetadataCommand extends Command
             ->in($searchDirs)
             ->files();
 
-        $extendedOxidClasses = \oxRegistry::get('oxModuleInstaller')->getModulesWithExtendedClass();
+        try {
+            $extendedOxidClasses = \oxRegistry::get('oxModuleInstaller')->getModulesWithExtendedClass();
+        } catch (\oxSystemComponentException $e) {
+            $extendedOxidClasses = \oxRegistry::getConfig()->getAllModules();
+        }
 
         $classes = array();
 
@@ -89,7 +93,7 @@ class PhpstormMetadataCommand extends Command
                                 foreach ($extendedOxidClasses[$normalizedClassName] as $moduleClass) {
                                     $extendedClassName   = basename($moduleClass);
                                     $classExtensions[]   =
-                                        "class {$extendedClassName}_parent extends \\{$oldExtendedClass} {}";
+                                        "    class {$extendedClassName}_parent extends \\{$oldExtendedClass} {}";
                                     $oldExtendedClass    = $extendedClassName;
                                     $classes[$className] = $oldExtendedClass;
                                 }
@@ -106,7 +110,7 @@ class PhpstormMetadataCommand extends Command
 
         foreach ($classes as $baseClass => $class) {
             $classLowerCase = strtolower($baseClass);
-            $STATIC_METHOD_TYPES .= "            '$classLowerCase' instanceof \\$class," . PHP_EOL;
+            $STATIC_METHOD_TYPES .= "                '{$classLowerCase}' => \\{$class}::class,\n";
         }
 
         $metaContent = <<<'EOT'
@@ -122,29 +126,47 @@ class PhpstormMetadataCommand extends Command
  */
 
 namespace PHPSTORM_META {
-    /**
-     * @noinspection PhpUnusedLocalVariableInspection
-     * @noinspection PhpIllegalArrayKeyTypeInspection
-     */
-    $STATIC_METHOD_TYPES = [
-        \oxNew('') => [
-            CLASSES_PLACEHOLDER
-        ],
-        \oxRegistry::get('') => [
-            CLASSES_PLACEHOLDER
-        ],
-    ];
-
+    override(
+        \oxNew(0),
+        map(
+            [
+                CLASSES_PLACEHOLDER
+            ]
+        )
+    );
+    override(
+        \oxRegistry::get(0),
+        map(
+            [
+                CLASSES_PLACEHOLDER
+            ]
+        )
+    );
 }
 
+namespace {
+
 EXTENDS_PLACEHOLDER
+
+}
 EOT;
 
-        $metaContent = str_replace('CLASSES_PLACEHOLDER', ltrim($STATIC_METHOD_TYPES), $metaContent);
+        $metaContent = str_replace('CLASSES_PLACEHOLDER', trim($STATIC_METHOD_TYPES), $metaContent);
         $metaContent = str_replace('EXTENDS_PLACEHOLDER', implode("\n\n", $classExtensions), $metaContent);
 
         if ($input->hasOption('output-dir') && (null !== ($outputDir = $input->getOption('output-dir')))) {
-            file_put_contents("{$outputDir}/.phpstorm.meta.php", $metaContent);
+            $phpstormMetaDir = "{$outputDir}/.phpstorm.meta.php";
+            $phpstormMetaFile = "{$phpstormMetaDir}/oxid.meta.php";
+
+            if (is_file($phpstormMetaDir)) {
+                unlink($phpstormMetaDir);
+            }
+
+            if (!is_dir($phpstormMetaDir)) {
+                mkdir($phpstormMetaDir, 0777, true);
+            }
+
+            file_put_contents($phpstormMetaFile, $metaContent);
             return;
         }
 
