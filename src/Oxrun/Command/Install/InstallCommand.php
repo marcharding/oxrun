@@ -224,6 +224,17 @@ class InstallCommand extends Command
      */
     protected function downloadOxid(OutputInterface $output, $version)
     {
+        $toolCache = new ToolCache();
+
+        if ($toolCache->has('archive.oxid-'.$version['versionTag'])) {
+            $file = $toolCache->get('archive.oxid-'.$version['versionTag']);
+            if (file_exists($file)) {
+                $output->writeln('  Loading from cache');
+                return $file;
+            }
+            $toolCache->delete('archive.oxid-'.$version['versionTag']);
+        }
+
         $file = sys_get_temp_dir() . '/oxrun-' . time() . '.zip';
 
         $progressBar = null;
@@ -284,6 +295,8 @@ class InstallCommand extends Command
             $progressBar->finish();
             $output->writeln("\n");
         }
+
+        $toolCache->set('archive.oxid-'.$version['versionTag'], $file, (int)date_create('+12 Month')->format('U'));
 
         return $file;
     }
