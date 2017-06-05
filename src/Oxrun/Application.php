@@ -3,7 +3,10 @@
 namespace Oxrun;
 
 use Composer\Autoload\ClassLoader;
+use Oxrun\Command\Custom;
+use Oxrun\Helper\DatenbaseConnection;
 use Symfony\Component\Console\Application as BaseApplication;
+use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -13,6 +16,16 @@ use Symfony\Component\Console\Input\InputOption;
  */
 class Application extends BaseApplication
 {
+    /**
+     * @var null
+     */
+    protected $oxidBootstrapExists = null;
+
+    /**
+     * @var null
+     */
+    protected $hasDBConnection = null;
+
     /**
      * Oxid eshop shop dir
      *
@@ -31,6 +44,11 @@ class Application extends BaseApplication
     protected $oxidConfigContent;
 
     /**
+     * @var DatenbaseConnection
+     */
+    protected $datenbaseConnection = null;
+
+    /**
      * @param ClassLoader   $autoloader
      * @param string $name
      * @param string $version
@@ -40,6 +58,15 @@ class Application extends BaseApplication
         $this->autoloader = $autoloader;
         parent::__construct($name, $version);
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function getDefaultCommands()
+    {
+        return array(new HelpCommand(), new Custom\ListCommand());
+    }
+
 
     /**
      * @return \Symfony\Component\Console\Input\InputDefinition
@@ -60,11 +87,31 @@ class Application extends BaseApplication
     }
 
     /**
-     * @param bool $skipViews Add 'blSkipViewUsage' to OXIDs config.
+     * Oxid bootstrap.php is loaded.
+     *
+     * @param bool $blNeedDBConnection this Command need a DB Connection
+     *
+     * @return bool|null
+     */
+    public function bootstrapOxid($blNeedDBConnection = true)
+    {
+        if ($this->oxidBootstrapExists === null) {
+            $this->oxidBootstrapExists = $this->findBootstrapFile();
+        }
+
+        if ($this->oxidBootstrapExists && $blNeedDBConnection) {
+            return $this->canConnectToDB();
+        }
+
+        return $this->oxidBootstrapExists;
+    }
+
+    /**
+     * Search Oxid Bootstrap.file and include that
+     *
      * @return bool
      */
-    public function bootstrapOxid()
-    {
+    protected function findBootstrapFile() {
         $input = new ArgvInput();
         if($input->getParameterOption('--shopDir')) {
             $oxBootstrap = $input->getParameterOption('--shopDir'). '/bootstrap.php';
@@ -133,6 +180,45 @@ class Application extends BaseApplication
     public function getShopDir()
     {
         return $this->shopDir;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canConnectToDB()
+    {
+        if ($this->hasDBConnection !== null) {
+            return $this->hasDBConnection;
+        }
+
+        $configfile = $this->shopDir . DIRECTORY_SEPARATOR . 'config.inc.php';
+
+        if ($this->shopDir && file_exists($configfile)) {
+            $oxConfigFile = new \OxConfigFile($configfile);
+
+            $datenbaseConnection = $this->getDatenbaseConnection();
+            $datenbaseConnection
+                ->setHost($oxConfigFile->getVar('dbHost'))
+                ->setUser($oxConfigFile->getVar('dbUser'))
+                ->setPass($oxConfigFile->getVar('dbPwd'))
+                ->setDatabase($oxConfigFile->getVar('dbName'));
+
+            return $this->hasDBConnection = $datenbaseConnection->canConnectToMysql();
+        }
+
+        return $this->hasDBConnection = false;
+    }
+
+    /**
+     * @return DatenbaseConnection
+     */
+    public function getDatenbaseConnection()
+    {
+        if ($this->datenbaseConnection === null) {
+            $this->datenbaseConnection = new DatenbaseConnection();
+        }
+
+        return $this->datenbaseConnection;
     }
 
 }
