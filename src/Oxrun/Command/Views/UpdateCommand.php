@@ -49,7 +49,7 @@ class UpdateCommand extends Command
     {
         /** @var \Oxrun\Application $application */
         $application = $this->getApplication();
-        return $application->bootstrapOxid(true);
+        return $application->bootstrapOxid();
     }
 
 }
