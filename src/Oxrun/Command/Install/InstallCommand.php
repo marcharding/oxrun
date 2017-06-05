@@ -6,9 +6,11 @@ use Distill\Distill;
 use GuzzleHttp\Client;
 use GuzzleHttp\Event\ProgressEvent;
 use GuzzleHttp\Exception\ClientException;
+use Oxrun\Helper\ToolCache;
 use Oxrun\PhpParser\OxidSetupNodeVisitor;
 use PhpParser;
 use PhpParser\Node;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,7 +51,8 @@ class InstallCommand extends Command
             ->addOption('shopURL', null, InputOption::VALUE_REQUIRED, 'Installation base url')
             ->addOption('adminUser', null, InputOption::VALUE_REQUIRED, 'Admin user email/login', 'admin@example.com')
             ->addOption('adminPassword', null, InputOption::VALUE_REQUIRED, 'Admin password', 'oxid-123456')
-            ->setDescription('Installs the shop');
+            ->setDescription('Installs the shop.')
+            ->setHelp('Installs the shop.'.PHP_EOL.'<info>To refresh oxid version list, use Command cache:clear:oxrun</info>');
     }
 
     /**
@@ -186,13 +189,8 @@ class InstallCommand extends Command
      */
     protected function getOxidVersions()
     {
-        $client = new Client();
-        $githubToken = getenv('GITHUB_TOKEN');
-        if( $githubToken ) {
-            $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags?access_token='.$githubToken)->json();
-        } else {
-            $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags')->json();
-        }
+        $tagsArray = $this->_latestOxidVersions();
+
         $tagsArray = array_reduce(
             $tagsArray,
             function ($result, $item) {
@@ -226,6 +224,17 @@ class InstallCommand extends Command
      */
     protected function downloadOxid(OutputInterface $output, $version)
     {
+        $toolCache = new ToolCache();
+
+        if ($toolCache->has('archive.oxid-'.$version['versionTag'])) {
+            $file = $toolCache->get('archive.oxid-'.$version['versionTag']);
+            if (file_exists($file)) {
+                $output->writeln('  Loading from cache');
+                return $file;
+            }
+            $toolCache->delete('archive.oxid-'.$version['versionTag']);
+        }
+
         $file = sys_get_temp_dir() . '/oxrun-' . time() . '.zip';
 
         $progressBar = null;
@@ -287,6 +296,8 @@ class InstallCommand extends Command
             $output->writeln("\n");
         }
 
+        $toolCache->set('archive.oxid-'.$version['versionTag'], $file, ToolCache::ONEYEAR);
+
         return $file;
     }
 
@@ -321,6 +332,29 @@ timestamp = "{$oxidVersion['timestamp']}"
 EOT;
         file_put_contents($target . '/pkg.info', $pkgInfo);
         file_put_contents($target . '/pkg.rev', $oxidVersion['sha']);
+    }
+
+    /**
+     * Download latest Oxid Version List from GitHub
+     * and cached
+     *
+     * @return mixed
+     */
+    protected function _latestOxidVersions()
+    {
+        $toolCache = new ToolCache();
+
+        if ($toolCache->has('OxidVersions') == false) {
+            $url = 'https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags';
+            if ($githubToken = getenv('GITHUB_TOKEN')) {
+                $url .= '?access_token=' . $githubToken;
+            }
+
+            $client = new Client();
+            $toolCache->set('OxidVersions', $client->get($url)->json());
+        }
+
+        return $toolCache->get('OxidVersions');
     }
 
 }
