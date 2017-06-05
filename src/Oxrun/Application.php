@@ -109,9 +109,6 @@ class Application extends BaseApplication
                     $this->autoloader->register(true);
                 }
 
-                // we must call this once, otherwise there are no modules visible in a fresh shop
-                $oModuleList = oxNew("oxModuleList");
-                $oModuleList->getModulesFromDir(\oxRegistry::getConfig()->getModulesDir());
                 return true;
             }
         }
