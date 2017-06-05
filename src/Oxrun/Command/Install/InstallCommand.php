@@ -296,7 +296,7 @@ class InstallCommand extends Command
             $output->writeln("\n");
         }
 
-        $toolCache->set('archive.oxid-'.$version['versionTag'], $file, (int)date_create('+12 Month')->format('U'));
+        $toolCache->set('archive.oxid-'.$version['versionTag'], $file, ToolCache::ONEYEAR);
 
         return $file;
     }

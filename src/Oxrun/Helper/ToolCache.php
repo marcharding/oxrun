@@ -6,8 +6,9 @@
 
 namespace Oxrun\Helper;
 
+use Desarrolla2\Cache\Adapter\File;
+use Desarrolla2\Cache\Cache;
 use Psr\SimpleCache\CacheInterface;
-use Symfony\Component\Cache\Simple\FilesystemCache;
 
 /**
  * Class ToolCache
@@ -16,7 +17,13 @@ use Symfony\Component\Cache\Simple\FilesystemCache;
  */
 class ToolCache implements CacheInterface
 {
-    /** @var FilesystemCache  */
+
+    const TOWWEEKS = 1209600; #sec 60 * 60 * 24 * 14;
+    const ONEYEAR  = 31557600; #sec 60 * 60 * 24 * 365;
+
+    /**
+     * @var Cache
+     */
     protected $filesystemCache = null;
 
     /**
@@ -24,10 +31,11 @@ class ToolCache implements CacheInterface
      */
     public function __construct()
     {
-        $this->filesystemCache = new FilesystemCache(
-            'oxrun',
-            date_create('+2 Week')->format('U')
-        );
+
+        $fileAdapter = new File(sys_get_temp_dir()."oxrun_cache");
+        $fileAdapter->setOption('ttl', self::TOWWEEKS);
+
+        $this->filesystemCache = new Cache($fileAdapter);
     }
 
     /**
@@ -36,7 +44,9 @@ class ToolCache implements CacheInterface
      */
     public function get($key, $default = null)
     {
-        return $this->filesystemCache->get($key, $default);
+        $value = $this->filesystemCache->get($key);
+
+        return $value ? $value : $default;
     }
 
     /**
@@ -63,7 +73,8 @@ class ToolCache implements CacheInterface
      */
     public function clear()
     {
-        return $this->filesystemCache->clear();
+        $this->filesystemCache->dropCache();
+        return true;
     }
 
     /**
@@ -72,7 +83,11 @@ class ToolCache implements CacheInterface
      */
     public function getMultiple($keys, $default = null)
     {
-        return $this->filesystemCache->getMultiple($keys, $default);
+        $result = [];
+        foreach ($keys as $key) {
+            $result[$key] = $this->get($key, $default);
+        }
+        return $result;
     }
 
     /**
@@ -81,7 +96,15 @@ class ToolCache implements CacheInterface
      */
     public function setMultiple($values, $ttl = null)
     {
-        return $this->filesystemCache->setMultiple($values, $ttl);
+        if (is_array($values) == false) {
+            throw new \InvalidArgumentException("values must be a array");
+        }
+
+        foreach ($values as $key => $value) {
+            $this->set($key, $value, $ttl);
+        }
+
+        return true;
     }
 
     /**
@@ -90,7 +113,15 @@ class ToolCache implements CacheInterface
      */
     public function deleteMultiple($keys)
     {
-        return $this->filesystemCache->deleteMultiple($keys);
+        if (is_array($keys) == false) {
+            throw new \InvalidArgumentException("values must be a array");
+        }
+
+        foreach ($keys as $key) {
+            $this->delete($key);
+        }
+
+        return true;
     }
 
     /**
