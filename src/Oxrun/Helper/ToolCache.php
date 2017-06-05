@@ -32,7 +32,7 @@ class ToolCache implements CacheInterface
     public function __construct()
     {
 
-        $fileAdapter = new File(sys_get_temp_dir()."oxrun_cache");
+        $fileAdapter = new File(sys_get_temp_dir() . DIRECTORY_SEPARATOR . "oxrun_cache");
         $fileAdapter->setOption('ttl', self::TOWWEEKS);
 
         $this->filesystemCache = new Cache($fileAdapter);
