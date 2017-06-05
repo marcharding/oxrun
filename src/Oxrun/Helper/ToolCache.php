@@ -31,11 +31,23 @@ class ToolCache implements CacheInterface
      */
     public function __construct()
     {
+        $this->init();
+    }
 
-        $fileAdapter = new File(sys_get_temp_dir() . DIRECTORY_SEPARATOR . "oxrun_cache");
+    protected function init()
+    {
+        $fileAdapter = new File($this->getCacheDir());
         $fileAdapter->setOption('ttl', self::TOWWEEKS);
 
         $this->filesystemCache = new Cache($fileAdapter);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCacheDir()
+    {
+        return sys_get_temp_dir() . DIRECTORY_SEPARATOR . "oxrun_cache";
     }
 
     /**
@@ -73,8 +85,26 @@ class ToolCache implements CacheInterface
      */
     public function clear()
     {
-        $this->filesystemCache->dropCache();
-        return true;
+        // $this->filesystemCache->dropCache(); function not ready
+
+        $result = $this->recurseRmdir( $this->getCacheDir() );
+        $this->init();
+
+        return (bool)$result;
+    }
+
+    /**
+     * Delete Folder Recusive
+     *
+     * @param $dir
+     * @return bool
+     */
+    protected function recurseRmdir($dir) {
+        $files = array_diff(scandir($dir), array('.','..'));
+        foreach ($files as $file) {
+            (is_dir("$dir/$file")) ? $this->recurseRmdir("$dir/$file") : unlink("$dir/$file");
+        }
+        return rmdir($dir);
     }
 
     /**
