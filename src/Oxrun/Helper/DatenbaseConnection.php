@@ -132,7 +132,12 @@ class DatenbaseConnection
     public function canConnectToMysql()
     {
         if ($this->PDO === null) {
-            $this->inspectAccessData();
+            try {
+                $this->inspectAccessData();
+            } catch (\LogicException $e) {
+                $this->lastErrorMsg = $e->getMessage();
+                return false;
+            }
 
             $dsn = sprintf('mysql:dbname=%s;host=%s;port=%s', $this->database, $this->host, $this->port);
 
@@ -169,7 +174,7 @@ class DatenbaseConnection
     protected function inspectAccessData()
     {
         if ($this->host == '' || $this->port == false || $this->user == '') {
-            throw new \LogicException('Param host, port or user are empty');
+            throw new \LogicException('The config param DB::host, DB::port or DB::user are empty');
         }
     }
 

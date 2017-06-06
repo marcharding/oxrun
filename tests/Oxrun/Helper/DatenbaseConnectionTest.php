@@ -48,6 +48,26 @@ class DatenbaseConnectionTest extends \PHPUnit_Framework_TestCase
         self::assertContains("Unknown database 'oxid_unbekannt'", $this->testSubject->getLastErrorMsg());
     }
 
+    /**
+     * @dataProvider getEmptyConfigs
+     */
+    public function testHasEmptyConfig($func, $value)
+    {
+        $this->testSubject->$func($value);
+
+        self::assertFalse($this->testSubject->canConnectToMysql());
+        self::assertContains("are empty", $this->testSubject->getLastErrorMsg());
+    }
+
+    public function getEmptyConfigs()
+    {
+        return [
+            'No Host Config' => ['func'=>'setHost', 'value' => ''],
+            'No Port Config' => ['func'=>'setPort', 'value' => 0],
+            'No User Config' => ['func'=>'setUser', 'value' => ''],
+        ];
+    }
+
     public function testCanConnected()
     {
         self::assertTrue($this->testSubject->canConnectToMysql());
