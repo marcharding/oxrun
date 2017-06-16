@@ -189,9 +189,9 @@ class InstallCommand extends Command
         $client = new Client();
         $githubToken = getenv('GITHUB_TOKEN');
         if( $githubToken ) {
-            $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags?access_token='.$githubToken)->json();
+            $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags?per_page=9999&access_token='.$githubToken)->json();
         } else {
-            $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags')->json();
+            $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags?per_page=9999')->json();
         }
         $tagsArray = array_reduce(
             $tagsArray,
