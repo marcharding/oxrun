@@ -21,7 +21,7 @@ before_script:
   - php composer.phar install
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'
   - bin/oxrun install:shop --oxidVersion="${OXID_VERSION}" --dbUser=root --installationFolder=../ --shopURL=http://local.oxrun --adminUser=admin@local.oxrun --adminPassword=oxrunpassword
-
+  - chmod 777 ../config.inc.php
 script:
   - mkdir -p phpunit/logs
   - vendor/bin/phpunit --debug --stop-on-error --stop-on-failure
