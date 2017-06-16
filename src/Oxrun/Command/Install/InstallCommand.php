@@ -185,6 +185,10 @@ class InstallCommand extends Command
                 $code = file_get_contents($target . '/setup/oxrunsetup.php');
                 $code = str_replace("demodata.sql", "test_demodata.sql", $code);
                 file_put_contents($target . '/setup/oxrunsetup.php', $code);
+                // they really messed this up, the admin user is missing when the testdata is used.
+                $sqlInitialData = file_get_contents($target . '/setup/sql/initial_data.sql');
+                $sqlDemoData = file_get_contents($target . '/setup/sql/test_demodata.sql');
+                file_put_contents($target . '/setup/sql/test_demodata.sql', $sqlInitialData . PHP_EOL . $sqlDemoData);
             }
         }
     }
