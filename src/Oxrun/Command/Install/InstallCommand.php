@@ -35,10 +35,9 @@ class InstallCommand extends Command
      */
     protected function configure()
     {
-        $this->oxidVersions = $this->getOxidVersions();
         $this
             ->setName('install:shop')
-            ->addOption('oxidVersion', null, InputOption::VALUE_OPTIONAL, 'Oxid version', key($this->oxidVersions))
+            ->addOption('oxidVersion', null, InputOption::VALUE_OPTIONAL, 'Oxid version')
             ->addOption('installationFolder', null, InputOption::VALUE_OPTIONAL, 'Installation folder', getcwd())
             ->addOption('dbHost', null, InputOption::VALUE_REQUIRED, 'Database host', 'localhost')
             ->addOption('dbUser', null, InputOption::VALUE_REQUIRED, 'Database user', 'oxid')
@@ -60,6 +59,7 @@ class InstallCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->oxidVersions = $this->getOxidVersions();
         if (!isset($this->oxidVersions[$input->getOption('oxidVersion')])) {
             $output->writeln("<error>Oxid {$input->getOption('oxidVersion')} not available</error>");
             return;
