@@ -80,7 +80,7 @@ class InstallCommand extends Command
         $this->extractArchive($output, $archiveFile, $target, $oxidVersion);
 
         $output->writeLn("<info>Patching installation</info>");
-        $this->patchOxSetup($target);
+        $this->patchOxSetup($target, $oxidVersion['tag']);
 
         $output->writeLn("<info>Installing shop</info>");
         include_once $target . '/setup/oxrunsetup.php';
@@ -163,7 +163,7 @@ class InstallCommand extends Command
      *
      * @param $target
      */
-    protected function patchOxSetup($target)
+    protected function patchOxSetup($target, $version = null)
     {
         $parser = new \PhpParser\Parser(new PhpParser\Lexer\Emulative);
         $traverser = new \PhpParser\NodeTraverser;
@@ -178,6 +178,14 @@ class InstallCommand extends Command
             file_put_contents($target . '/setup/oxrunsetup.php', $code, FILE_APPEND);
         } catch (PhpParser\Error $e) {
 
+        }
+        // patch version 4.10.2 and above (broken in official installer)
+        if(isset($version)) {
+            if(version_compare($version, "v4.10.2") >= 0){
+                $code = file_get_contents($target . '/setup/oxrunsetup.php');
+                $code = str_replace("demodata.sql", "test_demodata.sql", $code);
+                file_put_contents($target . '/setup/oxrunsetup.php', $code);
+            }
         }
     }
 

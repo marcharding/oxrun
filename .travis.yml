@@ -11,6 +11,7 @@ php:
   - 5.6
 
 env:
+  - OXID_VERSION="v4.10.4"
   - OXID_VERSION="v4.9.9"
   - OXID_VERSION="v4.8.12"
   - OXID_VERSION="v4.7.14"
