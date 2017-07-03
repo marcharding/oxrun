@@ -19,11 +19,8 @@ trait ModuleListCheckTrait
      */
     protected function checkModulelist()
     {
-        $aModuleList = \oxRegistry::getConfig()->getConfigParam('aModulePaths');
-        if (is_array($aModuleList) == false || count($aModuleList) == 0) {
-            // we must call this once, otherwise there are no modules visible in a fresh shop
-            $oModuleList = oxNew("oxModuleList");
-            $oModuleList->getModulesFromDir(\oxRegistry::getConfig()->getModulesDir());
-        }
+        // we must call this once, otherwise there are no modules visible in a fresh shop
+        $oModuleList = oxNew("oxModuleList");
+        $oModuleList->getModulesFromDir(\oxRegistry::getConfig()->getModulesDir());
     }
 }
