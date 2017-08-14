@@ -33,20 +33,19 @@ class ClearCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $compileDir = $this->getCompileDir();
-        foreach (glob($compileDir . DIRECTORY_SEPARATOR . '*') as $filename) {
-            if (!is_dir($filename)) {
-                unlink($filename);
-            }
+        if (!is_dir($compileDir)) {
+            $output->writeln("<error>'${compileDir}' is not a directory.</error>");
+            return;
         }
-        foreach (glob($compileDir . DIRECTORY_SEPARATOR . 'smarty' . DIRECTORY_SEPARATOR . '*') as $filename) {
-            if (!is_dir($filename)) {
-                unlink($filename);
-            }
+
+        if ($this->isLinuxSystem()) {
+            $this->unixFastClear($compileDir);
+        } else {
+            $this->windowsClear($compileDir);
         }
+
         $output->writeln('<info>Cache cleared.</info>');
     }
-
-
 
     /**
      * Find sCompileDir path without connect to DB.
@@ -74,4 +73,40 @@ class ClearCommand extends Command
         return $this->getApplication()->bootstrapOxid();
     }
 
+    /**
+     * @param $compileDir
+     */
+    protected function windowsClear($compileDir)
+    {
+        foreach (glob($compileDir . DIRECTORY_SEPARATOR . '*') as $filename) {
+            if (!is_dir($filename)) {
+                unlink($filename);
+            }
+        }
+        foreach (glob($compileDir . DIRECTORY_SEPARATOR . 'smarty' . DIRECTORY_SEPARATOR . '*') as $filename) {
+            if (!is_dir($filename)) {
+                unlink($filename);
+            }
+        }
+    }
+
+    /**
+     * @param $compileDir
+     */
+    protected function unixFastClear($compileDir)
+    {
+        $compileDir = escapeshellarg($compileDir);
+        // Fast Process: Move and create new folder
+        passthru("mv ${compileDir} ${compileDir}_old && mkdir -p ${compileDir}/smarty");
+        // Low Process delete folder on slow HD
+        passthru("rm -Rf ${compileDir}_old");
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isLinuxSystem()
+    {
+        return (PHP_SHLIB_SUFFIX == 'so');
+    }
 }
