@@ -5,6 +5,7 @@ namespace Oxrun\Command\Cache;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 /**
  * Class ClearCommand
@@ -31,18 +32,38 @@ class ClearCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $myConfig = \oxRegistry::getConfig();
-        foreach (glob($myConfig->getConfigParam('sCompileDir') . '/*') as $filename) {
+        $compileDir = $this->getCompileDir();
+        foreach (glob($compileDir . DIRECTORY_SEPARATOR . '*') as $filename) {
             if (!is_dir($filename)) {
                 unlink($filename);
             }
         }
-        foreach (glob($myConfig->getConfigParam('sCompileDir') . '/smarty/*') as $filename) {
+        foreach (glob($compileDir . DIRECTORY_SEPARATOR . 'smarty' . DIRECTORY_SEPARATOR . '*') as $filename) {
             if (!is_dir($filename)) {
                 unlink($filename);
             }
         }
         $output->writeln('<info>Cache cleared.</info>');
+    }
+
+
+
+    /**
+     * Find sCompileDir path without connect to DB.
+     *
+     * @return string
+     */
+    protected function getCompileDir()
+    {
+        $oxidPath = $this->getApplication()->getShopDir();
+        $configfile = $oxidPath . DIRECTORY_SEPARATOR . 'config.inc.php';
+
+        if ($oxidPath && file_exists($configfile)) {
+            $oxConfigFile = new \OxConfigFile($configfile);
+            return $oxConfigFile->getVar('sCompileDir');
+        }
+
+        throw new FileNotFoundException("$configfile");
     }
 
     /**
