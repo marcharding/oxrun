@@ -4,6 +4,7 @@ namespace Oxrun\Command\Cache;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
@@ -21,7 +22,8 @@ class ClearCommand extends Command
     {
         $this
             ->setName('cache:clear')
-            ->setDescription('Clears the cache');
+            ->setDescription('Clears the cache')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Try to delete the cache anyway. [danger or permission denied]');
     }
 
     /**
@@ -34,14 +36,14 @@ class ClearCommand extends Command
     {
         $compileDir = $this->getCompileDir();
         if (!is_dir($compileDir)) {
-            $output->writeln("<error>'${compileDir}' is not a directory.</error>");
-            return;
+            mkdir($compileDir);
         }
 
-        if ($this->isLinuxSystem()) {
+        if ($this->isLinuxSystem() && $input->getOption('force') == false) {
+            $this->checkSameOwner($compileDir);
             $this->unixFastClear($compileDir);
         } else {
-            $this->windowsClear($compileDir);
+            $this->oneByOneClear($compileDir);
         }
 
         $output->writeln('<info>Cache cleared.</info>');
@@ -76,7 +78,7 @@ class ClearCommand extends Command
     /**
      * @param $compileDir
      */
-    protected function windowsClear($compileDir)
+    protected function oneByOneClear($compileDir)
     {
         foreach (glob($compileDir . DIRECTORY_SEPARATOR . '*') as $filename) {
             if (!is_dir($filename)) {
@@ -96,7 +98,7 @@ class ClearCommand extends Command
     protected function unixFastClear($compileDir)
     {
         $compileDir = escapeshellarg($compileDir);
-        // Fast Process: Move and create new folder
+        // Fast Process: Move folder and create new folder
         passthru("mv ${compileDir} ${compileDir}_old && mkdir -p ${compileDir}/smarty");
         // Low Process delete folder on slow HD
         passthru("rm -Rf ${compileDir}_old");
@@ -108,5 +110,21 @@ class ClearCommand extends Command
     protected function isLinuxSystem()
     {
         return (PHP_SHLIB_SUFFIX == 'so');
+    }
+
+    /**
+     * Check has Process same Owner permission
+     *
+     * @param $compileDir
+     * @throws \Exception
+     */
+    protected function checkSameOwner($compileDir)
+    {
+        $owner = fileowner($compileDir);
+        $owner = posix_getpwuid($owner);
+        if ($_SERVER['USER'] != $owner['name']) {
+            global $argv;
+            throw new \Exception("Please run command as `${owner['name']}` user." . PHP_EOL . "    sudo -u ${owner['name']} " . join(' ', $argv));
+        }
     }
 }
