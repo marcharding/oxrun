@@ -121,9 +121,10 @@ class ClearCommand extends Command
     protected function checkSameOwner($compileDir)
     {
         $owner = fileowner($compileDir);
-        $owner = posix_getpwuid($owner);
-        if ($_SERVER['USER'] != $owner['name']) {
+        $current_owner = posix_getuid();
+        if ($current_owner != $owner) {
             global $argv;
+            $owner = posix_getpwuid($owner);
             throw new \Exception("Please run command as `${owner['name']}` user." . PHP_EOL . "    sudo -u ${owner['name']} " . join(' ', $argv));
         }
     }
