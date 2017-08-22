@@ -26,6 +26,7 @@ before_script:
 script:
   - mkdir -p phpunit/logs
   - vendor/bin/phpunit --debug --stop-on-error --stop-on-failure
+  - chmod 777 phpunit/logs/clover.xml
 
 after_success:
  - php vendor/bin/coveralls -v

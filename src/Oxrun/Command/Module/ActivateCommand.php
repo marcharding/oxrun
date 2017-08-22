@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Module;
 
+use Oxrun\Traits\ModuleListCheckTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ActivateCommand extends Command
 {
+    use ModuleListCheckTrait;
 
     /**
      * Configures the current command.
@@ -33,6 +35,8 @@ class ActivateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->checkModulelist();
+
         if (version_compare($this->getApplication()->getOxidVersion(), '4.9.0') >= 0) {
             $this->executeVersion490($input, $output);
         } else {
