@@ -23,6 +23,7 @@ class DatenbaseConnectionTest extends \PHPUnit_Framework_TestCase
     {
         $datenbaseConnection = new DatenbaseConnection();
         $datenbaseConnection
+            // Must be right to work correct
             ->setHost('127.0.0.1')
             ->setPort('3306')
             ->setUser('root')
