@@ -7,7 +7,7 @@ use Oxrun\TestCase;
 use Oxrun\Command\Database\ListCommand as TestListCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class DumpCommandTest extends TestCase
+class ListCommandTest extends TestCase
 {
     public function testExecute()
     {
