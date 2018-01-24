@@ -180,7 +180,7 @@ class Application extends BaseApplication
         }
 
         if ($this->findVersionOnOxidLegacy() == false) {
-            $this->findVersionByOXID6();
+            $this->findVersionOnOxid6();
         }
 
         return $this->oxid_version;
@@ -253,7 +253,7 @@ class Application extends BaseApplication
      * Find Version up to OXID 6 Version
      * @throws \Exception
      */
-    protected function findVersionByOXID6()
+    protected function findVersionOnOxid6()
     {
         if (class_exists("OxidEsales\Facts\Facts")) {
             $facts = new \OxidEsales\Facts\Facts();
