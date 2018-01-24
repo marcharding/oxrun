@@ -49,6 +49,11 @@ class Application extends BaseApplication
     protected $datenbaseConnection = null;
 
     /**
+     * @var string
+     */
+    protected $oxid_version = "0.0.0";
+
+    /**
      * @param ClassLoader   $autoloader
      * @param string $name
      * @param string $version
@@ -165,13 +170,20 @@ class Application extends BaseApplication
 
 
     /**
-     * @return string
+     * @return mixed|string
+     * @throws \Exception
      */
     public function getOxidVersion()
     {
-        $oxConfig = oxNew('oxConfig');
-        $pkgInfo = parse_ini_file($oxConfig->getConfigParam('sShopDir') . 'pkg.info');
-        return $pkgInfo['version'];
+        if ($this->oxid_version != '0.0.0') {
+            return $this->oxid_version;
+        }
+
+        if ($this->findVersionOnOxidLegacy() == false) {
+            $this->findVersionByOXID6();
+        }
+
+        return $this->oxid_version;
     }
 
     /**
@@ -219,6 +231,51 @@ class Application extends BaseApplication
         }
 
         return $this->datenbaseConnection;
+    }
+
+    /**
+     * Find Version on Place into Oxid Legacy Code
+     *
+     * @return bool
+     */
+    protected function findVersionOnOxidLegacy()
+    {
+        $pkgInfo = $this->getShopDir() . DIRECTORY_SEPARATOR . 'pkg.info';
+        if (file_exists($pkgInfo)) {
+            $pkgInfo = parse_ini_file($pkgInfo);
+            $this->oxid_version = $pkgInfo['version'];
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Find Version up to OXID 6 Version
+     * @throws \Exception
+     */
+    protected function findVersionByOXID6()
+    {
+        if (class_exists("OxidEsales\Facts\Facts")) {
+            $facts = new \OxidEsales\Facts\Facts();
+            $composerVersionFile = $facts->getShopRootPath() . DIRECTORY_SEPARATOR . 'composer.lock';
+            if (!file_exists($composerVersionFile)) {
+                throw new \Exception('Can\'t find Shop Version');
+            }
+            $composerVersionFile = json_decode(file_get_contents($composerVersionFile), true);
+            if (!isset($composerVersionFile['packages'])) {
+                throw new \Exception('Can\'t find Shop Version. `composer.lock` is corrupt');
+            }
+
+            $version = array_filter($composerVersionFile['packages'], function ($package) {
+                return ($package['name'] == 'oxid-esales/oxideshop-ce');
+            });
+
+            if (empty($version)) {
+                throw new \Exception('Can\'t find Shop Version. Is package oxid-esales/oxideshop-ce installed');
+            }
+            $version = array_shift($version);
+            $this->oxid_version = str_replace('v', '', $version['version']);
+        }
     }
 
 }
