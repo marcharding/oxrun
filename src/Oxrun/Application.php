@@ -255,27 +255,10 @@ class Application extends BaseApplication
      */
     protected function findVersionOnOxid6()
     {
-        if (class_exists("OxidEsales\Facts\Facts")) {
-            $facts = new \OxidEsales\Facts\Facts();
-            $composerVersionFile = $facts->getShopRootPath() . DIRECTORY_SEPARATOR . 'composer.lock';
-            if (!file_exists($composerVersionFile)) {
-                throw new \Exception('Can\'t find Shop Version');
-            }
-            $composerVersionFile = json_decode(file_get_contents($composerVersionFile), true);
-            if (!isset($composerVersionFile['packages'])) {
-                throw new \Exception('Can\'t find Shop Version. `composer.lock` is corrupt');
-            }
-
-            $version = array_filter($composerVersionFile['packages'], function ($package) {
-                return ($package['name'] == 'oxid-esales/oxideshop-ce');
-            });
-
-            if (empty($version)) {
-                throw new \Exception('Can\'t find Shop Version. Is package oxid-esales/oxideshop-ce installed');
-            }
-            $version = array_shift($version);
-            $this->oxid_version = str_replace('v', '', $version['version']);
+        if (!class_exists('OxidEsales\\Eshop\\Core\\ShopVersion')) {
+            throw new \Exception('Can\'t find Shop Version. Maybe run OXID `Unified Namespace Generator` with composer');
         }
-    }
 
+        $this->oxid_version = \OxidEsales\Eshop\Core\ShopVersion::getVersion();
+    }
 }
