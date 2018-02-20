@@ -49,6 +49,11 @@ class Application extends BaseApplication
     protected $datenbaseConnection = null;
 
     /**
+     * @var string
+     */
+    protected $oxid_version = "0.0.0";
+
+    /**
      * @param ClassLoader   $autoloader
      * @param string $name
      * @param string $version
@@ -165,13 +170,20 @@ class Application extends BaseApplication
 
 
     /**
-     * @return string
+     * @return mixed|string
+     * @throws \Exception
      */
     public function getOxidVersion()
     {
-        $oxConfig = oxNew('oxConfig');
-        $pkgInfo = parse_ini_file($oxConfig->getConfigParam('sShopDir') . 'pkg.info');
-        return $pkgInfo['version'];
+        if ($this->oxid_version != '0.0.0') {
+            return $this->oxid_version;
+        }
+
+        if ($this->findVersionOnOxidLegacy() == false) {
+            $this->findVersionOnOxid6();
+        }
+
+        return $this->oxid_version;
     }
 
     /**
@@ -221,4 +233,32 @@ class Application extends BaseApplication
         return $this->datenbaseConnection;
     }
 
+    /**
+     * Find Version on Place into Oxid Legacy Code
+     *
+     * @return bool
+     */
+    protected function findVersionOnOxidLegacy()
+    {
+        $pkgInfo = $this->getShopDir() . DIRECTORY_SEPARATOR . 'pkg.info';
+        if (file_exists($pkgInfo)) {
+            $pkgInfo = parse_ini_file($pkgInfo);
+            $this->oxid_version = $pkgInfo['version'];
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Find Version up to OXID 6 Version
+     * @throws \Exception
+     */
+    protected function findVersionOnOxid6()
+    {
+        if (!class_exists('OxidEsales\\Eshop\\Core\\ShopVersion')) {
+            throw new \Exception('Can\'t find Shop Version. Maybe run OXID `Unified Namespace Generator` with composer');
+        }
+
+        $this->oxid_version = \OxidEsales\Eshop\Core\ShopVersion::getVersion();
+    }
 }
