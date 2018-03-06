@@ -5,6 +5,7 @@ namespace Oxrun\Command\Module;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -22,6 +23,7 @@ class GenerateCommand extends Command
         $this
             ->setName('module:generate')
             ->setDescription('Generates a module skeleton')
+            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
             ->addArgument('module', InputArgument::REQUIRED, 'Module name');
     }
 
@@ -33,6 +35,9 @@ class GenerateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $shopId = $input->getOption('shopId');
+        $this->getApplication()->switchToShopId($shopId);
+        
         $output->writeLn("<error>To be implemented</error>");
     }
 

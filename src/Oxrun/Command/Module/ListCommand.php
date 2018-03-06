@@ -6,6 +6,7 @@ use Oxrun\Traits\ModuleListCheckTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -23,6 +24,7 @@ class ListCommand extends Command
     {
         $this
             ->setName('module:list')
+            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
             ->setDescription('Lists all modules');
     }
 
@@ -34,6 +36,9 @@ class ListCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $shopId = $input->getOption('shopId');
+        $this->getApplication()->switchToShopId($shopId);
+        
         $this->checkModulelist();
 
         $oxModuleList = oxNew('oxModuleList');

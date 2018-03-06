@@ -6,6 +6,7 @@ use Oxrun\Traits\ModuleListCheckTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -24,9 +25,11 @@ class ActivateCommand extends Command
         $this
             ->setName('module:activate')
             ->setDescription('Activates a module')
-            ->addArgument('module', InputArgument::REQUIRED, 'Module name');
+            ->addArgument('module', InputArgument::REQUIRED, 'Module name')
+            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null);
     }
 
+    
     /**
      * Executes the current command.
      *
@@ -35,6 +38,9 @@ class ActivateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $shopId = $input->getOption('shopId');
+        $this->getApplication()->switchToShopId($shopId);
+        
         $this->checkModulelist();
 
         $actualVersion = $this->getApplication()->getOxidVersion();

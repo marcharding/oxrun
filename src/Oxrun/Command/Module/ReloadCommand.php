@@ -12,6 +12,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ReloadCommand extends Command
@@ -25,6 +26,7 @@ class ReloadCommand extends Command
         $this
             ->setName('module:reload')
             ->setDescription('Deactivate and activate a module')
+            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
             ->addArgument('module', InputArgument::REQUIRED, 'Module name');
     }
 
@@ -38,6 +40,8 @@ class ReloadCommand extends Command
     {
         /** @var \Oxrun\Application $app */
         $app = $this->getApplication();
+        $shopId = $input->getOption('shopId');
+        $app->switchToShopId($shopId);
         $app->find('module:deactivate')->run($input, $output);
         $app->find('cache:clear')->run(new ArgvInput([]), $output);
         $app->find('module:activate')->run($input, $output);
