@@ -390,6 +390,12 @@ module:activate
 
 ### Options:
 
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
+
 module:deactivate
 -----------------
 
@@ -404,6 +410,12 @@ module:deactivate
 * Description: Module name
 
 ### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
 
 module:fix
 ----------
@@ -420,6 +432,12 @@ module:fix
 
 ### Options:
 
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
+
 module:generate
 ---------------
 
@@ -434,6 +452,12 @@ module:generate
 * Description: Module name
 
 ### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
 
 module:list
 -----------
