@@ -37,16 +37,13 @@ class DeactivateCommand extends Command
     {
         $this->checkModulelist();
 
-        if (version_compare($this->getApplication()->getOxidVersion(), '4.9.0') >= 0) {
+        $oxidVersion = $this->getApplication()->getOxidVersion();
+        if (version_compare($oxidVersion, '4.9.0') >= 0) {
             $this->executeVersion490($input, $output);
-        } else {
-            if (version_compare($this->getApplication()->getOxidVersion(), '4.8.0') >= 0) {
-                $this->executeVersion480($input, $output);
-            } else {
-                if (version_compare($this->getApplication()->getOxidVersion(), '4.7.0') >= 0) {
-                    $this->executeVersion470($input, $output);
-                }
-            }
+        } elseif (version_compare($oxidVersion, '4.8.0') >= 0) {
+            $this->executeVersion480($input, $output);
+        } elseif (version_compare($oxidVersion, '4.7.0') >= 0) {
+            $this->executeVersion470($input, $output);
         }
     }
 
