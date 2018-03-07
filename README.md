@@ -197,6 +197,64 @@ config:shop:set
 * Description: oxbaseshop
 * Default: `'oxbaseshop'`
 
+config:export
+---------------
+
+* Description: Exports all config values as yaml files, interacts with the [Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module
+* Usage: `config:export`
+
+### Arguments:
+
+### Options:
+
+**no-debug:**
+
+* Name: `--no-debug`
+* Is value required: no
+* Description: No debug ouput
+
+**env:**
+
+* Name: `--env`
+* Is value required: no
+* Description: set specific environment, corresponds to a specific folder for the yaml files
+* Example: `--env=stage`
+
+**force-cleanup:**
+
+* Name: `--force-cleanup`
+* Is value required: no
+* Description: Force cleanup on error
+
+config:import
+---------------
+
+* Description: Imports all config values from yaml files, interacts with the [Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module
+* Usage: `config:import`
+
+### Arguments:
+
+### Options:
+
+**no-debug:**
+
+* Name: `--no-debug`
+* Is value required: no
+* Description: No debug ouput
+
+**env:**
+
+* Name: `--env`
+* Is value required: no
+* Description: set specific environment, corresponds to a specific folder for the yaml files
+* Example: `--env=stage`
+
+**force-cleanup:**
+
+* Name: `--force-cleanup`
+* Is value required: no
+* Description: Force cleanup on error
+
 db:dump
 -------
 
