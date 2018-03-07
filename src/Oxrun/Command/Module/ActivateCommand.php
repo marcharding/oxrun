@@ -39,9 +39,11 @@ class ActivateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $shopId = $input->getOption('shopId');
-        $this->getApplication()->switchToShopId($shopId);
+        if ($shopId) {
+            $this->getApplication()->switchToShopId($shopId);
+        }
         
-        $this->checkModulelist();
+        $this->checkModulelist($shopId);
 
         $actualVersion = $this->getApplication()->getOxidVersion();
 

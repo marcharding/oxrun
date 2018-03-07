@@ -41,7 +41,9 @@ class ReloadCommand extends Command
         /** @var \Oxrun\Application $app */
         $app = $this->getApplication();
         $shopId = $input->getOption('shopId');
-        $app->switchToShopId($shopId);
+        if ($shopId) {
+            $app->switchToShopId($shopId);
+        }
         $app->find('module:deactivate')->run($input, $output);
         $app->find('cache:clear')->run(new ArgvInput([]), $output);
         $app->find('module:activate')->run($input, $output);

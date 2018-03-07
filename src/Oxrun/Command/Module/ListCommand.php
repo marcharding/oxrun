@@ -37,16 +37,24 @@ class ListCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $shopId = $input->getOption('shopId');
-        $this->getApplication()->switchToShopId($shopId);
-        
-        $this->checkModulelist();
+        if ($shopId) {
+            $this->getApplication()->switchToShopId($shopId);
+        }
 
+        $this->checkModulelist($shopId);
+
+        /* @var oxModuleList $oxModuleList  */
         $oxModuleList = oxNew('oxModuleList');
 
         $activeModules = array_keys($oxModuleList->getActiveModuleInfo());
         $deactiveModules = $oxModuleList->getDisabledModules();;
         $activeModules = array_map(function ($item) {
-            return array($item, 'yes');
+            // check if really active
+            $oModule = oxNew('oxModule');
+            if ($oModule->load($item) && $oModule->isActive()) {
+                return array($item, 'yes');                
+            }
+            return array($item, 'no');
         }, $activeModules);
 
         // Fix for older oxid version < 4.9.0

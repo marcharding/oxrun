@@ -38,9 +38,11 @@ class DeactivateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $shopId = $input->getOption('shopId');
-        $this->getApplication()->switchToShopId($shopId);
-        
-        $this->checkModulelist();
+        if ($shopId) {
+            $this->getApplication()->switchToShopId($shopId);
+        }
+
+        $this->checkModulelist($shopId);
 
         $oxidVersion = $this->getApplication()->getOxidVersion();
         if (version_compare($oxidVersion, '4.9.0') >= 0) {

@@ -36,7 +36,9 @@ class GenerateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $shopId = $input->getOption('shopId');
-        $this->getApplication()->switchToShopId($shopId);
+        if ($shopId) {
+            $this->getApplication()->switchToShopId($shopId);
+        }
         
         $output->writeLn("<error>To be implemented</error>");
     }
