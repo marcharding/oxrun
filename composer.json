@@ -15,6 +15,7 @@
     "symfony/console": "2.8.*",
     "symfony/event-dispatcher":"2.8.*",
     "symfony/finder":"2.8.*",
+    "symfony/yaml":"2.8.*",
     "guzzlehttp/guzzle": "^5.0",
     "raulfraile/distill": "0.9.*",
     "nikic/php-parser": "1.4.*"
