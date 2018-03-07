@@ -28,7 +28,9 @@ class MultiActivateCommand extends Command
         $this
             ->setName('module:multiactivate')
             ->setDescription('Activate multiple modules')
-            ->addOption('shopId', 's', InputOption::VALUE_REQUIRED, "The shop id.")
+            ->addOption('shopId', NULL, InputOption::VALUE_REQUIRED, "The shop id.")
+            ->addOption('skipDeactivation', 's', InputOption::VALUE_NONE, "Skip deactivation of modules, only activate.")
+            ->addOption('skipClear', 'c', InputOption::VALUE_NONE, "Skip cache clearing.")
             ->addArgument('module', InputArgument::REQUIRED, 'YAML module list filename');
     }
 
@@ -43,7 +45,8 @@ class MultiActivateCommand extends Command
         $activateShopId = $input->getOption('shopId');
         /** @var \Oxrun\Application $app */
         $app = $this->getApplication();
-
+        $skipDeactivation = $input->getOption('skipDeactivation');
+        $skipClear = $input->getOption('skipClear');
         $moduleYml = $input->getArgument('module');
         $ymlFile = $app->getShopDir() . DIRECTORY_SEPARATOR . $moduleYml;
         
@@ -61,14 +64,18 @@ class MultiActivateCommand extends Command
                         continue;
                     }
                     foreach ($moduleIds as $moduleId) {
-                        $arguments = array(
-                            'command' => 'module:deactivate',
-                            'module'    => $moduleId,
-                            '--shopId'  => $shopId,
-                        );              
-                        $deactivateInput = new ArrayInput($arguments);          
-                        $app->find('module:deactivate')->run($deactivateInput, $output);
-                        $app->find('cache:clear')->run(new ArgvInput([]), $output);
+                        if (!$skipDeactivation) {
+                            $arguments = array(
+                                'command' => 'module:deactivate',
+                                'module'    => $moduleId,
+                                '--shopId'  => $shopId,
+                            );              
+                            $deactivateInput = new ArrayInput($arguments);          
+                            $app->find('module:deactivate')->run($deactivateInput, $output);
+                            if (!$skipClear) {
+                                $app->find('cache:clear')->run(new ArgvInput([]), $output);
+                            }
+                        }
                         $arguments = array(
                             'command' => 'module:activate',
                             'module'    => $moduleId,
