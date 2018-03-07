@@ -509,7 +509,19 @@ Currently supports a __"whitelist"__ entry with multiple shop ids and the desire
 
 * Name: `--shopId`
 * Is value required: no
-* Description: <none>
+* Description: The subshop id
+
+**skipDeactivation:**
+
+* Name: `--skipDeactivation` or `-s`
+* Is value required: no
+* Description: skip deactivation, only activate the modules
+
+**skipClear:**
+
+* Name: `--skipClear` or `-c`
+* Is value required: no
+* Description: skip cache clearing between deactivation and activation
 
 module:fix
 ----------
