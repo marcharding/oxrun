@@ -65,6 +65,7 @@ class ActivateCommand extends Command
     protected function executeVersion490(InputInterface $input, OutputInterface $output)
     {
         $sModule = $input->getArgument('module');
+        $shopId = $input->getOption('shopId');
 
         $oModule = oxNew('oxModule');
         $oModuleCache = oxNew('oxModuleCache', $oModule);
@@ -76,12 +77,12 @@ class ActivateCommand extends Command
 
         if (!$oModule->isActive()) {
             if ($oModuleInstaller->activate($oModule) === true) {
-                $output->writeLn("<info>Module $sModule activated.</info>");
+                $output->writeLn("<info>Module $sModule activated for shopId $shopId.</info>");
             } else {
-                $output->writeLn("<error>Module $sModule could not be activated.</error>");
+                $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
             }
         } else {
-            $output->writeLn("<error>Module $sModule already activated.</error>");
+            $output->writeLn("<error>Module $sModule already activated for shopId $shopId.</error>");
         }
     }
 
@@ -105,6 +106,7 @@ class ActivateCommand extends Command
     protected function executeVersion470(InputInterface $input, OutputInterface $output)
     {
         $sModule = $input->getArgument('module');
+        $shopId = $input->getOption('shopId');
 
         $oModule = oxNew('oxModule');
 
@@ -114,12 +116,12 @@ class ActivateCommand extends Command
 
         if (!$oModule->isActive()) {
             if ($oModule->activate() === true) {
-                $output->writeLn("<info>Module $sModule activated.</info>");
+                $output->writeLn("<info>Module $sModule activated for shopId $shopId.</info>");
             } else {
-                $output->writeLn("<error>Module $sModule could not be activated.</error>");
+                $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
             }
         } else {
-            $output->writeLn("<error>Module $sModule already activated.</error>");
+            $output->writeLn("<error>Module $sModule already activated for shopId $shopId.</error>");
         }
     }
 

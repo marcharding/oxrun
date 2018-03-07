@@ -40,11 +40,7 @@ class MultiActivateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $shopId = $input->getOption('shopId');
-        if (!$shopId) {
-            $output->writeLn("<warn>Please specify a shop id!</warn>");
-            return;
-        }
+        $activateShopId = $input->getOption('shopId');
         /** @var \Oxrun\Application $app */
         $app = $this->getApplication();
 
@@ -58,26 +54,32 @@ class MultiActivateCommand extends Command
 
         $moduleValues = Yaml::parse($ymlFile);
         if ($moduleValues && is_array($moduleValues)) {
-            if (isset($moduleValues['whitelist'][$shopId])) {
-                foreach ($moduleValues['whitelist'][$shopId] as $moduleId) {
-                    $arguments = array(
-                        'command' => 'module:deactivate',
-                        'module'    => $moduleId,
-                        '--shopId'  => $shopId,
-                    );              
-                    $deactivateInput = new ArrayInput($arguments);          
-                    $app->find('module:deactivate')->run($deactivateInput, $output);
-                    $app->find('cache:clear')->run(new ArgvInput([]), $output);
-                    $arguments = array(
-                        'command' => 'module:activate',
-                        'module'    => $moduleId,
-                        '--shopId'  => $shopId,
-                    );              
-                    $activateInput = new ArrayInput($arguments);          
-                    $app->find('module:activate')->run($activateInput, $output);
+            if (isset($moduleValues['whitelist'])) {
+                foreach ($moduleValues['whitelist'] as $shopId => $moduleIds) {
+                    if ($activateShopId && $activateShopId != $shopId) {
+                        $output->writeLn("<comment>Skipping shop '$shopId'!</comment>");
+                        continue;
+                    }
+                    foreach ($moduleIds as $moduleId) {
+                        $arguments = array(
+                            'command' => 'module:deactivate',
+                            'module'    => $moduleId,
+                            '--shopId'  => $shopId,
+                        );              
+                        $deactivateInput = new ArrayInput($arguments);          
+                        $app->find('module:deactivate')->run($deactivateInput, $output);
+                        $app->find('cache:clear')->run(new ArgvInput([]), $output);
+                        $arguments = array(
+                            'command' => 'module:activate',
+                            'module'    => $moduleId,
+                            '--shopId'  => $shopId,
+                        );              
+                        $activateInput = new ArrayInput($arguments);          
+                        $app->find('module:activate')->run($activateInput, $output);
+                    }
                 }
             } else {
-                $output->writeLn("<comment>No modules to activate for subshop '$shopId'!</comment>");                
+                $output->writeLn("<comment>No modules to activate for subshop '$shopId'!</comment>");
             }
         }
     }

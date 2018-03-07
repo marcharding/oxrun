@@ -63,6 +63,7 @@ class DeactivateCommand extends Command
     protected function executeVersion490(InputInterface $input, OutputInterface $output)
     {
         $sModule = $input->getArgument('module');
+        $shopId = $input->getOption('shopId');
 
         $oModule = \oxNew('oxModule');
         $oModuleCache = oxNew('oxModuleCache', $oModule);
@@ -73,12 +74,12 @@ class DeactivateCommand extends Command
         }
 
         if (!$oModule->isActive()) {
-            $output->writeLn("<error>Module $sModule already deactivated.</error>");
+            $output->writeLn("<error>Module $sModule already deactivated for shopId $shopId.</error>");
         } else {
             if ($oModuleInstaller->deactivate($oModule) === true) {
-                $output->writeLn("<info>Module $sModule deactivated.</info>");
+                $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
             } else {
-                $output->writeLn("<error>Module $sModule already activated.</error>");
+                $output->writeLn("<error>Module $sModule already deactivated for shopId $shopId.</error>");
             }
         }
 
@@ -104,6 +105,7 @@ class DeactivateCommand extends Command
     protected function executeVersion470(InputInterface $input, OutputInterface $output)
     {
         $sModule = $input->getArgument('module');
+        $shopId = $input->getOption('shopId');
 
         $oModule = \oxNew('oxModule');
 
@@ -112,15 +114,14 @@ class DeactivateCommand extends Command
         }
 
         if (!$oModule->isActive()) {
-            $output->writeLn("<error>Module $sModule already deactivated.</error>");
+            $output->writeLn("<error>Module $sModule already deactivated for shopId $shopId.</error>");
         } else {
             if ($oModule->deactivate() === true) {
-                $output->writeLn("<info>Module $sModule deactivated.</info>");
+                $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
             } else {
-                $output->writeLn("<error>Module $sModule already activated.</error>");
+                $output->writeLn("<error>Module $sModule already deactivated for shopId $shopId.</error>");
             }
         }
-
     }
 
     /**

@@ -417,11 +417,48 @@ module:deactivate
 * Is value required: no
 * Description: <none>
 
+module:multiactivate
+---------------
+
+* Description: Activates multiple modules, based on a YAML file
+* Usage: `module:multiactivate <yamlfile.yml>`
+
+### Arguments:
+
+**modulefile:**
+
+* Name: modulefile
+* Description: Module definition file name, e.g. "modules.yml", relative to the shop base dir.
+
+Example:
+
+```yaml
+whitelist:
+  1:
+    - ocb_cleartmp
+    - moduleinternals
+    #- ddoevisualcms
+    #- ddoewysiwyg
+  2:
+    - ocb_cleartmp
+```
+
+Currently supports a __"whitelist"__ entry with multiple shop ids and the desired module ids to activate.
+
+### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
+
 module:fix
 ----------
 
 * Description: Fixes a module
 * Usage: `module:fix module`
+* __NOT IMPLEMENTED YET!__
 
 ### Arguments:
 
@@ -443,6 +480,7 @@ module:generate
 
 * Description: Generates a module skeleton
 * Usage: `module:generate module`
+* __NOT IMPLEMENTED YET!__
 
 ### Arguments:
 
@@ -466,6 +504,12 @@ module:list
 * Usage: `module:list`
 
 ### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
 
 user:password
 -------------
