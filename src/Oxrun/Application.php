@@ -242,9 +242,6 @@ class Application extends BaseApplication
      */
     public function switchToShopId($shopId)
     {
-        $_POST['shp'] = $shopId;
-        $_POST['actshop'] = $shopId;
-
         $oxidVersion = $this->getOxidVersion();
         if (version_compare($oxidVersion, '4.9.0') < 0) {
             // old OXID versions
@@ -254,6 +251,9 @@ class Application extends BaseApplication
             return;
         }
 
+        $_POST['shp'] = $shopId;
+        $_POST['actshop'] = $shopId;
+        
         $keepThese = [\OxidEsales\Eshop\Core\ConfigFile::class];
         $registryKeys = \OxidEsales\Eshop\Core\Registry::getKeys();
         foreach ($registryKeys as $key) {

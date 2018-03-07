@@ -10,10 +10,12 @@ namespace Oxrun\Command\Module;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class MultiActivateCommand extends Command
 {
@@ -26,8 +28,8 @@ class MultiActivateCommand extends Command
         $this
             ->setName('module:multiactivate')
             ->setDescription('Activate multiple modules')
-            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
-            ->addArgument('modulelist', InputArgument::REQUIRED, 'YAML module list filename');
+            ->addOption('shopId', 's', InputOption::VALUE_REQUIRED, "The shop id.")
+            ->addArgument('module', InputArgument::REQUIRED, 'YAML module list filename');
     }
 
     /**
@@ -38,20 +40,46 @@ class MultiActivateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $shopId = $input->getOption('shopId');
+        if (!$shopId) {
+            $output->writeLn("<warn>Please specify a shop id!</warn>");
+            return;
+        }
         /** @var \Oxrun\Application $app */
         $app = $this->getApplication();
-        $shopId = $input->getOption('shopId');
-        if ($shopId) {
-            $app->switchToShopId($shopId);
+
+        $moduleYml = $input->getArgument('module');
+        $ymlFile = $app->getShopDir() . DIRECTORY_SEPARATOR . $moduleYml;
+        
+        if (!file_exists($ymlFile)) {
+            $output->writeLn("<error>Yaml file '$ymlFile' not found!</error>");
+            return;
         }
-        $moduleYml = $input->getArgument('modulelist');
-        $ymlFile = __DIR__ . DIRECTORY_SEPARATOR . $moduleYml;
-        echo "FILE: " . $ymlFile;
-        /*
-        $app->find('module:deactivate')->run($input, $output);
-        $app->find('cache:clear')->run(new ArgvInput([]), $output);
-        $app->find('module:activate')->run($input, $output);
-        */
+
+        $moduleValues = Yaml::parse($ymlFile);
+        if ($moduleValues && is_array($moduleValues)) {
+            if (isset($moduleValues['whitelist'][$shopId])) {
+                foreach ($moduleValues['whitelist'][$shopId] as $moduleId) {
+                    $arguments = array(
+                        'command' => 'module:deactivate',
+                        'module'    => $moduleId,
+                        '--shopId'  => $shopId,
+                    );              
+                    $deactivateInput = new ArrayInput($arguments);          
+                    $app->find('module:deactivate')->run($deactivateInput, $output);
+                    $app->find('cache:clear')->run(new ArgvInput([]), $output);
+                    $arguments = array(
+                        'command' => 'module:activate',
+                        'module'    => $moduleId,
+                        '--shopId'  => $shopId,
+                    );              
+                    $activateInput = new ArrayInput($arguments);          
+                    $app->find('module:activate')->run($activateInput, $output);
+                }
+            } else {
+                $output->writeLn("<comment>No modules to activate for subshop '$shopId'!</comment>");                
+            }
+        }
     }
 
     /**
