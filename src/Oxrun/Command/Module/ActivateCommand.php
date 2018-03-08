@@ -78,10 +78,14 @@ class ActivateCommand extends Command
         }
 
         if (!$oModule->isActive()) {
-            if ($oModuleInstaller->activate($oModule) === true) {
-                $output->writeLn("<info>Module $sModule activated for shopId $shopId.</info>");
-            } else {
-                $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
+            try {
+                if ($oModuleInstaller->activate($oModule) === true) {
+                    $output->writeLn("<info>Module $sModule activated for shopId $shopId.</info>");
+                } else {
+                    $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
+                }    
+            } catch (\Exception $ex) {
+                $output->writeLn("<error>Exception actiating module: $sModule for shop $shopId: {$ex->getMessage()}</error>");
             }
         } else {
             $output->writeLn("<comment>Module $sModule already activated for shopId $shopId.</comment>");
@@ -117,10 +121,14 @@ class ActivateCommand extends Command
         }
 
         if (!$oModule->isActive()) {
-            if ($oModule->activate() === true) {
-                $output->writeLn("<info>Module $sModule activated for shopId $shopId.</info>");
-            } else {
-                $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
+            try {
+                if ($oModule->activate() === true) {
+                    $output->writeLn("<info>Module $sModule activated for shopId $shopId.</info>");
+                } else {
+                    $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
+                }
+            } catch (\Exception $ex) {
+                $output->writeLn("<error>Exception actiating module: $sModule for shop $shopId: {$ex->getMessage()}</error>");
             }
         } else {
             $output->writeLn("<comment>Module $sModule already activated for shopId $shopId.</comment>");

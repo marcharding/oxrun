@@ -76,10 +76,14 @@ class DeactivateCommand extends Command
         if (!$oModule->isActive()) {
             $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
         } else {
-            if ($oModuleInstaller->deactivate($oModule) === true) {
-                $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
-            } else {
-                $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
+            try {
+                if ($oModuleInstaller->deactivate($oModule) === true) {
+                    $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
+                } else {
+                    $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
+                }
+            } catch (\Exception $ex) {
+                $output->writeLn("<error>Exception deactiating module: $sModule for shop $shopId: {$ex->getMessage()}</error>");
             }
         }
 
@@ -116,10 +120,14 @@ class DeactivateCommand extends Command
         if (!$oModule->isActive()) {
             $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
         } else {
-            if ($oModule->deactivate() === true) {
-                $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
-            } else {
-                $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
+            try {
+                if ($oModule->deactivate() === true) {
+                    $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
+                } else {
+                    $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
+                }
+            } catch (\Exception $ex) {
+                $output->writeLn("<error>Exception deactiating module: $sModule for shop $shopId: {$ex->getMessage()}</error>");
             }
         }
     }
