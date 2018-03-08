@@ -74,12 +74,12 @@ class DeactivateCommand extends Command
         }
 
         if (!$oModule->isActive()) {
-            $output->writeLn("<error>Module $sModule already deactivated for shopId $shopId.</error>");
+            $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
         } else {
             if ($oModuleInstaller->deactivate($oModule) === true) {
                 $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
             } else {
-                $output->writeLn("<error>Module $sModule already deactivated for shopId $shopId.</error>");
+                $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
             }
         }
 
@@ -114,12 +114,12 @@ class DeactivateCommand extends Command
         }
 
         if (!$oModule->isActive()) {
-            $output->writeLn("<error>Module $sModule already deactivated for shopId $shopId.</error>");
+            $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
         } else {
             if ($oModule->deactivate() === true) {
                 $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
             } else {
-                $output->writeLn("<error>Module $sModule already deactivated for shopId $shopId.</error>");
+                $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
             }
         }
     }

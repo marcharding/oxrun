@@ -9,24 +9,15 @@ Thanks to the [netz98 magerun](https://github.com/netz98/n98-magerun) project wh
 
 ## Installation
 
-PHP 5.4 is required.
+__Disclaimer:__ This fork is intended for __usage with OXID 6.x__ and up, it will not be compatible with older shop versions. Legacy commands will be removed, e.g. 
+"install:shop" which is now handled via Composer.
 
-If you are using composer (which you probably are), just add `"marcharding/oxrun": "dev-master"` to your composer.json and run composer install.
+
+PHP 5.6 is required, PHP 7 or newer is recommended.
+
+If you are using composer (which you probably are), just add `"smxsm/oxrun": "dev-develop"` to your composer.json and run composer install.
 
 You can then use oxrun by calling `vendor/bin/oxrun` or add `vendor/bin` to your $PATH to be able to just call `oxrun`.
-
-You can also install oxrun by simply downloading the phar file
-
-    wget --no-check-certificate https://raw.githubusercontent.com/marcharding/oxrun/master/oxrun.phar
-
-You can oxrun now via `php oxrun.phar`
-
-Alternatively you can also make the phar itself executable and copy it to your /usr/local/bin/ directory for global usage.
-
-    chmod +x oxrun.phar
-    sudo mv oxrun.phar /usr/local/bin/oxrun
-
-You can then run oxrun by just calling `oxrun`
 
 # Usage
 
@@ -501,7 +492,7 @@ whitelist:
     - ocb_cleartmp
 ```
 
-Currently supports a __"whitelist"__ entry with multiple shop ids and the desired module ids to activate.
+Supports either a __"whitelist"__ or a __"blacklist"__ entry with multiple shop ids and the desired module ids to activate (whitelist) or to exclude from activation (blacklist).
 
 ### Options:
 

@@ -11,7 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class ActivateCommand
+ * 
  * @package Oxrun\Command\Module
+ * 
  */
 class ActivateCommand extends Command
 {
@@ -82,7 +84,7 @@ class ActivateCommand extends Command
                 $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
             }
         } else {
-            $output->writeLn("<error>Module $sModule already activated for shopId $shopId.</error>");
+            $output->writeLn("<comment>Module $sModule already activated for shopId $shopId.</comment>");
         }
     }
 
@@ -121,7 +123,7 @@ class ActivateCommand extends Command
                 $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
             }
         } else {
-            $output->writeLn("<error>Module $sModule already activated for shopId $shopId.</error>");
+            $output->writeLn("<comment>Module $sModule already activated for shopId $shopId.</comment>");
         }
     }
 
