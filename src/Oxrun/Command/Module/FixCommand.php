@@ -5,6 +5,7 @@ namespace Oxrun\Command\Module;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -22,6 +23,7 @@ class FixCommand extends Command
         $this
             ->setName('module:fix')
             ->setDescription('Fixes a module')
+            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
             ->addArgument('module', InputArgument::REQUIRED, 'Module name');
     }
 
@@ -34,6 +36,12 @@ class FixCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
+        $shopId = $input->getOption('shopId');
+        if ($shopId) {
+            $this->getApplication()->switchToShopId($shopId);
+        }
+        
+        $output->writeLn("<error>To be implemented</error>");
 
     }
 

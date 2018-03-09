@@ -2,9 +2,11 @@
 
 namespace Oxrun\Command\Module;
 
+use Oxrun\Traits\ModuleListCheckTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -13,6 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DeactivateCommand extends Command
 {
+    use ModuleListCheckTrait;
 
     /**
      * Configures the current command.
@@ -22,6 +25,7 @@ class DeactivateCommand extends Command
         $this
             ->setName('module:deactivate')
             ->setDescription('Deactivates a module')
+            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
             ->addArgument('module', InputArgument::REQUIRED, 'Module name');
     }
 
@@ -33,16 +37,20 @@ class DeactivateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (version_compare($this->getApplication()->getOxidVersion(), '4.9.0') >= 0) {
+        $shopId = $input->getOption('shopId');
+        if ($shopId) {
+            $this->getApplication()->switchToShopId($shopId);
+        }
+
+        $this->checkModulelist($shopId);
+
+        $oxidVersion = $this->getApplication()->getOxidVersion();
+        if (version_compare($oxidVersion, '4.9.0') >= 0) {
             $this->executeVersion490($input, $output);
-        } else {
-            if (version_compare($this->getApplication()->getOxidVersion(), '4.8.0') >= 0) {
-                $this->executeVersion480($input, $output);
-            } else {
-                if (version_compare($this->getApplication()->getOxidVersion(), '4.7.0') >= 0) {
-                    $this->executeVersion470($input, $output);
-                }
-            }
+        } elseif (version_compare($oxidVersion, '4.8.0') >= 0) {
+            $this->executeVersion480($input, $output);
+        } elseif (version_compare($oxidVersion, '4.7.0') >= 0) {
+            $this->executeVersion470($input, $output);
         }
     }
 
@@ -55,6 +63,7 @@ class DeactivateCommand extends Command
     protected function executeVersion490(InputInterface $input, OutputInterface $output)
     {
         $sModule = $input->getArgument('module');
+        $shopId = $input->getOption('shopId');
 
         $oModule = \oxNew('oxModule');
         $oModuleCache = oxNew('oxModuleCache', $oModule);
@@ -65,12 +74,16 @@ class DeactivateCommand extends Command
         }
 
         if (!$oModule->isActive()) {
-            $output->writeLn("<error>Module $sModule already deactivated.</error>");
+            $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
         } else {
-            if ($oModuleInstaller->deactivate($oModule) === true) {
-                $output->writeLn("<info>Module $sModule deactivated.</info>");
-            } else {
-                $output->writeLn("<error>Module $sModule already activated.</error>");
+            try {
+                if ($oModuleInstaller->deactivate($oModule) === true) {
+                    $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
+                } else {
+                    $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
+                }
+            } catch (\Exception $ex) {
+                $output->writeLn("<error>Exception deactiating module: $sModule for shop $shopId: {$ex->getMessage()}</error>");
             }
         }
 
@@ -96,6 +109,7 @@ class DeactivateCommand extends Command
     protected function executeVersion470(InputInterface $input, OutputInterface $output)
     {
         $sModule = $input->getArgument('module');
+        $shopId = $input->getOption('shopId');
 
         $oModule = \oxNew('oxModule');
 
@@ -104,15 +118,18 @@ class DeactivateCommand extends Command
         }
 
         if (!$oModule->isActive()) {
-            $output->writeLn("<error>Module $sModule already deactivated.</error>");
+            $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
         } else {
-            if ($oModule->deactivate() === true) {
-                $output->writeLn("<info>Module $sModule deactivated.</info>");
-            } else {
-                $output->writeLn("<error>Module $sModule already activated.</error>");
+            try {
+                if ($oModule->deactivate() === true) {
+                    $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
+                } else {
+                    $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
+                }
+            } catch (\Exception $ex) {
+                $output->writeLn("<error>Exception deactiating module: $sModule for shop $shopId: {$ex->getMessage()}</error>");
             }
         }
-
     }
 
     /**

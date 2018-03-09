@@ -18,7 +18,7 @@ env:
 
 before_script:
   - curl -s https://getcomposer.org/installer | php
-  - php composer.phar config -g github-oauth.github.com "${GITHUB_TOKEN}"
+  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then php composer.phar config -g github-oauth.github.com "${GITHUB_TOKEN}"; fi'
   - php composer.phar install
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'
   - bin/oxrun install:shop --oxidVersion="${OXID_VERSION}" --dbUser=root --installationFolder=../ --shopURL=http://local.oxrun --adminUser=admin@local.oxrun --adminPassword=oxrunpassword
