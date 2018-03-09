@@ -139,6 +139,39 @@ config:set
 * Is value required: no
 * Description: <none>
 
+config:multiset
+----------
+
+* Description: Sets multiple config values for multiple subshops, defined in a yaml file
+* Usage: `config:multiset configfile`
+
+### Arguments:
+
+**configfile:**
+
+The file containing the config values, see malls.yml.dist. The file path is relative to the shop root.
+
+```yaml
+config:
+  1:
+    blReverseProxyActive: 
+      variableType: bool
+      variableValue: false
+    # simple string type
+    sMallShopURL: http://myshop.dev.local
+    sMallSSLShopURL: http://myshop.dev.local
+    myMultiVal:
+      variableType: aarr
+      variableValue:
+        - /foo/bar/
+        - /bar/foo/
+      # optional module id
+      moduleId: my_module
+  2:
+    blReverseProxyActive: 
+...
+```
+
 config:shop:get
 ---------------
 
