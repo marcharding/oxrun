@@ -8,11 +8,11 @@
 namespace Oxrun\Helper;
 
 
-class DatenbaseConnectionTest extends \PHPUnit_Framework_TestCase
+class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var DatenbaseConnection
+     * @var DatabaseConnection
      */
     protected $testSubject;
 
@@ -21,8 +21,8 @@ class DatenbaseConnectionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $datenbaseConnection = new DatenbaseConnection();
-        $datenbaseConnection
+        $databaseConnection = new DatabaseConnection();
+        $databaseConnection
             // Must be right to work correct
             ->setHost('127.0.0.1')
             ->setPort('3306')
@@ -30,7 +30,7 @@ class DatenbaseConnectionTest extends \PHPUnit_Framework_TestCase
             ->setPass('')
             ->setDatabase('oxid');
 
-        $this->testSubject = $datenbaseConnection;
+        $this->testSubject = $databaseConnection;
     }
 
     public function testCanParseHostPort()
