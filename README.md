@@ -21,9 +21,32 @@ You can then use oxrun by calling `vendor/bin/oxrun` or add `vendor/bin` to your
 
 # Usage
 
-To use oxrun just execute `php oxrun.phar` or `oxrun` (see above).
+To use oxrun just execute `php oxrun.phar` or `./vendor/bin/oxrun` (see above).
 
 Execute oxrun inside your OXID eShop base directory (or subdirectory) if you want to interact with an existing shop. It will automatically try to find the oxid boostrap.php and load it.
+
+If you want to __run it from a different directory__, you have to add the option `"--shopDir=/path/to/your/shop"`.
+
+You can use it e.g. to help you with an OXID 6 installation or deployment, e.g.:
+
+```json
+  "scripts": {
+    "post-update-cmd": [
+      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+      "@oe:ide-helper:generate",
+      "@oxrun:activate-modules",
+      "@oxrun:set-config"
+    ],
+    "oxrun:activate-modules": [
+      "./vendor/bin/oxrun module:multiactivate configs/modules.yml -c --shopDir=./source"
+    ],
+    "oxrun:set-config": [
+      "./vendor/bin/oxrun config:multiset configs/malls.yml --shopDir=./source"
+    ],
+
+```
+
+This could activate some modules in different subshops and set a bunch of config variables e.g.
 
 # Available commands
 
