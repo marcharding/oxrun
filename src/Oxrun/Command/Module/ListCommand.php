@@ -48,23 +48,29 @@ class ListCommand extends Command
 
         $activeModules = array_keys($oxModuleList->getActiveModuleInfo());
         $deactiveModules = $oxModuleList->getDisabledModules();;
-        $activeModules = array_map(function ($item) {
-            // check if really active
-            $oModule = oxNew('oxModule');
-            if ($oModule->load($item) && $oModule->isActive()) {
-                return array($item, 'yes');                
-            }
-            return array($item, 'no');
-        }, $activeModules);
+        $activeModules = array_map(
+            function ($item) {
+                // check if really active
+                $oModule = oxNew('oxModule');
+                if ($oModule->load($item) && $oModule->isActive()) {
+                    return array($item, 'yes');                
+                }
+                return array($item, 'no');
+            },
+            $activeModules
+        );
 
         // Fix for older oxid version < 4.9.0
         if (!is_array($deactiveModules)) {
             $deactiveModules = array();
         }
 
-        $deactiveModules = array_map(function ($item) {
-            return array($item, 'no');
-        }, $deactiveModules);
+        $deactiveModules = array_map(
+            function ($item) {
+                return array($item, 'no');
+            },
+            $deactiveModules
+        );
 
         $table = new Table($output);
         $table

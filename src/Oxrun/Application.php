@@ -4,7 +4,7 @@ namespace Oxrun;
 
 use Composer\Autoload\ClassLoader;
 use Oxrun\Command\Custom;
-use Oxrun\Helper\DatenbaseConnection;
+use Oxrun\Helper\DatabaseConnection;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -44,9 +44,9 @@ class Application extends BaseApplication
     protected $oxidConfigContent;
 
     /**
-     * @var DatenbaseConnection
+     * @var databaseConnection
      */
-    protected $datenbaseConnection = null;
+    protected $databaseConnection = null;
 
     /**
      * @var string
@@ -54,9 +54,9 @@ class Application extends BaseApplication
     protected $oxid_version = "0.0.0";
 
     /**
-     * @param ClassLoader   $autoloader
-     * @param string $name
-     * @param string $version
+     * @param ClassLoader   $autoloader The composer autoloader
+     * @param string        $name
+     * @param string        $version
      */
     public function __construct($autoloader = null, $name = 'UNKNOWN', $version = 'UNKNOWN')
     {
@@ -116,11 +116,12 @@ class Application extends BaseApplication
      *
      * @return bool
      */
-    protected function findBootstrapFile() {
+    protected function findBootstrapFile()
+    {
         $input = new ArgvInput();
-        if($input->getParameterOption('--shopDir')) {
+        if ($input->getParameterOption('--shopDir')) {
             $oxBootstrap = $input->getParameterOption('--shopDir'). '/bootstrap.php';
-            if( $this->checkBootstrapOxidInclude( $oxBootstrap ) === true ) {
+            if ($this->checkBootstrapOxidInclude($oxBootstrap) === true ) {
                 return true;
             }
             return false;
@@ -130,7 +131,7 @@ class Application extends BaseApplication
         $currentWorkingDirectory = getcwd();
         do {
             $oxBootstrap = $currentWorkingDirectory . '/bootstrap.php';
-            if( $this->checkBootstrapOxidInclude( $oxBootstrap ) === true ) {
+            if ($this->checkBootstrapOxidInclude($oxBootstrap) === true ) {
                 return true;
                 break;
             }
@@ -143,7 +144,8 @@ class Application extends BaseApplication
      * Check if bootstrap file exists
      *
      * @param String $oxBootstrap Path to oxid bootstrap.php
-     * @param bool $skipViews Add 'blSkipViewUsage' to OXIDs config.
+     * @param bool   $skipViews   Add 'blSkipViewUsage' to OXIDs config.
+     * 
      * @return bool
      */
     public function checkBootstrapOxidInclude($oxBootstrap)
@@ -153,7 +155,7 @@ class Application extends BaseApplication
             if (strpos(file_get_contents($oxBootstrap), 'OX_BASE_PATH') !== false) {
                 $this->shopDir = dirname($oxBootstrap);
 
-                require_once $oxBootstrap;
+                include_once $oxBootstrap;
 
                 // If we've an autoloader we must re-register it to avoid conflicts with a composer autoloader from shop
                 if (null !== $this->autoloader) {
@@ -208,29 +210,29 @@ class Application extends BaseApplication
         if ($this->shopDir && file_exists($configfile)) {
             $oxConfigFile = new \OxConfigFile($configfile);
 
-            $datenbaseConnection = $this->getDatenbaseConnection();
-            $datenbaseConnection
+            $databaseConnection = $this->getDatabaseConnection();
+            $databaseConnection
                 ->setHost($oxConfigFile->getVar('dbHost'))
                 ->setUser($oxConfigFile->getVar('dbUser'))
                 ->setPass($oxConfigFile->getVar('dbPwd'))
                 ->setDatabase($oxConfigFile->getVar('dbName'));
 
-            return $this->hasDBConnection = $datenbaseConnection->canConnectToMysql();
+            return $this->hasDBConnection = $databaseConnection->canConnectToMysql();
         }
 
         return $this->hasDBConnection = false;
     }
 
     /**
-     * @return DatenbaseConnection
+     * @return DatabaseConnection
      */
-    public function getDatenbaseConnection()
+    public function getDatabaseConnection()
     {
-        if ($this->datenbaseConnection === null) {
-            $this->datenbaseConnection = new DatenbaseConnection();
+        if ($this->databaseConnection === null) {
+            $this->databaseConnection = new DatabaseConnection();
         }
 
-        return $this->datenbaseConnection;
+        return $this->databaseConnection;
     }
 
     /**
