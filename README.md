@@ -47,6 +47,7 @@ You can use it e.g. to help you with an OXID 6 installation or deployment, e.g.:
 ```
 
 This could activate some modules in different subshops and set a bunch of config variables e.g.
+__Please note:__ since activating modules and updating config values requires a filled database and a valid config.inc.php file, you'd have to do some more voodoo during the OXID setup routine to make the above example work! But it should give you an idea how to use oxrun "multiactivate" and "multiset" :)
 
 # Available commands
 
@@ -247,7 +248,7 @@ config:shop:set
 config:export
 ---------------
 
-* Description: Exports all config values as yaml files, interacts with the [Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module
+* Description: Exports all config values as yaml files, interacts with the [Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module [__which currently isn't fully ported to OXID 6 yet!__](https://github.com/OXIDprojects/oxid_modules_config/tree/dev-6.0-wip)
 * Usage: `config:export`
 
 ### Arguments:
@@ -276,7 +277,7 @@ config:export
 config:import
 ---------------
 
-* Description: Imports all config values from yaml files, interacts with the [Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module
+* Description: Imports all config values from yaml files, interacts with the [Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module, [__which currently isn't fully ported to OXID 6 yet!__](https://github.com/OXIDprojects/oxid_modules_config/tree/dev-6.0-wip)
 * Usage: `config:import`
 
 ### Arguments:
@@ -368,7 +369,7 @@ Requires php exec and MySQL CLI tools installed on your system.
 * Description: Raw output
 * Default: `false`
 
-install:shop
+install:shop __[DEPRECATED!]__
 ------------
 
 * Description: Installs the shop
