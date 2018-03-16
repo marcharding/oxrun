@@ -658,7 +658,7 @@ views:update
 route:debug
 -----------------
 
-* Description: lookup a SQL Url in the database and check which controller is associated etc.
+* Description: lookup a SEO Url in the database and check which controller is associated etc.
 * Usage: `route:debug http://myshop.de/my/url`
 
 ### Arguments:
