@@ -43,8 +43,8 @@ class ListCommand extends Command
 
         $this->checkModulelist($shopId);
 
-        /* @var \OxidEsales\Eshop\Core\ModuleList $oxModuleList  */
-        $oxModuleList = oxNew(\OxidEsales\Eshop\Core\ModuleList::class);
+        /* @var \OxidEsales\Eshop\Core\Module\ModuleList $oxModuleList  */
+        $oxModuleList = oxNew(\OxidEsales\Eshop\Core\Module\ModuleList::class);
 
         $activeModules = array_keys($oxModuleList->getActiveModuleInfo());
         $deactiveModules = $oxModuleList->getDisabledModules();;
