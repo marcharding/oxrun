@@ -53,13 +53,13 @@ class MultiSetCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // do not use the registry pattern (\oxRegistry::getConfig()) here, so we do not have any caches (breaks unit tests)
-        $oxConfig = oxNew('oxConfig');
+        // do not use the registry pattern (\OxidEsales\Eshop\Core\Registry::getConfig()) here, so we do not have any caches (breaks unit tests)
+        $oxConfig = oxNew(\OxidEsales\Eshop\Core\Config::class);
 
         /* @var \Oxrun\Application $app */
         $app = $this->getApplication();
 
-        // now try to ready specified YAML file
+        // now try to read specified YAML file
         $mallYml = $input->getArgument('configfile');
         $ymlFile = $app->getShopDir() . DIRECTORY_SEPARATOR . $mallYml;
         if (!file_exists($ymlFile)) {

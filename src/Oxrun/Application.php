@@ -69,7 +69,10 @@ class Application extends BaseApplication
      */
     protected function getDefaultCommands()
     {
-        return array(new HelpCommand(), new Custom\ListCommand());
+        return array(
+            new HelpCommand(),
+            new Custom\ListCommand(),
+        );
     }
 
 
@@ -247,9 +250,9 @@ class Application extends BaseApplication
         $oxidVersion = $this->getOxidVersion();
         if (version_compare($oxidVersion, '4.9.0') < 0) {
             // old OXID versions
-            $oConfig = \oxRegistry::getConfig();
+            $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
             $oConfig->setShopId($shopId);
-            \oxRegistry::set('oxConfig', $oConfig);
+            \OxidEsales\Eshop\Core\Registry::set('oxConfig', $oConfig);
             return;
         }
 

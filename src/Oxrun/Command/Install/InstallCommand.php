@@ -123,9 +123,9 @@ class InstallCommand extends Command
         $oxSetupController->dbCreate();
         $oxSetupController->dirsWrite();
         $aMessages = $oxSetupController->getView()->getMessages();
-        foreach($aMessages as $message) {
-            $cleanMessage = str_replace(array('ERROR:','FEHLER:'), '', $message);
-            if($cleanMessage !== $message) {
+        foreach ($aMessages as $message) {
+            $cleanMessage = str_replace(array('ERROR:', 'FEHLER:'), '', $message);
+            if ($cleanMessage !== $message) {
                 $cleanMessage = trim($cleanMessage);
                 $output->writeln("<error>An error occured during the installation: {$cleanMessage}</error>");
             }
@@ -180,8 +180,8 @@ class InstallCommand extends Command
 
         }
         // patch version 4.10.2 and above (broken in official installer)
-        if(isset($version)) {
-            if(version_compare($version, "v4.10.2") >= 0){
+        if (isset($version)) {
+            if (version_compare($version, "v4.10.2") >= 0) {
                 $code = file_get_contents($target . '/setup/oxrunsetup.php');
                 $code = str_replace("demodata.sql", "test_demodata.sql", $code);
                 file_put_contents($target . '/setup/oxrunsetup.php', $code);
@@ -200,8 +200,8 @@ class InstallCommand extends Command
     {
         $client = new Client();
         $githubToken = getenv('GITHUB_TOKEN');
-        if( $githubToken ) {
-            $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags?per_page=9999&access_token='.$githubToken)->json();
+        if ($githubToken) {
+            $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags?per_page=9999&access_token=' . $githubToken)->json();
         } else {
             $tagsArray = $client->get('https://api.github.com/repos/OXID-eSales/oxideshop_ce/tags?per_page=9999')->json();
         }
@@ -222,7 +222,7 @@ class InstallCommand extends Command
         );
         $tagsArray = array_filter(
             $tagsArray,
-            function($tagArray) {
+            function ($tagArray) {
                 return preg_match('#^v\d+\.\d+\.\d+$#', $tagArray['tag']);
             }
         );
@@ -247,8 +247,8 @@ class InstallCommand extends Command
         try {
 
             $githubToken = getenv('GITHUB_TOKEN');
-            if( $githubToken ) {
-                $request = $client->createRequest('GET', $version['zip'].'?access_token='.$githubToken, array('save_to' => $file));
+            if ($githubToken) {
+                $request = $client->createRequest('GET', $version['zip'] . '?access_token=' . $githubToken, array('save_to' => $file));
             } else {
                 $request = $client->createRequest('GET', $version['zip'], array('save_to' => $file));
             }

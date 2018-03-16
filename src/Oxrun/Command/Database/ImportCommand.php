@@ -48,17 +48,17 @@ HELP;
         }
 
         // allow empty password
-        $dbPwd = \oxRegistry::getConfig()->getConfigParam('dbPwd');
+        $dbPwd = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbPwd');
         if (!empty($dbPwd)) {
             $dbPwd = '-p' . $dbPwd;
         }
 
         $exec = sprintf(
             "mysql -h%s %s -u%s %s < %s 2>&1",
-            \oxRegistry::getConfig()->getConfigParam('dbHost'),
+            \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbHost'),
             $dbPwd,
-            \oxRegistry::getConfig()->getConfigParam('dbUser'),
-            \oxRegistry::getConfig()->getConfigParam('dbName'),
+            \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbUser'),
+            \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbName'),
             $file
         );
 

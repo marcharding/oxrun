@@ -38,8 +38,8 @@ class SetCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // do not use the registry pattern (\oxRegistry::getConfig()) here, so we do not have any caches (breaks unit tests)
-        $oxConfig = oxNew('oxConfig');
+        // do not use the registry pattern (\OxidEsales\Eshop\Core\Registry::getConfig()) here, so we do not have any caches (breaks unit tests)
+        $oxConfig = oxNew(\OxidEsales\Eshop\Core\Config::class);
 
         // determine variable type
         if ($input->getOption('variableType')) {
@@ -47,9 +47,9 @@ class SetCommand extends Command
         } else {
             $sql = sprintf(
                 "SELECT  `oxconfig`.`OXVARTYPE` FROM `oxconfig` WHERE `oxconfig`.`OXVARNAME` = %s",
-                \oxDb::getDb()->quote($input->getArgument('variableName'))
+                \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quote($input->getArgument('variableName'))
             );
-            $variableType = \oxDb::getDb()->getOne($sql);
+            $variableType = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getOne($sql);
         }
 
         if (in_array($variableType, array('aarr', 'arr'))) {

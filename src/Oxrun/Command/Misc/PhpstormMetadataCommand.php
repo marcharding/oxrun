@@ -42,10 +42,10 @@ class PhpstormMetadataCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $searchDirs = [
-            OX_BASE_PATH . '/application/components',
-            OX_BASE_PATH . '/application/controllers',
-            OX_BASE_PATH . '/application/models',
-            OX_BASE_PATH . '/core',
+            OX_BASE_PATH . '../vendor/oxid-esales/oxideshop-ce/source/Application/Component',
+            OX_BASE_PATH . '../vendor/oxid-esales/oxideshop-ce/source/Application/Controller',
+            OX_BASE_PATH . '../vendor/oxid-esales/oxideshop-ce/source/Application/Model',
+            OX_BASE_PATH . '../vendor/oxid-esales/oxideshop-ce/source/Core',
             OX_BASE_PATH . '/modules',
         ];
         $finder     = new Finder();
@@ -61,9 +61,9 @@ class PhpstormMetadataCommand extends Command
             ->files();
 
         try {
-            $extendedOxidClasses = \oxRegistry::get('oxModuleInstaller')->getModulesWithExtendedClass();
+            $extendedOxidClasses = \OxidEsales\Eshop\Core\Registry::get('oxModuleInstaller')->getModulesWithExtendedClass();
         } catch (\oxSystemComponentException $e) {
-            $extendedOxidClasses = \oxRegistry::getConfig()->getAllModules();
+            $extendedOxidClasses = \OxidEsales\Eshop\Core\Registry::getConfig()->getAllModules();
         }
 
         $classes = array();
@@ -135,7 +135,7 @@ namespace PHPSTORM_META {
         )
     );
     override(
-        \oxRegistry::get(0),
+        \OxidEsales\Eshop\Core\Registry::get(0),
         map(
             [
                 CLASSES_PLACEHOLDER

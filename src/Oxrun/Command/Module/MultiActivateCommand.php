@@ -108,7 +108,7 @@ class MultiActivateCommand extends Command
                 // use blacklist
                 /* @var \OxidEsales\Eshop\Core\Module\ModuleList $oxModuleList  */
                 $oxModuleList = oxNew(\OxidEsales\Eshop\Core\Module\ModuleList::class);
-                $oConfig = \oxRegistry::getConfig();
+                $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
                 $aModules = $oxModuleList->getModulesFromDir($oConfig->getModulesDir());
                 foreach ($aModules as $moduleId => $aModuleData) {
                     foreach ($moduleValues['blacklist'] as $shopId => $moduleIds) {

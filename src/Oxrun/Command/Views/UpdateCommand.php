@@ -31,10 +31,10 @@ class UpdateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $myConfig = \oxRegistry::getConfig();
+        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
         $myConfig->setConfigParam('blSkipViewUsage', true);
         
-        $oMetaData = \oxNew('oxDbMetaDataHandler');
+        $oMetaData = \oxNew(\OxidEsales\Eshop\Core\DbMetaDataHandler::class);
         if ($oMetaData->updateViews()) {
             $output->writeln('<info>Views updated.</info>');
         } else {

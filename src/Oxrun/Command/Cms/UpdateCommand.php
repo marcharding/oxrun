@@ -38,7 +38,7 @@ class UpdateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $oxContent = oxNew('oxcontent');
+        $oxContent = oxNew(\OxidEsales\Eshop\Application\Model\Content::class);
         $oxContent->loadByIdent($input->getArgument('ident'));
 
         if (!$oxContent) {
@@ -49,13 +49,13 @@ class UpdateCommand extends Command
         if ($input->getOption('language') !== false) {
             $language = $input->getOption('language');
         } else {
-            $language = \oxRegistry::getLang()->getBaseLanguage();
+            $language = \OxidEsales\Eshop\Core\Registry::getLang()->getBaseLanguage();
         }
 
         $oxContent->setLanguage($language);
 
         if ($input->getOption('title')) {
-            $oxContent->oxcontents__oxtitle = new \oxField($input->getOption('title'));
+            $oxContent->oxcontents__oxtitle = new \OxidEsales\Eshop\Core\Field($input->getOption('title'));
         }
 
         if ($input->getOption('content')) {
@@ -64,11 +64,11 @@ class UpdateCommand extends Command
             } else {
                 $content = $input->getOption('content');
             }
-            $oxContent->oxcontents__oxcontent = new \oxField($content);
+            $oxContent->oxcontents__oxcontent = new \OxidEsales\Eshop\Core\Field($content);
         }
 
         if ($input->getOption('active')) {
-            $oxContent->oxcontents__oxactive = new \oxField($input->getOption('active'));
+            $oxContent->oxcontents__oxactive = new \OxidEsales\Eshop\Core\Field($input->getOption('active'));
         }
         if ($oxContent->save()) {
             $output->writeLn("<info>Content with ident {$input->getArgument('ident')} updated.</info>");

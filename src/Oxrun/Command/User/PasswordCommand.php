@@ -34,14 +34,14 @@ class PasswordCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $oxUser = \oxNew('oxUser');
+        $oxUser = \oxNew(\OxidEsales\Eshop\Application\Model\User::class);
 
         $sql = sprintf(
             "SELECT `oxuser`.`OXID` FROM `oxuser` WHERE `oxuser`.`OXUSERNAME` = %s",
-            \oxDb::getDb()->quote($input->getArgument('username'))
+            \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quote($input->getArgument('username'))
         );
-        $userOxid = \oxDb::getDb()->getOne($sql);
-        if(empty($userOxid)){
+        $userOxid = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getOne($sql);
+        if (empty($userOxid)) {
             $output->writeln('<error>User does not exist.</error>');
             return;
         }

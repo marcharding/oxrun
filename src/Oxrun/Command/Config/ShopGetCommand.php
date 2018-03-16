@@ -36,7 +36,7 @@ class ShopGetCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         // Shop config
-        $oxShop = oxNew('oxShop');
+        $oxShop = oxNew(\OxidEsales\Eshop\Application\Model\Shop::class);
         $oxShop->load($input->getOption('shopId'));
         $varibaleValue = $oxShop->{'oxshops__' . $input->getArgument('variableName')}->value;
         $output->writeln("<info>Config {$input->getArgument('variableName')} has value $varibaleValue</info>");

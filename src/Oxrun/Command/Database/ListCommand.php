@@ -64,7 +64,11 @@ HELP;
 
         if ($input->getOption('plain')) {
             $quote = "'";
-            $existsTable = array_map(function ($row) {return $row[0];}, $tablenames);
+            $existsTable = array_map(
+                function ($row) {
+                    return $row[0];
+                }, $tablenames
+            );
             $list = implode("$quote, $quote", $existsTable);
             $output->writeln($quote . $list . $quote);
             return;
@@ -86,7 +90,7 @@ HELP;
     {
         $whereIN = $whereLIKE = [];
 
-        $dbName = \oxRegistry::getConfig()->getConfigParam('dbName');
+        $dbName = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbName');
 
         foreach ($tables as $name) {
             if (preg_match('/[%*]/', $name)) {
@@ -110,7 +114,7 @@ HELP;
 
         $sqlstament = "SHOW FULL TABLES IN {$dbName} WHERE $conditionsIN $conditionsLIKE";
 
-        $existsTable = \oxDb::getDb()->getAll($sqlstament);
+        $existsTable = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getAll($sqlstament);
 
         return $existsTable;
     }

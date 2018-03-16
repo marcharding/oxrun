@@ -56,12 +56,14 @@ class GenerateDocumentationCommand extends Command
         );
 
         $availableCommands = array_keys($this->getApplication()->all());
-        $availableCommands = array_filter($availableCommands, function ($commandName) {
-            if (in_array($commandName, $this->skipCommands)) {
-                return false;
+        $availableCommands = array_filter(
+            $availableCommands, function ($commandName) {
+                if (in_array($commandName, $this->skipCommands)) {
+                    return false;
+                }
+                return true;
             }
-            return true;
-        });
+        );
 
         $command = $this->getApplication()->find('help');
         $commandTester = new CommandTester($command);

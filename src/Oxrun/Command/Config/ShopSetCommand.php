@@ -36,7 +36,7 @@ class ShopSetCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $oxShop = oxNew('oxShop');
+        $oxShop = oxNew(\OxidEsales\Eshop\Application\Model\Shop::class);
         $oxShop->load($input->getOption('shopId'));
         $oxShop->assign(array('oxshops__' . $input->getArgument('variableName') => $input->getArgument('variableValue')));
         $oxShop->save();

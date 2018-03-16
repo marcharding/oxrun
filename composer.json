@@ -2,6 +2,7 @@
   "name": "smxsm/oxrun",
   "description": "Oxrun provides a cli toolset for the OXID eShop Community Edition",
   "license": "MIT",
+  "version": "v0.2.2",
   "support": {
     "issues": "https://github.com/marcharding/oxrun/issues"
   },
@@ -40,6 +41,14 @@
     {
       "name":"Stefan Krenz",
       "email":"info@kyoya.de"
+    },
+    {
+      "name":"Tobias Matthaiou",
+      "email":"matthaiou@tobimat.eu"
+    },
+    {
+      "name":"Stefan Moises",
+      "email":"moises@shoptimax.de"
     }
   ],
   "bin": ["bin/oxrun"]

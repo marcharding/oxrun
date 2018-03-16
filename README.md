@@ -654,3 +654,24 @@ views:update
 
 * Description: Updates the views
 * Usage: `views:update`
+
+route:debug
+-----------------
+
+* Description: lookup a SQL Url in the database and check which controller is associated etc.
+* Usage: `route:debug http://myshop.de/my/url`
+
+### Arguments:
+
+**url:**
+
+* Name: url
+* Description: SEO URL
+
+### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
