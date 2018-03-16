@@ -8,6 +8,11 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class DumpCommandTest extends TestCase
 {
+    /**
+     * DB execute test
+     *
+     * @return void
+     */
     public function testExecute()
     {
         $app = new Application();
@@ -44,7 +49,7 @@ class DumpCommandTest extends TestCase
             )
         );
 
-        $dump = file_get_contents( $path );
+        $dump = file_get_contents($path);
         $this->assertContains('DROP TABLE IF EXISTS `oxacceptedterms`;', $dump);
         $this->assertContains('DROP TABLE IF EXISTS `oxaccessoire2article`;', $dump);
         $this->assertContains('DROP TABLE IF EXISTS `oxactions`;', $dump);

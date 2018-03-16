@@ -23,13 +23,13 @@ trait ModuleListCheckTrait
      */
     protected function checkModulelist($shopId = null)
     {
-        $oConfig = \oxRegistry::getConfig();
+        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
         if ($shopId != null) {
             $oConfig->setShopId($shopId);
-            \oxRegistry::set('oxConfig', $oConfig);
+            \OxidEsales\Eshop\Core\Registry::set('oxConfig', $oConfig);
         }
         // we must call this once, otherwise there are no modules visible in a fresh shop
-        $oModuleList = oxNew("oxModuleList");
+        $oModuleList = oxNew(\OxidEsales\Eshop\Core\Module\ModuleList::class);
         $oModuleList->getModulesFromDir($oConfig->getModulesDir());
     }
 }

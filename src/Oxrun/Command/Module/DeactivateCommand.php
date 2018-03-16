@@ -44,14 +44,7 @@ class DeactivateCommand extends Command
 
         $this->checkModulelist($shopId);
 
-        $oxidVersion = $this->getApplication()->getOxidVersion();
-        if (version_compare($oxidVersion, '4.9.0') >= 0) {
-            $this->executeVersion490($input, $output);
-        } elseif (version_compare($oxidVersion, '4.8.0') >= 0) {
-            $this->executeVersion480($input, $output);
-        } elseif (version_compare($oxidVersion, '4.7.0') >= 0) {
-            $this->executeVersion470($input, $output);
-        }
+        $this->executeDeactivate($input, $output);
     }
 
     /**
@@ -60,14 +53,14 @@ class DeactivateCommand extends Command
      * @param InputInterface $input An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      */
-    protected function executeVersion490(InputInterface $input, OutputInterface $output)
+    protected function executeDeactivate(InputInterface $input, OutputInterface $output)
     {
         $sModule = $input->getArgument('module');
         $shopId = $input->getOption('shopId');
 
-        $oModule = \oxNew('oxModule');
-        $oModuleCache = oxNew('oxModuleCache', $oModule);
-        $oModuleInstaller = oxNew('oxModuleInstaller', $oModuleCache);
+        $oModule = oxNew(\OxidEsales\Eshop\Core\Module\Module::class);
+        $oModuleCache = oxNew(\OxidEsales\Eshop\Core\Module\ModuleCache::class, $oModule);
+        $oModuleInstaller = oxNew(\OxidEsales\Eshop\Core\Module\ModuleInstaller::class, $oModuleCache);
 
         if (!$oModule->load($sModule)) {
             $output->writeLn("<error>Cannot load module $sModule.</error>");
@@ -88,50 +81,6 @@ class DeactivateCommand extends Command
         }
 
     }
-
-    /**
-     * Executes the current command.
-     *
-     * @param InputInterface $input An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
-     */
-    protected function executeVersion480(InputInterface $input, OutputInterface $output)
-    {
-        $this->executeVersion470($input, $output);
-    }
-
-    /**
-     * Executes the current command.
-     *
-     * @param InputInterface $input An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
-     */
-    protected function executeVersion470(InputInterface $input, OutputInterface $output)
-    {
-        $sModule = $input->getArgument('module');
-        $shopId = $input->getOption('shopId');
-
-        $oModule = \oxNew('oxModule');
-
-        if (!$oModule->load($sModule)) {
-            $output->writeLn("<error>Cannot load module $sModule.</error>");
-        }
-
-        if (!$oModule->isActive()) {
-            $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
-        } else {
-            try {
-                if ($oModule->deactivate() === true) {
-                    $output->writeLn("<info>Module $sModule deactivated for shopId $shopId.</info>");
-                } else {
-                    $output->writeLn("<comment>Module $sModule already deactivated for shopId $shopId.</comment>");
-                }
-            } catch (\Exception $ex) {
-                $output->writeLn("<error>Exception deactiating module: $sModule for shop $shopId: {$ex->getMessage()}</error>");
-            }
-        }
-    }
-
     /**
      * @return bool
      */

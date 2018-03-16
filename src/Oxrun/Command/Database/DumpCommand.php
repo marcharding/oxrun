@@ -71,10 +71,10 @@ class DumpCommand extends Command
                 'Do not export table with person related data.'
             )
             ->addOption(
-        'withoutTableData',
-        'w',
-        InputOption::VALUE_REQUIRED,
-        'Table name to dump without data. Use comma separated list and or pattern e.g. %voucher%'
+                'withoutTableData',
+                'w',
+                InputOption::VALUE_REQUIRED,
+                'Table name to dump without data. Use comma separated list and or pattern e.g. %voucher%'
             );
 
         $anonymousTables= implode('`, `', $this->anonymousTables);
@@ -118,10 +118,10 @@ HELP;
         $canDumpTables = true;
 
         $file   = $input->getOption('file');
-        $dbName = \oxRegistry::getConfig()->getConfigParam('dbName');
+        $dbName = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbName');
 
-        if($input->getOption('ignoreViews')) {
-            $viewsResultArray = \oxDb::getDb()->getAll("SHOW FULL TABLES IN {$dbName} WHERE TABLE_TYPE LIKE 'VIEW'");
+        if ($input->getOption('ignoreViews')) {
+            $viewsResultArray = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getAll("SHOW FULL TABLES IN {$dbName} WHERE TABLE_TYPE LIKE 'VIEW'");
             if (is_array($viewsResultArray)) {
                 foreach ($viewsResultArray as $sqlRow) {
                     $ignoreTables[] = $sqlRow[0];
@@ -219,17 +219,17 @@ HELP;
      */
     protected function getMysqlDumpCommand()
     {
-        $dbHost = \oxRegistry::getConfig()->getConfigParam('dbHost');
-        $dbUser = \oxRegistry::getConfig()->getConfigParam('dbUser');
-        $dbName = \oxRegistry::getConfig()->getConfigParam('dbName');
+        $dbHost = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbHost');
+        $dbUser = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbUser');
+        $dbName = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbName');
 
-        $dbPwd = \oxRegistry::getConfig()->getConfigParam('dbPwd');
+        $dbPwd = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbPwd');
         if (!empty($dbPwd)) {
             $dbPwd = ' -p' . $dbPwd;
         }
 
         $utfMode = '';
-        if (\oxRegistry::getConfig()->getConfigParam('iUtfMode')) {
+        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iUtfMode')) {
             $utfMode = ' --default-character-set=utf8';
         }
 
@@ -242,9 +242,9 @@ HELP;
             ' --opt' .
             ' --hex-blob' .
             $utfMode .
-            ' %s ' . # argumment part
+            ' %s ' . // argumment part
             $dbName .
-            ' '; # bash part
+            ' '; // bash part
 
         return $mysqldump;
     }
@@ -260,6 +260,7 @@ HELP;
     /**
      * @param string $flag
      * @param array $tables
+     * 
      * @return array
      */
     protected function addCommandFlag($flag, $tables)
@@ -281,7 +282,7 @@ HELP;
     {
         $whereIN = $whereLIKE = [];
 
-        $dbName = \oxRegistry::getConfig()->getConfigParam('dbName');
+        $dbName = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('dbName');
 
         foreach ($tables as $name) {
             if (preg_match('/[%*]/', $name)) {
@@ -305,10 +306,13 @@ HELP;
 
         $sqlstament = "SHOW FULL TABLES IN {$dbName} WHERE $conditionsIN $conditionsLIKE";
 
-        $result = \oxDb::getDb()->getAll($sqlstament);
+        $result = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getAll($sqlstament);
 
-        $existsTable = array_map(function ($row) {return $row[0];}, $result);
-
+        $existsTable = array_map(
+            function ($row) {
+                return $row[0];
+            }, $result
+        );
         return $existsTable;
     }
 

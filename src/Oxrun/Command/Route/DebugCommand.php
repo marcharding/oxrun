@@ -40,6 +40,7 @@ class DebugCommand extends Command
         $this->setName("route:debug")
             ->setDescription("Returns the route. Which controller and parameters are called.")
             ->addArgument("url", InputArgument::REQUIRED, "Website URL. Full or Path")
+            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
             ->addOption('copy', 'c', InputOption::VALUE_NONE, 'Copy file path from the class to the clipboard (only MacOS)');
     }
 
@@ -50,11 +51,15 @@ class DebugCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $url = $this->cleanUrlPath($input);
+        $shopId = $input->getOption('shopId');
+        if ($shopId) {
+            $this->getApplication()->switchToShopId($shopId);
+        }
 
         $output->writeln("<info>Results for:</info> $url");
 
-        /** @var \oxSeoDecoder $oxSeoDecoder */
-        $oxSeoDecoder = \oxNew('oxSeoDecoder');
+        /** @var \OxidEsales\Eshop\Core\SeoDecoder $oxSeoDecoder */
+        $oxSeoDecoder = oxNew(\OxidEsales\Eshop\Core\SeoDecoder::class);
         $aSeoURl = $oxSeoDecoder->decodeUrl($url);
 
         if ($aSeoURl == false) {

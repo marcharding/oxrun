@@ -47,15 +47,7 @@ class ActivateCommand extends Command
         
         $this->checkModulelist($shopId);
 
-        $actualVersion = $this->getApplication()->getOxidVersion();
-
-        if (version_compare($actualVersion, '4.9.0') >= 0) {
-            $this->executeVersion490($input, $output);
-        } elseif (version_compare($actualVersion, '4.8.0') >= 0) {
-            $this->executeVersion480($input, $output);
-        } elseif (version_compare($actualVersion, '4.7.0') >= 0) {
-            $this->executeVersion470($input, $output);
-        }
+        $this->executeActivate($input, $output);
     }
 
     /**
@@ -64,14 +56,14 @@ class ActivateCommand extends Command
      * @param InputInterface $input An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      */
-    protected function executeVersion490(InputInterface $input, OutputInterface $output)
+    protected function executeActivate(InputInterface $input, OutputInterface $output)
     {
         $sModule = $input->getArgument('module');
         $shopId = $input->getOption('shopId');
 
-        $oModule = oxNew('oxModule');
-        $oModuleCache = oxNew('oxModuleCache', $oModule);
-        $oModuleInstaller = oxNew('oxModuleInstaller', $oModuleCache);
+        $oModule = oxNew(\OxidEsales\Eshop\Core\Module\Module::class);
+        $oModuleCache = oxNew(\OxidEsales\Eshop\Core\Module\ModuleCache::class, $oModule);
+        $oModuleInstaller = oxNew(\OxidEsales\Eshop\Core\Module\ModuleInstaller::class, $oModuleCache);
 
         if (!$oModule->load($sModule)) {
             $output->writeLn("<error>Cannot load module $sModule.</error>");
@@ -84,49 +76,6 @@ class ActivateCommand extends Command
                 } else {
                     $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
                 }    
-            } catch (\Exception $ex) {
-                $output->writeLn("<error>Exception actiating module: $sModule for shop $shopId: {$ex->getMessage()}</error>");
-            }
-        } else {
-            $output->writeLn("<comment>Module $sModule already activated for shopId $shopId.</comment>");
-        }
-    }
-
-    /**
-     * Executes the current command.
-     *
-     * @param InputInterface $input An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
-     */
-    protected function executeVersion480(InputInterface $input, OutputInterface $output)
-    {
-        $this->executeVersion470($input, $output);
-    }
-
-    /**
-     * Executes the current command.
-     *
-     * @param InputInterface $input An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
-     */
-    protected function executeVersion470(InputInterface $input, OutputInterface $output)
-    {
-        $sModule = $input->getArgument('module');
-        $shopId = $input->getOption('shopId');
-
-        $oModule = oxNew('oxModule');
-
-        if (!$oModule->load($sModule)) {
-            $output->writeLn("<error>Cannot load module $sModule.</error>");
-        }
-
-        if (!$oModule->isActive()) {
-            try {
-                if ($oModule->activate() === true) {
-                    $output->writeLn("<info>Module $sModule activated for shopId $shopId.</info>");
-                } else {
-                    $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
-                }
             } catch (\Exception $ex) {
                 $output->writeLn("<error>Exception actiating module: $sModule for shop $shopId: {$ex->getMessage()}</error>");
             }

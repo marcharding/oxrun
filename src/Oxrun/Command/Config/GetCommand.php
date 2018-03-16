@@ -36,7 +36,7 @@ class GetCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $oxConfig = oxNew('oxConfig');
+        $oxConfig = oxNew(\OxidEsales\Eshop\Core\Config::class);
         $shopConfVar = $oxConfig->getShopConfVar(
             $input->getArgument('variableName'),
             $input->getOption('shopId'),
@@ -45,7 +45,7 @@ class GetCommand extends Command
         if (is_array($shopConfVar)) {
             $shopConfVar = json_encode($shopConfVar, true);
         }
-        if( empty($shopConfVar)){
+        if (empty($shopConfVar)) {
             $shopConfVar = 0;
         }
         $output->writeln("<info>{$input->getArgument('variableName')} has value {$shopConfVar}</info>");
