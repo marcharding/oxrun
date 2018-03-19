@@ -29,7 +29,7 @@ class ReloadCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'invoicepdf'
+                'module' => 'oepaypal'
             )
         );
 

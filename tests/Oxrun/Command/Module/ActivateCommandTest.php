@@ -20,7 +20,7 @@ class ActivateCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'invoicepdf'
+                'module' => 'oepaypal'
             )
         );
 
@@ -30,22 +30,22 @@ class ActivateCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'invoicepdf'
+                'module' => 'oepaypal'
             )
         );
 
-        $this->assertContains('Module invoicepdf activated.', $commandTester->getDisplay());
+        $this->assertContains('Module oepaypal activated', $commandTester->getDisplay());
 
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'invoicepdf'
+                'module' => 'oepaypal'
             )
         );
 
-        $this->assertContains('Module invoicepdf already activated.', $commandTester->getDisplay());
+        $this->assertContains('Module oepaypal already activated', $commandTester->getDisplay());
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
@@ -55,7 +55,7 @@ class ActivateCommandTest extends TestCase
             )
         );
 
-        $this->assertContains('Cannot load module not_and_existing_module.', $commandTester->getDisplay());
+        $this->assertContains('Cannot load module not_and_existing_module', $commandTester->getDisplay());
 
     }
 

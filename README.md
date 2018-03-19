@@ -675,3 +675,11 @@ route:debug
 * Name: `--shopId`
 * Is value required: no
 * Description: <none>
+
+# Run the unit tests
+
+The unit tests require a configured shop and a database. To start the tests, run the following command __in the "source" folder of your OXID 6 installation__ and set the correct path to the "oxrun" vendor directory, e.g.:
+
+```bash
+../vendor/bin/phpunit /var/www/html/oxid6/vendor/smxsm/oxrun/
+```

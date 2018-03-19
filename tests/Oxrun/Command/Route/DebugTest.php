@@ -16,7 +16,9 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class DebugTest extends TestCase
 {
-    const commandName = 'route:debug';
+    const COMMANDNAME = 'route:debug';
+
+    protected $baseUrl = 'http://localhost';
     /**
      * @var Route\DebugCommand|CommandTester
      */
@@ -27,7 +29,11 @@ class DebugTest extends TestCase
         $app = new Application();
         $app->add(new Route\DebugCommand());
 
-        $command = $app->find(self::commandName);
+        $command = $app->find(self::COMMANDNAME);
+
+        $this->baseUrl = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sShopURL');
+
+        // TODO - insert static seo url for "warenkorb"!!?
 
         $this->commandTester = new CommandTester($command);
     }
@@ -36,20 +42,21 @@ class DebugTest extends TestCase
     {
         $this->commandTester->execute(
             array(
-                'url' => 'http://localhost/warenkorb/',
-                'command' => self::commandName,
+                'url' => $this->baseUrl . '/warenkorb/',
+                'command' => self::COMMANDNAME,
             )
         );
 
+        //echo "\nRESULT: " . $this->commandTester->getDisplay();
         $this->assertRegExp('~\|\s+Controller\s+\|\s+basket\s+\|~', $this->commandTester->getDisplay());
     }
 
-    public function testHalfBrockenUrl()
+    public function testHalfBrokenUrl()
     {
         $this->commandTester->execute(
             array(
-                'url' => 'http://localhost/warenkorb',
-                'command' => self::commandName,
+                'url' => $this->baseUrl . '/warenkorb',
+                'command' => self::COMMANDNAME,
             )
         );
 
@@ -61,7 +68,7 @@ class DebugTest extends TestCase
         $this->commandTester->execute(
             array(
                 'url' => 'warenkorb/',
-                'command' => self::commandName,
+                'command' => self::COMMANDNAME,
             )
         );
 
@@ -73,7 +80,7 @@ class DebugTest extends TestCase
         $this->commandTester->execute(
             array(
                 'url' => 'warenkorb',
-                'command' => self::commandName,
+                'command' => self::COMMANDNAME,
             )
         );
 
@@ -85,7 +92,7 @@ class DebugTest extends TestCase
         $this->commandTester->execute(
             array(
                 'url' => 'warenkorb',
-                'command' => self::commandName,
+                'command' => self::COMMANDNAME,
             )
         );
 
@@ -94,30 +101,30 @@ class DebugTest extends TestCase
 
     public function testGiveFunctionLineNumber()
     {
-        /** @var oxSeoEncoder $oxSeoEncoder */
-        $oxSeoEncoder = oxNew('oxSeoEncoder');
+        /** @var \OxidEsales\Eshop\Core\SeoDecoder $oxSeoEncoder */
+        $oxSeoEncoder = oxNew(\OxidEsales\Eshop\Core\SeoEncoder::class);
         $oxSeoEncoder->getDynamicUrl('index.php?cl=news&amp;fnc=render', 'newspage/',  0);
 
         $this->commandTester->execute(
             array(
                 'url' => 'NewsPage/',
-                'command' => self::commandName,
+                'command' => self::COMMANDNAME,
             )
         );
 
-        $this->assertRegExp('~news.php:\d+~', $this->commandTester->getDisplay());
+        $this->assertRegExp('~NewsController.php:\d+~', $this->commandTester->getDisplay());
     }
 
     public function testClassDontExists()
     {
-        /** @var oxSeoEncoder $oxSeoEncoder */
-        $oxSeoEncoder = oxNew('oxSeoEncoder');
+        /** @var \OxidEsales\Eshop\Core\SeoDecoder $oxSeoEncoder */
+        $oxSeoEncoder = oxNew(\OxidEsales\Eshop\Core\SeoEncoder::class);
         $oxSeoEncoder->getDynamicUrl('index.php?cl=classdontexists', 'class/dont/exists/',  0);
 
         $this->commandTester->execute(
             array(
                 'url' => 'Class/Dont/Exists/',
-                'command' => self::commandName,
+                'command' => self::COMMANDNAME,
             )
         );
 
@@ -126,14 +133,14 @@ class DebugTest extends TestCase
 
     public function testMethodInClassDontExists()
     {
-        /** @var oxSeoEncoder $oxSeoEncoder */
-        $oxSeoEncoder = oxNew('oxSeoEncoder');
+        /** @var \OxidEsales\Eshop\Core\SeoEncoder $oxSeoEncoder */
+        $oxSeoEncoder = oxNew(\OxidEsales\Eshop\Core\SeoEncoder::class);
         $oxSeoEncoder->getDynamicUrl('index.php?cl=news&amp;fnc=nameXYX', 'method/in/class/dont/exists/',  0);
 
         $this->commandTester->execute(
             array(
                 'url' => 'Method/In/Class/Dont/Exists/',
-                'command' => self::commandName,
+                'command' => self::COMMANDNAME,
             )
         );
 
@@ -145,7 +152,7 @@ class DebugTest extends TestCase
      */
     public static function tearDownAfterClass()
     {
-        $db = oxDb::getDb();
+        $db = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
 
         $seoURls[] = $db->quote('newspage/');
         $seoURls[] = $db->quote('class/dont/exists/');
