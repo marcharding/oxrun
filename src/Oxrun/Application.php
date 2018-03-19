@@ -289,6 +289,33 @@ class Application extends BaseApplication
             throw new \Exception('Failed to switch to subshop id ' . $shopId . " Calculate ID: " . $shopIdCalculator->getShopId() . " Config ShopId: " . \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId());
         }
     }
+
+    /**
+     * Get YAML string, either from file or from string
+     *
+     * @param string $ymlString The relative file path, from shop root OR a YAML string
+     * @param string $basePath  Alternative root dir path, if a file is used
+     * 
+     * @return string
+     */
+    public function getYaml($ymlString, $basePath = '')
+    {
+        // is it a file?
+        if (strpos(strtolower($ymlString), '.yml') !== false 
+            || strpos(strtolower($ymlString), '.yaml') !== false
+        ) {
+            if ($basePath == '') {
+                $basePath = $this->getShopDir() . DIRECTORY_SEPARATOR;
+            }
+            $ymlFile = $basePath . $ymlString;
+            if (file_exists($ymlFile)) {
+                $ymlString = file_get_contents($ymlFile);
+            }
+        }
+        
+        return $ymlString;
+    }
+    
     
     /**
      * Find Version on Place into Oxid Legacy Code

@@ -18,12 +18,30 @@ class DebugTest extends TestCase
 {
     const COMMANDNAME = 'route:debug';
 
+    /**
+     * Shop URL, will be read from config
+     *
+     * @var string
+     */
     protected $baseUrl = 'http://localhost';
+
+    /**
+     * Seo path to search for
+     *
+     * @var string
+     */
+    protected $seoKey = 'Nach-Hersteller';
+
     /**
      * @var Route\DebugCommand|CommandTester
      */
     protected $commandTester;
 
+    /**
+     * Prepare
+     *
+     * @return void
+     */
     protected function setUp()
     {
         $app = new Application();
@@ -33,8 +51,7 @@ class DebugTest extends TestCase
 
         $this->baseUrl = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sShopURL');
 
-        // TODO - insert static seo url for "warenkorb"!!?
-
+        // TODO - insert static seo url for seoKey!?
         $this->commandTester = new CommandTester($command);
     }
 
@@ -42,61 +59,61 @@ class DebugTest extends TestCase
     {
         $this->commandTester->execute(
             array(
-                'url' => $this->baseUrl . '/warenkorb/',
+                'url' => $this->baseUrl . "/{$this->seoKey}/",
                 'command' => self::COMMANDNAME,
             )
         );
 
         //echo "\nRESULT: " . $this->commandTester->getDisplay();
-        $this->assertRegExp('~\|\s+Controller\s+\|\s+basket\s+\|~', $this->commandTester->getDisplay());
+        $this->assertRegExp('~\|\s+Controller\s+\|\s+manufacturerlist\s+\|~', $this->commandTester->getDisplay());
     }
 
     public function testHalfBrokenUrl()
     {
         $this->commandTester->execute(
             array(
-                'url' => $this->baseUrl . '/warenkorb',
+                'url' => $this->baseUrl . '/' . $this->seoKey,
                 'command' => self::COMMANDNAME,
             )
         );
 
-        $this->assertRegExp('~\|\s+Controller\s+\|\s+basket\s+\|~', $this->commandTester->getDisplay());
+        $this->assertRegExp('~\|\s+Controller\s+\|\s+manufacturerlist\s+\|~', $this->commandTester->getDisplay());
     }
 
     public function testOnlyPath()
     {
         $this->commandTester->execute(
             array(
-                'url' => 'warenkorb/',
+                'url' => $this->seoKey. '/',
                 'command' => self::COMMANDNAME,
             )
         );
 
-        $this->assertRegExp('~\|\s+Controller\s+\|\s+basket\s+\|~', $this->commandTester->getDisplay());
+        $this->assertRegExp('~\|\s+Controller\s+\|\s+manufacturerlist\s+\|~', $this->commandTester->getDisplay());
     }
 
     public function testHalfOnlyPath()
     {
         $this->commandTester->execute(
             array(
-                'url' => 'warenkorb',
+                'url' => $this->seoKey,
                 'command' => self::COMMANDNAME,
             )
         );
 
-        $this->assertRegExp('~\|\s+Controller\s+\|\s+basket\s+\|~', $this->commandTester->getDisplay());
+        $this->assertRegExp('~\|\s+Controller\s+\|\s+manufacturerlist\s+\|~', $this->commandTester->getDisplay());
     }
 
     public function testGiveMeClassPath()
     {
         $this->commandTester->execute(
             array(
-                'url' => 'warenkorb',
+                'url' => $this->seoKey,
                 'command' => self::COMMANDNAME,
             )
         );
 
-        $this->assertContains('basket.php', $this->commandTester->getDisplay());
+        $this->assertContains('manufacturerlist', $this->commandTester->getDisplay());
     }
 
     public function testGiveFunctionLineNumber()
