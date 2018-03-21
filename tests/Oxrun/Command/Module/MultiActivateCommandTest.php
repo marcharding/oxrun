@@ -33,6 +33,16 @@ class MultiActivateCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
+                'module' => "blacklist:\n  1:\n    - oepaypal\n"
+            )
+        );
+
+        $this->assertContains("Module blacklisted: 'oepaypal'", $commandTester->getDisplay());
+        
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(
+            array(
+                'command' => $command->getName(),
                 'module' => "whitelist:\n  1:\n    - not_and_existing_module\n"
             )
         );
