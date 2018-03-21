@@ -21,14 +21,15 @@ class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
         $databaseConnection = new DatabaseConnection();
         $databaseConnection
             // Must be right to work correct
-            ->setHost('127.0.0.1')
+            ->setHost($oConfig->getConfigParam('dbHost'))
             ->setPort('3306')
-            ->setUser('root')
-            ->setPass('')
-            ->setDatabase('oxid');
+            ->setUser($oConfig->getConfigParam('dbUser'))
+            ->setPass($oConfig->getConfigParam('dbPwd'))
+            ->setDatabase($oConfig->getConfigParam('dbName'));
 
         $this->testSubject = $databaseConnection;
     }
@@ -46,7 +47,7 @@ class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase
         $this->testSubject->setDatabase('oxid_unbekannt');
 
         self::assertFalse($this->testSubject->canConnectToMysql());
-        self::assertContains("Unknown database 'oxid_unbekannt'", $this->testSubject->getLastErrorMsg());
+        self::assertContains("database 'oxid_unbekannt'", $this->testSubject->getLastErrorMsg());
     }
 
     /**

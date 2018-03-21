@@ -65,15 +65,9 @@ class MultiActivateCommand extends Command
         $skipDeactivation = $input->getOption('skipDeactivation');
         $skipClear = $input->getOption('skipClear');
 
-        // now try to ready specified YAML file
-        $moduleYml = $input->getArgument('module');
-        $ymlFile = $app->getShopDir() . DIRECTORY_SEPARATOR . $moduleYml;
-        if (!file_exists($ymlFile)) {
-            $output->writeLn("<error>Yaml file '$ymlFile' not found!</error>");
-            return;
-        }
-        $moduleValues = Yaml::parse($ymlFile);
-
+        // now try to read YAML
+        $moduleYml = $app->getYaml($input->getArgument('module'));
+        $moduleValues = Yaml::parse($moduleYml);
         if ($moduleValues && is_array($moduleValues)) {
             // use whitelist
             if (isset($moduleValues['whitelist'])) {
@@ -141,6 +135,8 @@ class MultiActivateCommand extends Command
             } else {
                 $output->writeLn("<comment>No modules to activate for subshop '$shopId'!</comment>");
             }
+        } else {
+            $output->writeLn("<comment>No valid YAML data found!</comment>");
         }
     }
 

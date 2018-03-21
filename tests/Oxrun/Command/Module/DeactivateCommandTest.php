@@ -19,11 +19,11 @@ class DeactivateCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'invoicepdf'
+                'module' => 'oepaypal'
             )
         );
 
-        $this->assertContains('Module invoicepdf deactivated.', $commandTester->getDisplay());
+        $this->assertContains('Module oepaypal deactivated', $commandTester->getDisplay());
     }
 
 }

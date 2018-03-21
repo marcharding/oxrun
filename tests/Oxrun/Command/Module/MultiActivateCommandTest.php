@@ -4,54 +4,46 @@ namespace Oxrun\Command\Module;
 
 use Oxrun\Application;
 use Oxrun\TestCase;
+use Oxrun\Command\Cache\ClearCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class ActivateCommandTest extends TestCase
+class MultiActivateCommandTest extends TestCase
 {
     public function testExecute()
     {
         $app = new Application();
         $app->add(new ActivateCommand());
+        $app->add(new ClearCommand());
         $app->add(new DeactivateCommand());
+        $app->add(new MultiActivateCommand());
 
-        $command = $app->find('module:deactivate');
-
-        $commandTester = new CommandTester($command);
-        $commandTester->execute(
-            array(
-                'command' => $command->getName(),
-                'module' => 'oepaypal'
-            )
-        );
-
-        $command = $app->find('module:activate');
+        $command = $app->find('module:multiactivate');
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'oepaypal'
+                'module' => "whitelist:\n  1:\n    - oepaypal\n"
             )
         );
 
         $this->assertContains('Module oepaypal activated', $commandTester->getDisplay());
 
-
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'oepaypal'
+                'module' => "blacklist:\n  1:\n    - oepaypal\n"
             )
         );
 
-        $this->assertContains('Module oepaypal already activated', $commandTester->getDisplay());
-
+        $this->assertContains("Module blacklisted: 'oepaypal'", $commandTester->getDisplay());
+        
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'not_and_existing_module'
+                'module' => "whitelist:\n  1:\n    - not_and_existing_module\n"
             )
         );
 

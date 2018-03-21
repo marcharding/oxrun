@@ -44,7 +44,7 @@ class MultiSetCommand extends Command
             ->setDescription('Sets multiple config values from yaml file')
             ->addArgument('configfile', InputArgument::REQUIRED, 'The yaml file name, relative to shop base.');
     }
-
+    
     /**
      * Executes the current command.
      *
@@ -59,14 +59,10 @@ class MultiSetCommand extends Command
         /* @var \Oxrun\Application $app */
         $app = $this->getApplication();
 
-        // now try to read specified YAML file
-        $mallYml = $input->getArgument('configfile');
-        $ymlFile = $app->getShopDir() . DIRECTORY_SEPARATOR . $mallYml;
-        if (!file_exists($ymlFile)) {
-            $output->writeLn("<error>Yaml file '$ymlFile' not found!</error>");
-            return;
-        }
-        $mallValues = Yaml::parse($ymlFile);
+        // now try to read YAML
+        $mallYml = $app->getYaml($input->getArgument('configfile'));
+        $mallValues = Yaml::parse($mallYml);
+
         if ($mallValues && is_array($mallValues['config'])) {
             $mallSettings = $mallValues['config'];
             foreach ($mallSettings as $shopId => $configData) {

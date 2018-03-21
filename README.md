@@ -551,6 +551,12 @@ whitelist:
 
 Supports either a __"whitelist"__ or a __"blacklist"__ entry with multiple shop ids and the desired module ids to activate (whitelist) or to exclude from activation (blacklist).
 
+If you want, you can also specify __a YAML string on the command line instead of a file__, e.g.:
+
+```bash
+../vendor/bin/oxrun module:multiactivate $'whitelist:\n  1:\n    - oepaypal\n' --shopId=1
+```
+
 ### Options:
 
 **shopId:**
@@ -675,3 +681,11 @@ route:debug
 * Name: `--shopId`
 * Is value required: no
 * Description: <none>
+
+# Run the unit tests
+
+The unit tests require a configured shop and a database. To start the tests, run the following command __in the "source" folder of your OXID 6 installation__ and set the correct path to the "oxrun" vendor directory, e.g.:
+
+```bash
+../vendor/bin/phpunit /var/www/html/oxid6/vendor/smxsm/oxrun/
+```
