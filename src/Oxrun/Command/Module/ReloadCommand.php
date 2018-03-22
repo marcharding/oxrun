@@ -8,10 +8,12 @@
 
 namespace Oxrun\Command\Module;
 
+use Oxrun\Command\Cache\ClearCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ReloadCommand extends Command
@@ -25,7 +27,8 @@ class ReloadCommand extends Command
         $this
             ->setName('module:reload')
             ->setDescription('Deactivate and activate a module')
-            ->addArgument('module', InputArgument::REQUIRED, 'Module name');
+            ->addArgument('module', InputArgument::REQUIRED, 'Module name')
+            ->addOption('force', 'f',InputOption::VALUE_NONE, 'Force reload Module');
     }
 
     /**
@@ -38,9 +41,24 @@ class ReloadCommand extends Command
     {
         /** @var \Oxrun\Application $app */
         $app = $this->getApplication();
-        $app->find('module:deactivate')->run($input, $output);
-        $app->find('cache:clear')->run(new ArgvInput([]), $output);
-        $app->find('module:activate')->run($input, $output);
+
+        $clearCommand      = $app->find('cache:clear');
+        $deactivateCommand = $app->find('module:deactivate');
+        $activateCommand   = $app->find('module:activate');
+
+        $argvInputClearCache = new ArgvInput([''], $clearCommand->getDefinition());
+        $argvInputDeactivate = new ArgvInput(['', $input->getArgument('module')], $deactivateCommand->getDefinition());
+        $argvInputActivate   = new ArgvInput(['', $input->getArgument('module')], $activateCommand->getDefinition());
+
+        if ($input->getOption('force')) {
+            $argvInputClearCache->setOption('force', true);
+        }
+
+        //Run Command
+        $clearCommand->execute($argvInputClearCache, $output);
+        $deactivateCommand->execute($argvInputDeactivate, $output);
+        $clearCommand->execute($argvInputClearCache, $output);
+        $activateCommand->execute($argvInputActivate, $output);
     }
 
     /**
