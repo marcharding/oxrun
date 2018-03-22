@@ -8,11 +8,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ClearCommandTest extends TestCase
 {
-    /**
-     * @var string
-     */
-    protected $change_back_to_origin = null;
-
     public function testExecute()
     {
         $app = new Application();
@@ -31,7 +26,6 @@ class ClearCommandTest extends TestCase
         $this->assertContains('Cache cleared.', $commandTester->getDisplay());
     }
 
-
     /**
      * @expectedException \Exception
      */
@@ -47,12 +41,7 @@ class ClearCommandTest extends TestCase
         $current_owner = posix_getuid();
 
         if ($current_owner == $owner) {
-            $this->change_back_to_origin = ['userid' => $owner, 'path' => $compileDir];
-            chown($compileDir, 'daemon');
-            $hasChange = fileowner($compileDir);
-            if ($hasChange == $owner) {
-                throw new \PHPUnit_Framework_SkippedTestError('Process has\'t premission to change owner ');
-            };
+            throw new \PHPUnit_Framework_SkippedTestError('Test can\'t be testet, becouse the compileDir has the same owner ');
         }
 
         $command = $app->find('cache:clear');
@@ -64,19 +53,4 @@ class ClearCommandTest extends TestCase
             )
         );
     }
-
-    /**
-     * Tears down the fixture, for example, close a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        if ($this->change_back_to_origin !== null) {
-            chown($this->change_back_to_origin['path'], $this->change_back_to_origin['userid']);
-            $this->change_back_to_origin = null;
-        }
-        parent::tearDown();
-    }
-
-
 }
