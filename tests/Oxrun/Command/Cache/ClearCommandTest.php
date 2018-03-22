@@ -18,7 +18,8 @@ class ClearCommandTest extends TestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             array(
-                'command' => $command->getName()
+                'command' => $command->getName(),
+                '--force' => 1
             )
         );
 
