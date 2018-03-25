@@ -22,7 +22,7 @@ class FixCommand extends Command
     {
         $this
             ->setName('module:fix')
-            ->setDescription('Fixes a module')
+            ->setDescription('Fixes a module __[NOT IMPLEMENTED YET]__')
             ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
             ->addArgument('module', InputArgument::REQUIRED, 'Module name');
     }

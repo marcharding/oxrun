@@ -44,11 +44,40 @@ class MultiActivateCommand extends Command
     {
         $this
             ->setName('module:multiactivate')
-            ->setDescription('Activate multiple modules')
+            ->setDescription('Activates multiple modules, based on a YAML file')
             ->addOption('shopId', null, InputOption::VALUE_REQUIRED, "The shop id.")
             ->addOption('skipDeactivation', 's', InputOption::VALUE_NONE, "Skip deactivation of modules, only activate.")
             ->addOption('skipClear', 'c', InputOption::VALUE_NONE, "Skip cache clearing.")
-            ->addArgument('module', InputArgument::REQUIRED, 'YAML module list filename');
+            ->addArgument('module', InputArgument::REQUIRED, 'YAML module list filename or YAML string');
+
+$help = <<<HELP
+<info>usage:</info>
+<comment>oxrun module:multiactivate configs/modules.yml</comment>
+- to activate all modules defined in the file "configs/modules.yml" based
+on a white- or blacklist
+
+Example:
+
+```yaml
+whitelist:
+1:
+    - ocb_cleartmp
+    - moduleinternals
+    #- ddoevisualcms
+    #- ddoewysiwyg
+2:
+    - ocb_cleartmp
+```
+
+Supports either a __"whitelist"__ or a __"blacklist"__ entry with multiple shop ids and the desired module ids to activate (whitelist) or to exclude from activation (blacklist).
+
+If you want, you can also specify __a YAML string on the command line instead of a file__, e.g.:
+
+```bash
+../vendor/bin/oxrun module:multiactivate $'whitelist:\n  1:\n    - oepaypal\n' --shopId=1
+```
+HELP;
+            $this->setHelp($help);
     }
 
     /**

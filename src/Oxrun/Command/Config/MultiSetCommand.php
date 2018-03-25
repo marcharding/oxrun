@@ -42,7 +42,39 @@ class MultiSetCommand extends Command
         $this
             ->setName('config:multiset')
             ->setDescription('Sets multiple config values from yaml file')
-            ->addArgument('configfile', InputArgument::REQUIRED, 'The yaml file name, relative to shop base.');
+            ->addArgument('configfile', InputArgument::REQUIRED, 'The file containing the config values, see malls.yml.dist. The file path is relative to the shop root. You can also pass a YAML string on the command line.');
+
+$help = <<<HELP
+<info>YAML example:</info>
+```yaml
+config:
+  1:
+    blReverseProxyActive: 
+      variableType: bool
+      variableValue: false
+    # simple string type
+    sMallShopURL: http://myshop.dev.local
+    sMallSSLShopURL: http://myshop.dev.local
+    myMultiVal:
+      variableType: aarr
+      variableValue:
+        - /foo/bar/
+        - /bar/foo/
+      # optional module id
+      moduleId: my_module
+  2:
+    blReverseProxyActive: 
+...
+```
+
+If you want, you can also specify __a YAML string on the command line instead of a file__, e.g.:
+
+```bash
+../vendor/bin/oxrun module:multiset $'config:\n  1:\n    foobar: barfoo\n' --shopId=1
+```    
+HELP;
+            $this->setHelp($help);
+                        
     }
     
     /**

@@ -51,292 +51,43 @@ __Please note:__ since activating modules and updating config values requires a 
 
 # Available commands
 
-cache:clear
------------
 
-* Description: Clears the cache
-* Usage: `cache:clear`
 
-### Options:
+misc:phpstorm:metadata
+----------------------
 
-cms:update
-----------
+* Description: Generate a PhpStorm metadata file for auto-completion.
+* Usage:
 
-* Description: Updates a cms page
-* Usage: `cms:update [--title[="..."]] [--content[="..."]] [--language="..."] [--active="..."] ident`
+  * `misc:phpstorm:metadata [-o|--output-dir OUTPUT-DIR]`
 
-### Arguments:
-
-**ident:**
-
-* Name: ident
-* Description: Content ident
+Generate a PhpStorm metadata file for auto-completion.
 
 ### Options:
 
-**title:**
+**output-dir:**
 
-* Name: `--title`
-* Is value required: no
-* Description: Content title
-
-**content:**
-
-* Name: `--content`
-* Is value required: no
-* Description: Content body
-
-**language:**
-
-* Name: `--language`
+* Name: `--output-dir`
+* Shortcut: `-o`
 * Is value required: yes
-* Description: Content language
+* Description: Writes the metadata for PhpStorm to the specified directory.
 
-**active:**
+misc:generate:documentation
+---------------------------
 
-* Name: `--active`
-* Is value required: yes
-* Description: Content active
+* Description: Generate a raw command documentation of the available commands
+* Usage:
 
-config:get
-----------
+  * `misc:generate:documentation`
 
-* Description: Gets a config value
-* Usage: `config:get [--shopId[="..."]] [--moduleId[="..."]] variableName`
+Generate a raw command documentation of the available commands
 
 ### Arguments:
 
-**variableName:**
+**command:**
 
-* Name: variableName
-* Description: Variable name
-
-### Options:
-
-**shopId:**
-
-* Name: `--shopId`
-* Is value required: no
-* Description: <none>
-
-**moduleId:**
-
-* Name: `--moduleId`
-* Is value required: no
-* Description: <none>
-
-config:set
-----------
-
-* Description: Sets a config value
-* Usage: `config:set [--variableType="..."] [--shopId[="..."]] [--moduleId[="..."]] variableName variableValue`
-
-### Arguments:
-
-**variableName:**
-
-* Name: variableName
-* Description: Variable name
-
-**variableValue:**
-
-* Name: variableValue
-* Description: Variable value
-
-### Options:
-
-**variableType:**
-
-* Name: `--variableType`
-* Is value required: yes
-* Description: Variable type
-
-**shopId:**
-
-* Name: `--shopId`
-* Is value required: no
-* Description: <none>
-
-**moduleId:**
-
-* Name: `--moduleId`
-* Is value required: no
-* Description: <none>
-
-config:multiset
-----------
-
-* Description: Sets multiple config values for multiple subshops, defined in a yaml file
-* Usage: `config:multiset configfile`
-
-### Arguments:
-
-**configfile:**
-
-The file containing the config values, see malls.yml.dist. The file path is relative to the shop root.
-
-```yaml
-config:
-  1:
-    blReverseProxyActive: 
-      variableType: bool
-      variableValue: false
-    # simple string type
-    sMallShopURL: http://myshop.dev.local
-    sMallSSLShopURL: http://myshop.dev.local
-    myMultiVal:
-      variableType: aarr
-      variableValue:
-        - /foo/bar/
-        - /bar/foo/
-      # optional module id
-      moduleId: my_module
-  2:
-    blReverseProxyActive: 
-...
-```
-
-config:shop:get
----------------
-
-* Description: Sets a shop config value
-* Usage: `config:shop:get [--shopId[="..."]] variableName`
-
-### Arguments:
-
-**variableName:**
-
-* Name: variableName
-* Description: Variable name
-
-### Options:
-
-**shopId:**
-
-* Name: `--shopId`
-* Is value required: no
-* Description: oxbaseshop
-* Default: `'oxbaseshop'`
-
-config:shop:set
----------------
-
-* Description: Sets a shop config value
-* Usage: `config:shop:set [--shopId[="..."]] variableName variableValue`
-
-### Arguments:
-
-**variableName:**
-
-* Name: variableName
-* Description: Variable name
-
-**variableValue:**
-
-* Name: variableValue
-* Description: Variable value
-
-### Options:
-
-**shopId:**
-
-* Name: `--shopId`
-* Is value required: no
-* Description: oxbaseshop
-* Default: `'oxbaseshop'`
-
-config:export
----------------
-
-* Description: Exports all config values as yaml files, interacts with the [Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module [__which currently isn't fully ported to OXID 6 yet!__](https://github.com/OXIDprojects/oxid_modules_config/tree/dev-6.0-wip)
-* Usage: `config:export`
-
-### Arguments:
-
-### Options:
-
-**no-debug:**
-
-* Name: `--no-debug`
-* Is value required: no
-* Description: No debug ouput
-
-**env:**
-
-* Name: `--env`
-* Is value required: no
-* Description: set specific environment, corresponds to a specific folder for the yaml files
-* Example: `--env=stage`
-
-**force-cleanup:**
-
-* Name: `--force-cleanup`
-* Is value required: no
-* Description: Force cleanup on error
-
-config:import
----------------
-
-* Description: Imports all config values from yaml files, interacts with the [Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module, [__which currently isn't fully ported to OXID 6 yet!__](https://github.com/OXIDprojects/oxid_modules_config/tree/dev-6.0-wip)
-* Usage: `config:import`
-
-### Arguments:
-
-### Options:
-
-**no-debug:**
-
-* Name: `--no-debug`
-* Is value required: no
-* Description: No debug ouput
-
-**env:**
-
-* Name: `--env`
-* Is value required: no
-* Description: set specific environment, corresponds to a specific folder for the yaml files
-* Example: `--env=stage`
-
-**force-cleanup:**
-
-* Name: `--force-cleanup`
-* Is value required: no
-* Description: Force cleanup on error
-
-db:dump
--------
-
-* Description: Dumps the the current shop database
-* Usage: `db:dump [--file="..."]`
-
-Dumps the the current shop database.
-
-Requires php exec and MySQL CLI tools installed on your system.
-
-### Options:
-
-**file:**
-
-* Name: `--file`
-* Is value required: yes
-* Description: Dump sql in to this file
-
-db:import
----------
-
-* Description: Import a sql file
-* Usage: `db:import file`
-
-Imports an SQL file on the current shop database.
-
-Requires php exec and MySQL CLI tools installed on your system.
-
-### Arguments:
-
-**file:**
-
-* Name: file
-* Description: The sql file which is to be imported
+* Name: command
+* Description: The command to execute
 
 ### Options:
 
@@ -344,7 +95,9 @@ db:query
 --------
 
 * Description: Executes a query
-* Usage: `db:query [--raw] query`
+* Usage:
+
+  * `db:query [--raw] [--] <query>`
 
 Executes an SQL query on the current shop database. Wrap your SQL in quotes.
 
@@ -369,11 +122,143 @@ Requires php exec and MySQL CLI tools installed on your system.
 * Description: Raw output
 * Default: `false`
 
-install:shop __[DEPRECATED!]__
-------------
+db:import
+---------
 
-* Description: Installs the shop
-* Usage: `install:shop [--oxidVersion[="..."]] [--installationFolder[="..."]] [--dbHost="..."] [--dbUser="..."] [--dbPwd="..."] [--dbName="..."] [--dbPort[="..."]] [--installSampleData[="..."]] [--shopURL="..."] [--adminUser="..."] [--adminPassword="..."]`
+* Description: Import a sql file
+* Usage:
+
+  * `db:import <file>`
+
+Imports an SQL file on the current shop database.
+
+Requires php exec and MySQL CLI tools installed on your system.
+
+### Arguments:
+
+**file:**
+
+* Name: file
+* Description: The sql file which is to be imported
+
+### Options:
+
+db:list
+-------
+
+* Description: List of all Tables
+* Usage:
+
+  * `db:list [-p|--plain] [-t|--pattern PATTERN]`
+
+List Tables
+
+usage:
+    oxrun db:list --pattern oxseo%,oxuser
+    - To dump all Tables, but `oxseo`, `oxvoucher`, and `oxvoucherseries` without data.
+      possibilities: oxseo%,oxuser,%logs%
+      
+
+
+### Options:
+
+**plain:**
+
+* Name: `--plain`
+* Shortcut: `-p`
+* Accept value: no
+* Is value required: no
+* Description: print list as comma separated.
+* Default: `false`
+
+**pattern:**
+
+* Name: `--pattern`
+* Shortcut: `-t`
+* Is value required: yes
+* Description: table name pattern test. e.g. oxseo%,oxuser
+
+db:dump
+-------
+
+* Description: Dumps the the current shop database
+* Usage:
+
+  * `db:dump [--file FILE] [-t|--table TABLE] [-i|--ignoreViews] [-a|--anonymous] [-w|--withoutTableData WITHOUTTABLEDATA]`
+
+Dump the current shop database.
+
+usage:
+    oxrun db:dump --withoutTableData oxseo,oxvou%
+    - To dump all Tables, but `oxseo`, `oxvoucher`, and `oxvoucherseries` without data.
+      possibilities: oxseo%,oxuser,%logs%
+      
+    oxrun db:dump --table %user%
+    - to dump only those tables `oxuser` `oxuserbasketitems` `oxuserbaskets` `oxuserpayments` 
+
+    oxrun db:dump --anonymous # Perfect for Stage Server
+    - Those table without data: `oxseo`, `oxseologs`, `oxseohistory`, `oxuser`, `oxuserbasketitems`, `oxuserbaskets`, `oxuserpayments`, `oxnewssubscribed`, `oxremark`, `oxvouchers`, `oxvoucherseries`, `oxaddress`, `oxorder`, `oxorderarticles`, `oxorderfiles`, `oepaypal_order`, `oepaypal_orderpayments`.
+    
+    oxrun db:dump -v 
+    - With verbose mode you will see the mysqldump command
+      (`mysqldump -u 'root' -h 'oxid_db' -p ... `)
+      
+    oxrun db:dump --file dump.sql 
+    - Put the Output into a File
+    
+** Only existing tables will be exported. No matter what was required.
+    
+Requires php, exec and MySQL CLI tools installed on your system.
+
+### Options:
+
+**file:**
+
+* Name: `--file`
+* Is value required: yes
+* Description: Dump sql in to this file
+
+**table:**
+
+* Name: `--table`
+* Shortcut: `-t`
+* Is value required: yes
+* Description: name of table to dump only. Default all tables. Use comma separated list and or pattern e.g. %voucher%
+
+**ignoreViews:**
+
+* Name: `--ignoreViews`
+* Shortcut: `-i`
+* Accept value: no
+* Is value required: no
+* Description: Ignore views
+* Default: `false`
+
+**anonymous:**
+
+* Name: `--anonymous`
+* Shortcut: `-a`
+* Accept value: no
+* Is value required: no
+* Description: Do not export table with person related data.
+* Default: `false`
+
+**withoutTableData:**
+
+* Name: `--withoutTableData`
+* Shortcut: `-w`
+* Is value required: yes
+* Description: Table name to dump without data. Use comma separated list and or pattern e.g. %voucher%
+
+install:shop __[DEPRECATED]__
+-----------------------------
+
+* Description: Installs the shop, for OXID 6 composer is used instead!
+* Usage:
+
+  * `install:shop __[DEPRECATED]__ [--oxidVersion [OXIDVERSION]] [--installationFolder [INSTALLATIONFOLDER]] [--dbHost DBHOST] [--dbUser DBUSER] [--dbPwd DBPWD] [--dbName DBNAME] [--dbPort [DBPORT]] [--installSampleData [INSTALLSAMPLEDATA]] [--shopURL SHOPURL] [--adminUser ADMINUSER] [--adminPassword ADMINPASSWORD]`
+
+Installs the shop, for OXID 6 composer is used instead!
 
 ### Options:
 
@@ -382,14 +267,13 @@ install:shop __[DEPRECATED!]__
 * Name: `--oxidVersion`
 * Is value required: no
 * Description: Oxid version
-* Default: `'v4.9.5'`
 
 **installationFolder:**
 
 * Name: `--installationFolder`
 * Is value required: no
 * Description: Installation folder
-* Default: `'/vagrant/web/oxrun'`
+* Default: `'/var/www/html/gerstaecker-oxid6/source'`
 
 **dbHost:**
 
@@ -444,48 +328,440 @@ install:shop __[DEPRECATED!]__
 * Name: `--adminUser`
 * Is value required: yes
 * Description: Admin user email/login
+* Default: `'admin@example.com'`
 
 **adminPassword:**
 
 * Name: `--adminPassword`
 * Is value required: yes
 * Description: Admin password
+* Default: `'oxid-123456'`
 
-misc:generate:documentation
----------------------------
+cache:clear
+-----------
 
-* Description: Generate a raw command documentation of the available commands
-* Usage: `misc:generate:documentation`
+* Description: Clears the cache
+* Usage:
+
+  * `cache:clear [-f|--force]`
+
+Clears the cache
+
+### Options:
+
+**force:**
+
+* Name: `--force`
+* Shortcut: `-f`
+* Accept value: no
+* Is value required: no
+* Description: Try to delete the cache anyway. [danger or permission denied]
+* Default: `false`
+
+route:debug
+-----------
+
+* Description: Returns the route. Which controller and parameters are called.
+* Usage:
+
+  * `route:debug [--shopId [SHOPID]] [-c|--copy] [--] <url>`
+
+Returns the route. Which controller and parameters are called.
 
 ### Arguments:
 
-**command:**
+**url:**
 
-* Name: command
-* Description: The command to execute
-
-### Options:
-
-misc:phpstorm:metadata
-----------------------
-
-* Description: Generate a PhpStorm metadata file for autocompletion
-* Usage: `misc:phpstorm:metadata`
+* Name: url
+* Description: Website URL. Full or Path
 
 ### Options:
 
-**output-dir:**
+**shopId:**
 
-* Name: `--output-dir`, `-o`
-* Accept value: yes
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
+
+**copy:**
+
+* Name: `--copy`
+* Shortcut: `-c`
+* Accept value: no
+* Is value required: no
+* Description: Copy file path from the class to the clipboard (only MacOS)
+* Default: `false`
+
+config:get
+----------
+
+* Description: Gets a config value
+* Usage:
+
+  * `config:get [--shopId [SHOPID]] [--moduleId [MODULEID]] [--] <variableName>`
+
+Gets a config value
+
+### Arguments:
+
+**variableName:**
+
+* Name: variableName
+* Description: Variable name
+
+### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
+
+**moduleId:**
+
+* Name: `--moduleId`
+* Is value required: no
+* Description: <none>
+
+config:export
+-------------
+
+* Description: Export shop config
+* Usage:
+
+  * `config:export [--no-debug] [--env [ENV]] [--force-cleanup [FORCE-CLEANUP]]`
+
+Info:
+Exports all config values to yaml files, interacts with the
+[Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module,
+[__which currently isn't fully ported to OXID 6 yet!__](https://github.com/OXIDprojects/oxid_modules_config/tree/dev-6.0-wip)
+
+### Options:
+
+**no-debug:**
+
+* Name: `--no-debug`
+* Accept value: no
+* Is value required: no
+* Description: No debug ouput
+* Default: `false`
+
+**env:**
+
+* Name: `--env`
+* Is value required: no
+* Description: set specific environment, corresponds to a specific folder for the yaml files
+
+**force-cleanup:**
+
+* Name: `--force-cleanup`
+* Is value required: no
+* Description: Force cleanup on error
+
+config:shop:set
+---------------
+
+* Description: Sets a shop config value
+* Usage:
+
+  * `config:shop:set [--shopId [SHOPID]] [--] <variableName> <variableValue>`
+
+Sets a shop config value
+
+### Arguments:
+
+**variableName:**
+
+* Name: variableName
+* Description: Variable name
+
+**variableValue:**
+
+* Name: variableValue
+* Description: Variable value
+
+### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: oxbaseshop
+* Default: `'oxbaseshop'`
+
+config:set
+----------
+
+* Description: Sets a config value
+* Usage:
+
+  * `config:set [--variableType VARIABLETYPE] [--shopId [SHOPID]] [--moduleId [MODULEID]] [--] <variableName> <variableValue>`
+
+Sets a config value
+
+### Arguments:
+
+**variableName:**
+
+* Name: variableName
+* Description: Variable name
+
+**variableValue:**
+
+* Name: variableValue
+* Description: Variable value
+
+### Options:
+
+**variableType:**
+
+* Name: `--variableType`
 * Is value required: yes
-* Description: Writes the metadata for PhpStorm to the specified directory.
+* Description: Variable type
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
+
+**moduleId:**
+
+* Name: `--moduleId`
+* Is value required: no
+* Description: <none>
+
+config:import
+-------------
+
+* Description: Import shop config
+* Usage:
+
+  * `config:import [--no-debug] [--env [ENV]] [--force-cleanup [FORCE-CLEANUP]]`
+
+Info:
+Imports all config values from yaml files, interacts with the
+[Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module,
+[__which currently isn't fully ported to OXID 6 yet!__](https://github.com/OXIDprojects/oxid_modules_config/tree/dev-6.0-wip)
+
+### Options:
+
+**no-debug:**
+
+* Name: `--no-debug`
+* Accept value: no
+* Is value required: no
+* Description: No debug ouput
+* Default: `false`
+
+**env:**
+
+* Name: `--env`
+* Is value required: no
+* Description: set specific environment, corresponds to a specific folder for the yaml files
+
+**force-cleanup:**
+
+* Name: `--force-cleanup`
+* Is value required: no
+* Description: Force cleanup on error
+
+config:multiset
+---------------
+
+* Description: Sets multiple config values from yaml file
+* Usage:
+
+  * `config:multiset <configfile>`
+
+YAML example:
+```yaml
+config:
+  1:
+    blReverseProxyActive: 
+      variableType: bool
+      variableValue: false
+    # simple string type
+    sMallShopURL: http://myshop.dev.local
+    sMallSSLShopURL: http://myshop.dev.local
+    myMultiVal:
+      variableType: aarr
+      variableValue:
+        - /foo/bar/
+        - /bar/foo/
+      # optional module id
+      moduleId: my_module
+  2:
+    blReverseProxyActive: 
+...
+```
+
+If you want, you can also specify __a YAML string on the command line instead of a file__, e.g.:
+
+```bash
+../vendor/bin/oxrun module:multiset $'config:
+  1:
+    foobar: barfoo
+' --shopId=1
+```    
+
+### Arguments:
+
+**configfile:**
+
+* Name: configfile
+* Description: The file containing the config values, see malls.yml.dist. The file path is relative to the shop root. You can also pass a YAML string on the command line.
+
+### Options:
+
+config:shop:get
+---------------
+
+* Description: Sets a shop config value
+* Usage:
+
+  * `config:shop:get [--shopId [SHOPID]] [--] <variableName>`
+
+Sets a shop config value
+
+### Arguments:
+
+**variableName:**
+
+* Name: variableName
+* Description: Variable name
+
+### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: oxbaseshop
+* Default: `'oxbaseshop'`
+
+module:generate
+---------------
+
+* Description: Generates a module skeleton __[NOT IMPLEMENTED YET]__
+* Usage:
+
+  * `module:generate [--shopId [SHOPID]] [--] <module>`
+
+Generates a module skeleton __[NOT IMPLEMENTED YET]__
+
+### Arguments:
+
+**module:**
+
+* Name: module
+* Description: Module name
+
+### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
+
+module:multiactivate
+--------------------
+
+* Description: Activates multiple modules, based on a YAML file
+* Usage:
+
+  * `module:multiactivate [--shopId SHOPID] [-s|--skipDeactivation] [-c|--skipClear] [--] <module>`
+
+usage:
+oxrun module:multiactivate configs/modules.yml
+- to activate all modules defined in the file "configs/modules.yml" based
+on a white- or blacklist
+
+Example:
+
+```yaml
+whitelist:
+1:
+    - ocb_cleartmp
+    - moduleinternals
+    #- ddoevisualcms
+    #- ddoewysiwyg
+2:
+    - ocb_cleartmp
+```
+
+Supports either a __"whitelist"__ or a __"blacklist"__ entry with multiple shop ids and the desired module ids to activate (whitelist) or to exclude from activation (blacklist).
+
+If you want, you can also specify __a YAML string on the command line instead of a file__, e.g.:
+
+```bash
+../vendor/bin/oxrun module:multiactivate $'whitelist:
+  1:
+    - oepaypal
+' --shopId=1
+```
+
+### Arguments:
+
+**module:**
+
+* Name: module
+* Description: YAML module list filename or YAML string
+
+### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: yes
+* Description: The shop id.
+
+**skipDeactivation:**
+
+* Name: `--skipDeactivation`
+* Shortcut: `-s`
+* Accept value: no
+* Is value required: no
+* Description: Skip deactivation of modules, only activate.
+* Default: `false`
+
+**skipClear:**
+
+* Name: `--skipClear`
+* Shortcut: `-c`
+* Accept value: no
+* Is value required: no
+* Description: Skip cache clearing.
+* Default: `false`
+
+module:list
+-----------
+
+* Description: Lists all modules
+* Usage:
+
+  * `module:list [--shopId [SHOPID]]`
+
+Lists all modules
+
+### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: <none>
 
 module:activate
 ---------------
 
 * Description: Activates a module
-* Usage: `module:activate module`
+* Usage:
+
+  * `module:activate [--shopId [SHOPID]] [--] <module>`
+
+Activates a module
 
 ### Arguments:
 
@@ -506,7 +782,11 @@ module:deactivate
 -----------------
 
 * Description: Deactivates a module
-* Usage: `module:deactivate module`
+* Usage:
+
+  * `module:deactivate [--shopId [SHOPID]] [--] <module>`
+
+Deactivates a module
 
 ### Arguments:
 
@@ -523,39 +803,22 @@ module:deactivate
 * Is value required: no
 * Description: <none>
 
-module:multiactivate
----------------
+module:reload
+-------------
 
-* Description: Activates multiple modules, based on a YAML file
-* Usage: `module:multiactivate <yamlfile.yml>`
+* Description: Deactivate and activate a module
+* Usage:
+
+  * `module:reload [--shopId [SHOPID]] [--] <module>`
+
+Deactivate and activate a module
 
 ### Arguments:
 
-**modulefile:**
+**module:**
 
-* Name: modulefile
-* Description: Module definition file name, e.g. "modules.yml", relative to the shop base dir.
-
-Example:
-
-```yaml
-whitelist:
-  1:
-    - ocb_cleartmp
-    - moduleinternals
-    #- ddoevisualcms
-    #- ddoewysiwyg
-  2:
-    - ocb_cleartmp
-```
-
-Supports either a __"whitelist"__ or a __"blacklist"__ entry with multiple shop ids and the desired module ids to activate (whitelist) or to exclude from activation (blacklist).
-
-If you want, you can also specify __a YAML string on the command line instead of a file__, e.g.:
-
-```bash
-../vendor/bin/oxrun module:multiactivate $'whitelist:\n  1:\n    - oepaypal\n' --shopId=1
-```
+* Name: module
+* Description: Module name
 
 ### Options:
 
@@ -563,26 +826,17 @@ If you want, you can also specify __a YAML string on the command line instead of
 
 * Name: `--shopId`
 * Is value required: no
-* Description: The subshop id
-
-**skipDeactivation:**
-
-* Name: `--skipDeactivation` or `-s`
-* Is value required: no
-* Description: skip deactivation, only activate the modules
-
-**skipClear:**
-
-* Name: `--skipClear` or `-c`
-* Is value required: no
-* Description: skip cache clearing between deactivation and activation
+* Description: <none>
 
 module:fix
 ----------
 
-* Description: Fixes a module
-* Usage: `module:fix module`
-* __NOT IMPLEMENTED YET!__
+* Description: Fixes a module __[NOT IMPLEMENTED YET]__
+* Usage:
+
+  * `module:fix [--shopId [SHOPID]] [--] <module>`
+
+Fixes a module __[NOT IMPLEMENTED YET]__
 
 ### Arguments:
 
@@ -590,42 +844,6 @@ module:fix
 
 * Name: module
 * Description: Module name
-
-### Options:
-
-**shopId:**
-
-* Name: `--shopId`
-* Is value required: no
-* Description: <none>
-
-module:generate
----------------
-
-* Description: Generates a module skeleton
-* Usage: `module:generate module`
-* __NOT IMPLEMENTED YET!__
-
-### Arguments:
-
-**module:**
-
-* Name: module
-* Description: Module name
-
-### Options:
-
-**shopId:**
-
-* Name: `--shopId`
-* Is value required: no
-* Description: <none>
-
-module:list
------------
-
-* Description: Lists all modules
-* Usage: `module:list`
 
 ### Options:
 
@@ -639,7 +857,11 @@ user:password
 -------------
 
 * Description: Sets a new password
-* Usage: `user:password username password`
+* Usage:
+
+  * `user:password <username> <password>`
+
+Sets a new password
 
 ### Arguments:
 
@@ -655,32 +877,61 @@ user:password
 
 ### Options:
 
+cms:update
+----------
+
+* Description: Updates a cms page
+* Usage:
+
+  * `cms:update [--title [TITLE]] [--content [CONTENT]] [--language LANGUAGE] [--active ACTIVE] [--] <ident>`
+
+Updates a cms page
+
+### Arguments:
+
+**ident:**
+
+* Name: ident
+* Description: Content ident
+
+### Options:
+
+**title:**
+
+* Name: `--title`
+* Is value required: no
+* Description: Content title
+
+**content:**
+
+* Name: `--content`
+* Is value required: no
+* Description: Content body
+
+**language:**
+
+* Name: `--language`
+* Is value required: yes
+* Description: Content language
+
+**active:**
+
+* Name: `--active`
+* Is value required: yes
+* Description: Content active
+
 views:update
 ------------
 
 * Description: Updates the views
-* Usage: `views:update`
+* Usage:
 
-route:debug
------------------
+  * `views:update`
 
-* Description: lookup a SEO Url in the database and check which controller is associated etc.
-* Usage: `route:debug http://myshop.de/my/url`
-
-### Arguments:
-
-**url:**
-
-* Name: url
-* Description: SEO URL
+Updates the views
 
 ### Options:
 
-**shopId:**
-
-* Name: `--shopId`
-* Is value required: no
-* Description: <none>
 
 # Run the unit tests
 

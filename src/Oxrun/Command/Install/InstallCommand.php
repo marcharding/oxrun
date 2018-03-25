@@ -36,7 +36,7 @@ class InstallCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('install:shop')
+            ->setName('install:shop __[DEPRECATED]__')
             ->addOption('oxidVersion', null, InputOption::VALUE_OPTIONAL, 'Oxid version')
             ->addOption('installationFolder', null, InputOption::VALUE_OPTIONAL, 'Installation folder', getcwd())
             ->addOption('dbHost', null, InputOption::VALUE_REQUIRED, 'Database host', 'localhost')
@@ -48,7 +48,7 @@ class InstallCommand extends Command
             ->addOption('shopURL', null, InputOption::VALUE_REQUIRED, 'Installation base url')
             ->addOption('adminUser', null, InputOption::VALUE_REQUIRED, 'Admin user email/login', 'admin@example.com')
             ->addOption('adminPassword', null, InputOption::VALUE_REQUIRED, 'Admin password', 'oxid-123456')
-            ->setDescription('Installs the shop');
+            ->setDescription('Installs the shop, for OXID 6 composer is used instead!');
     }
 
     /**
