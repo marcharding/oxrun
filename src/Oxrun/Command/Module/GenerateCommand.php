@@ -22,7 +22,7 @@ class GenerateCommand extends Command
     {
         $this
             ->setName('module:generate')
-            ->setDescription('Generates a module skeleton')
+            ->setDescription('Generates a module skeleton __[NOT IMPLEMENTED YET]__')
             ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
             ->addArgument('module', InputArgument::REQUIRED, 'Module name');
     }

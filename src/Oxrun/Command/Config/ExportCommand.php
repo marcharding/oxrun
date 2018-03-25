@@ -36,7 +36,7 @@ class ExportCommand extends Command
                 'env',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'Environment',
+                'set specific environment, corresponds to a specific folder for the yaml files',
                 null
             )
             ->addOption(
@@ -46,6 +46,13 @@ class ExportCommand extends Command
                 'Force cleanup on error',
                 null
             );
+$help = <<<HELP
+<info>Info:</info>
+Exports all config values to yaml files, interacts with the
+[Modules Config](https://github.com/OXIDprojects/oxid_modules_config/) module,
+[__which currently isn't fully ported to OXID 6 yet!__](https://github.com/OXIDprojects/oxid_modules_config/tree/dev-6.0-wip)
+HELP;
+        $this->setHelp($help);
     }
 
     /**
