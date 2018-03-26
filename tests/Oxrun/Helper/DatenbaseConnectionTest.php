@@ -10,6 +10,10 @@ namespace Oxrun\Helper;
 
 class DatenbaseConnectionTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var
+     */
+    protected static $config;
 
     /**
      * @var DatenbaseConnection
@@ -17,18 +21,30 @@ class DatenbaseConnectionTest extends \PHPUnit_Framework_TestCase
     protected $testSubject;
 
     /**
+     * This method is called before the first test of this test class is run.
+     *
+     * @since Method available since Release 3.4.0
+     */
+    public static function setUpBeforeClass()
+    {
+        self::$config = new \OxidFileConfig();
+    }
+
+    /**
      * @inheritDoc
      */
     protected function setUp()
     {
+        $port = isset(self::$config->dbPort) ? self::$config->dbPort : 3306;
+
         $datenbaseConnection = new DatenbaseConnection();
         $datenbaseConnection
             // Must be right to work correct
-            ->setHost('127.0.0.1')
-            ->setPort('3306')
-            ->setUser('root')
-            ->setPass('')
-            ->setDatabase('oxid');
+            ->setHost( self::$config->dbHost)
+            ->setPort($port)
+            ->setUser(self::$config->dbUser)
+            ->setPass(self::$config->dbPwd)
+            ->setDatabase(self::$config->dbName);
 
         $this->testSubject = $datenbaseConnection;
     }
@@ -46,7 +62,7 @@ class DatenbaseConnectionTest extends \PHPUnit_Framework_TestCase
         $this->testSubject->setDatabase('oxid_unbekannt');
 
         self::assertFalse($this->testSubject->canConnectToMysql());
-        self::assertContains("Unknown database 'oxid_unbekannt'", $this->testSubject->getLastErrorMsg());
+        self::assertContains("SQLSTATE[HY000]", $this->testSubject->getLastErrorMsg());
     }
 
     /**

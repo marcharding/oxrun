@@ -39,6 +39,10 @@
     {
       "name":"Stefan Krenz",
       "email":"info@kyoya.de"
+    },
+    {
+      "name":"Tobias Matthaiou",
+      "email":"github@tobimat.de"
     }
   ],
   "bin": ["bin/oxrun"]

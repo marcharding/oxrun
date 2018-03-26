@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+    php5.6:
+      image: mesa/oxid:php5.6
+      restart: always
+      container_name: oxid_php5.6
+      command: installOxid
+      working_dir: /data/source/oxrun
+      ports:
+        - "8082:80"
+      volumes:
+        - ./:/data/source/oxrun
+        - ./docker/bin/installOxid.sh:/usr/local/bin/installOxid
+      links:
+        - oxid_db
+      environment:
+        DOCKER_DOCUMENT_ROOT: /data/source
+        MYSQL_HOST: oxid_db
+        MYSQL_DATABASE: 'oxid'
+        MYSQL_USER: "oxid"
+        MYSQL_PASSWORD: "oxid"
+        OXID_SHOP_VERSION: "v4.10.4"
+        OXID_SHOP_URL: "http://localhost:8082"
+        OXID_IDEBUG: 0
+        OXID_ADMIN_PASSWORD: admin@local.oxrun
+        OXID_ADMIN_USERNAME: oxrunpassword
+
+    oxid_db:
+      image: mesa/oxid:db
+      restart: always
+      container_name: oxid_db
+      ports:
+        - "3306:3306"
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: oxid
+        MYSQL_USER: oxid
+        MYSQL_PASSWORD: 'oxid'

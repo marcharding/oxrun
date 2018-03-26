@@ -18,10 +18,39 @@ class ClearCommandTest extends TestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             array(
-                'command' => $command->getName()
+                'command' => $command->getName(),
+                '--force' => 1
             )
         );
 
         $this->assertContains('Cache cleared.', $commandTester->getDisplay());
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testDontClearCompileFolderIfIsNotSameOwner()
+    {
+        $app = new Application();
+        $app->add(new ClearCommand());
+
+        $oxconfigfile = new \oxConfigFile($app->getShopDir() . DIRECTORY_SEPARATOR . 'config.inc.php');
+        $compileDir   = $oxconfigfile->getVar('sCompileDir');
+
+        $owner = fileowner($compileDir);
+        $current_owner = posix_getuid();
+
+        if ($current_owner == $owner) {
+            throw new \PHPUnit_Framework_SkippedTestError('Test can\'t be testet, becouse the compileDir has the same owner ');
+        }
+
+        $command = $app->find('cache:clear');
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(
+            array(
+                'command' => $command->getName()
+            )
+        );
     }
 }
