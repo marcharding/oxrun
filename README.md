@@ -9,7 +9,7 @@ Thanks to the [netz98 magerun](https://github.com/netz98/n98-magerun) project wh
 
 ## Installation
 
-PHP 5.4 is required.
+PHP 5.6 is required.
 
 If you are using composer (which you probably are), just add `"marcharding/oxrun": "dev-master"` to your composer.json and run composer install.
 
