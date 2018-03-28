@@ -17,15 +17,15 @@ env:
   - OXID_VERSION="v4.7.14"
 
 before_script:
+  - mkdir -p build/logs
   - curl -s https://getcomposer.org/installer | php
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then php composer.phar config -g github-oauth.github.com "${GITHUB_TOKEN}"; fi'
   - php composer.phar install
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'
   - bin/oxrun install:shop --oxidVersion="${OXID_VERSION}" --dbUser=root --installationFolder=../ --shopURL=http://local.oxrun --adminUser=admin@local.oxrun --adminPassword=oxrunpassword
   - chmod 777 ../config.inc.php
+
 script:
-  - mkdir -p phpunit/logs
-  - mkdir -p build/logs
   - vendor/bin/phpunit --debug --stop-on-error --stop-on-failure
 
 after_success:
