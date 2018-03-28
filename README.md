@@ -15,9 +15,11 @@ If you are using composer (which you probably are), just add `"marcharding/oxrun
 
 You can then use oxrun by calling `vendor/bin/oxrun` or add `vendor/bin` to your $PATH to be able to just call `oxrun`.
 
-You can also install oxrun by simply downloading the phar file
+You can also install oxrun by simply downloading the phar file from the release tab.
 
-    wget --no-check-certificate https://raw.githubusercontent.com/marcharding/oxrun/master/oxrun.phar
+Here is a bash snippet which automatically downloads the latest release:
+
+    curl -LOk `curl --silent https://api.github.com/repos/marcharding/oxrun/releases/latest | /usr/bin/awk '/browser_download_url/ { print $2 }' | /usr/bin/sed 's/"//g'`
 
 You can oxrun now via `php oxrun.phar`
 
