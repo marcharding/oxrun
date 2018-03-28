@@ -25,8 +25,8 @@ before_script:
   - chmod 777 ../config.inc.php
 script:
   - mkdir -p phpunit/logs
+  - mkdir -p build/logs
   - vendor/bin/phpunit --debug --stop-on-error --stop-on-failure
-  - chmod 777 phpunit/logs/clover.xml
 
 after_success:
  - travis_retry php vendor/bin/php-coveralls -v
