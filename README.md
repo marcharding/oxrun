@@ -17,7 +17,7 @@ You can then use oxrun by calling `vendor/bin/oxrun` or add `vendor/bin` to your
 
 You can also install oxrun by simply downloading the phar file from the release tab.
 
-Here is a bash snippet which automatically downloads the latest release:
+Here is a bash snippet which automatically downloads the latest release from github:
 
     curl -LOk `curl --silent https://api.github.com/repos/marcharding/oxrun/releases/latest | /usr/bin/awk '/browser_download_url/ { print $2 }' | /usr/bin/sed 's/"//g'`
 
