@@ -22,7 +22,7 @@ script:
   - vendor/bin/phpunit --debug --stop-on-error --stop-on-failure
 
 after_success:
- - if [[ $TRAVIS_TAG != '' ]]; then php -d phar.readonly=0 build-phar; fi
+ - if [[ $TRAVIS_TAG != '' ]]; then php -d phar.readonly=0 build-phar -v${OXID_VERSION}; fi
  - travis_retry php vendor/bin/coveralls -v
 
 deploy:
