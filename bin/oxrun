@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+define('DS', DIRECTORY_SEPARATOR);
+
 // composer bin autoload
 if (is_file(__DIR__ . '/../../../autoload.php')) {
     $autoloader = require_once __DIR__ . '/../../../autoload.php';
@@ -13,12 +15,13 @@ if (is_file(__DIR__ . '/../vendor/autoload.php')) {
 
 $application = new \Oxrun\Application($autoloader, 'oxrun', '@package_version@');
 
-$commandSourceDir          = __DIR__ . '/../src/';
+// use the DIRECTORY_SEPARATOR constant here for windows compatibility
+$commandSourceDir          = __DIR__ . DS . '..' . DS .'src'. DS;
 $recursiveIteratorIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($commandSourceDir));
 $regexIterator             = new RegexIterator($recursiveIteratorIterator, '/.*Command\.php$/');
 
 foreach ($regexIterator as $commandPath) {
-    $commandClass = str_replace(array($commandSourceDir, '/', '.php'), array('', '\\', ''), $commandPath);
+    $commandClass = str_replace(array($commandSourceDir, DS, '.php'), array('', '\\', ''), $commandPath);
     $application->add(new $commandClass);
 }
 
