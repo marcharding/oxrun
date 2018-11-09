@@ -7,8 +7,9 @@
 
 namespace Oxrun\Helper;
 
+use Oxrun\TestCase;
 
-class DatenbaseConnectionTest extends \PHPUnit_Framework_TestCase
+class DatenbaseConnectionTest extends TestCase
 {
     /**
      * @var
@@ -27,7 +28,7 @@ class DatenbaseConnectionTest extends \PHPUnit_Framework_TestCase
      */
     public static function setUpBeforeClass()
     {
-        self::$config = new \OxidFileConfig();
+        self::$config = new \BootstrapConfigFileReader();
     }
 
     /**

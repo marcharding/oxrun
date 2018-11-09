@@ -10,6 +10,7 @@ use Oxrun\Application;
 use Oxrun\TestCase;
 use Oxrun\Command\Route;
 use Symfony\Component\Console\Tester\CommandTester;
+use \OxidEsales\Eshop\Core\SeoEncoder;
 
 /**
  * Class Debug
@@ -89,14 +90,14 @@ class DebugTest extends TestCase
             )
         );
 
-        $this->assertContains('basket.php', $this->commandTester->getDisplay());
+        $this->assertContains('BasketController.php', $this->commandTester->getDisplay());
     }
 
     public function testGiveFunctionLineNumber()
     {
-        /** @var oxSeoEncoder $oxSeoEncoder */
-        $oxSeoEncoder = oxNew('oxSeoEncoder');
-        $oxSeoEncoder->getDynamicUrl('index.php?cl=news&amp;fnc=render', 'newspage/',  0);
+        /** @var SeoEncoder $SeoEncoder */
+        $SeoEncoder = oxNew(SeoEncoder::class);
+        $SeoEncoder->getDynamicUrl('index.php?cl=news&amp;fnc=render', 'newspage/',  0);
 
         $this->commandTester->execute(
             array(
@@ -105,14 +106,14 @@ class DebugTest extends TestCase
             )
         );
 
-        $this->assertRegExp('~news.php:\d+~', $this->commandTester->getDisplay());
+        $this->assertRegExp('~NewsController.php:\d+~', $this->commandTester->getDisplay());
     }
 
     public function testClassDontExists()
     {
-        /** @var oxSeoEncoder $oxSeoEncoder */
-        $oxSeoEncoder = oxNew('oxSeoEncoder');
-        $oxSeoEncoder->getDynamicUrl('index.php?cl=classdontexists', 'class/dont/exists/',  0);
+        /** @var \SeoEncoder $SeoEncoder */
+        $SeoEncoder = oxNew(SeoEncoder::class);
+        $SeoEncoder->getDynamicUrl('index.php?cl=classdontexists', 'class/dont/exists/',  0);
 
         $this->commandTester->execute(
             array(
@@ -126,9 +127,9 @@ class DebugTest extends TestCase
 
     public function testMethodInClassDontExists()
     {
-        /** @var oxSeoEncoder $oxSeoEncoder */
-        $oxSeoEncoder = oxNew('oxSeoEncoder');
-        $oxSeoEncoder->getDynamicUrl('index.php?cl=news&amp;fnc=nameXYX', 'method/in/class/dont/exists/',  0);
+        /** @var SeoEncoder $SeoEncoder */
+        $SeoEncoder = oxNew(SeoEncoder::class);
+        $SeoEncoder->getDynamicUrl('index.php?cl=news&amp;fnc=nameXYX', 'method/in/class/dont/exists/',  0);
 
         $this->commandTester->execute(
             array(
@@ -145,7 +146,7 @@ class DebugTest extends TestCase
      */
     public static function tearDownAfterClass()
     {
-        $db = oxDb::getDb();
+        $db = OxidEsales\Eshop\Core\DatabaseProvider::getDb();
 
         $seoURls[] = $db->quote('newspage/');
         $seoURls[] = $db->quote('class/dont/exists/');
