@@ -22,7 +22,7 @@ class ListCommandTest extends TestCase
             )
         );
 
-        $this->assertContains('invoice', $commandTester->getDisplay());
+        $this->assertContains('oepaypal', $commandTester->getDisplay());
     }
 
 }

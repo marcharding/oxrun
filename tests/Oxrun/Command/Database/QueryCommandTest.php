@@ -3,10 +3,9 @@
 namespace Oxrun\Command\Database;
 
 use Oxrun\Application;
-use Oxrun\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class QueryCommandTest extends TestCase
+class QueryCommandTest extends \PHPUnit\Framework\TestCase
 {
     public function testExecute()
     {
