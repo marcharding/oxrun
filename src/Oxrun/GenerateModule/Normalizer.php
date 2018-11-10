@@ -52,7 +52,7 @@ class Normalizer
      */
     public function composerName($composerName)
     {
-        $composerName = preg_replace('/[A-Z]/', '-$0', $composerName);
+        $composerName = preg_replace('/[A-Z]+/', '-$0', $composerName);
         $composerName = preg_replace('/[\s@-]+/', '-', $composerName);
         $composerName = preg_replace('/[^A-Za-z0-9-]/', '', $composerName); //Remove not validate chars
         $composerName = strtolower($composerName);

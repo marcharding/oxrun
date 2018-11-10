@@ -2,9 +2,12 @@
 
 namespace Oxrun\Command\Module;
 
+use Oxrun\GenerateModule\InteractModuleForm;
+use Oxrun\GenerateModule\ModuleSpecification;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -13,16 +16,27 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class GenerateCommand extends Command
 {
+    /**
+     * @var string
+     */
+    protected $defaultTemplateRepo = 'https://github.com/OXIDprojects/oxid-module-skeleton/archive/v6_module.zip';
 
     /**
      * Configures the current command.
+     *
+     * @var ModuleSpecification
      */
+    private $moduleSpecification;
+
     protected function configure()
     {
         $this
             ->setName('module:generate')
             ->setDescription('Generates a module skeleton')
-            ->addArgument('module', InputArgument::REQUIRED, 'Module name');
+            ->addOption('skeleton', 's', InputOption::VALUE_REQUIRED, 'Zip of a Oxid Module Skeleton', $this->defaultTemplateRepo)
+        ;
+
+        InteractModuleForm::addCommandOptions($this);
     }
 
     /**
@@ -33,7 +47,33 @@ class GenerateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeLn("<error>To be implemented</error>");
+
+    }
+
+    protected function interact(InputInterface $input, OutputInterface $output)
+    {
+        $this->moduleSpecification = new ModuleSpecification();
+
+        /** @var QuestionHelper $helper */
+        $helper = $this->getHelper('question');
+
+        $form = new InteractModuleForm(
+            $this->moduleSpecification,
+            $helper,
+            $input,
+            $output
+        );
+
+        $form
+            ->askModuleName()
+            ->askVendor()
+            ->askDescription()
+            ->askAuthor()
+            ->askEmail()
+        ;
+
+        //Validate a throw
+        $this->moduleSpecification->getReplacement();
     }
 
     /**

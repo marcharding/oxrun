@@ -6,12 +6,14 @@
  * Time: 08:39
  */
 
-namespace Oxrun\GenerateModule;
+namespace Oxrun\GenerateModule\Test;
 
+use Oxrun\GenerateModule\Normalizer;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Class NormalizerTest
+ *
  * @package Oxrun\GenerateModule
  */
 class NormalizerTest extends TestCase
@@ -50,6 +52,7 @@ class NormalizerTest extends TestCase
             ['Module-Skeleton-base', 'ModuleSkeletonBase'],
             ['  Module-Skeleton-base  ', 'ModuleSkeletonBase'],
             ['Modul$e-Sk%eleto)n ba&se2000', 'ModuleSkeletonBase2000'],
+            ['Module Only CLI', 'ModuleOnlyCLI'],
         ];
     }
 
@@ -111,6 +114,7 @@ class NormalizerTest extends TestCase
             ['oeModuleSkeleton', 'oe-module-skeleton'],
             ['oeMod$)uleSkeleton', 'oe-module-skeleton'],
             ['  oe   Mod$)uleSkeleton  ', 'oe-module-skeleton'],
+            ['Module Only CLI', 'module-only-cli']
         ];
     }
 

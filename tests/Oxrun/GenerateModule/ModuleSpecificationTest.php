@@ -6,8 +6,9 @@
  * Time: 22:19
  */
 
-namespace Oxrun\GenerateModule;
+namespace Oxrun\GenerateModule\Test;
 
+use Oxrun\GenerateModule\ModuleSpecification;
 use Oxrun\TestCase;
 
 /**
