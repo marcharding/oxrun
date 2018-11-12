@@ -20,8 +20,6 @@ use Prophecy\Prophecy\ObjectProphecy;
  * Class DownloadSkeletonTest
  *
  * @package Oxrun\GenerateModule
- *
- * @group active
  */
 class DownloadSkeletonTest extends TestCase
 {
@@ -92,15 +90,19 @@ class DownloadSkeletonTest extends TestCase
         $this->downloadSkeleton->download($url);
     }
 
-    public function testExtractDownload()
+    /**
+     * @dataProvider dataZips
+     */
+    public function testExtractDownload($zipname)
     {
         //Arrage
         $url = "https://localhost/test.zip";
-        $this->toUnlink[] = $tempnam = sys_get_temp_dir() . '/OXID_Module';
+        $tempnam = sys_get_temp_dir() . '/OXID_Module/'. basename($zipname, '.zip');
+        $this->toUnlink[] = dirname($tempnam);
 
-        $this->client->get(Argument::is($url),Argument::any())->will(function ($args) {
+        $this->client->get(Argument::is($url),Argument::any())->will(function ($args) use ($zipname) {
             /** @var \GuzzleHttp\Psr7\Stream $stream */
-            $contents = file_get_contents(__DIR__ . '/testData/ModuleArchive.zip');
+            $contents = file_get_contents(__DIR__ . '/testData/'.$zipname);
             $stream = $args[1][RequestOptions::SINK];
             $stream->write($contents);
 
@@ -113,9 +115,48 @@ class DownloadSkeletonTest extends TestCase
             ->download($url)
             ->extractTo($tempnam);
 
+
         //Assert
-        $this->assertFileExists($tempnam . '/' . 'AllPlaceholder.php');
+        $this->assertFileExists($tempnam . '/' . 'metadata.php');
     }
+
+    public function testDownloadedArchiveIsNotAoxidModule()
+    {
+        //Arrage
+        $url = "https://localhost/test.zip";
+        $tempnam = sys_get_temp_dir() . '/OXID_Module/NotOxidModuleArchiv';
+        $this->toUnlink[] = dirname($tempnam);
+
+        $this->client->get(Argument::is($url),Argument::any())->will(function ($args)  {
+            /** @var \GuzzleHttp\Psr7\Stream $stream */
+            $contents = file_get_contents(__DIR__ . '/testData/NotOxidModuleArchiv.zip');
+            $stream = $args[1][RequestOptions::SINK];
+            $stream->write($contents);
+
+            return new Response(200, [], $contents);
+        });
+
+        //Assert
+        $this->expectExceptionMessage('Archive is not a OXID Module Archive');
+        $this->expectException(\Exception::class);
+
+        //Act
+        $this->downloadSkeleton
+            ->download($url)
+            ->extractTo($tempnam);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataZips()
+    {
+        return [
+            ["ModuleArchiv.zip"],
+            ["ModuleTree.zip"],
+        ];
+
+}
 
     /**
      * This method is called after each test.
@@ -127,6 +168,4 @@ class DownloadSkeletonTest extends TestCase
         }
         $this->toUnlink = [];
     }
-
-
 }
