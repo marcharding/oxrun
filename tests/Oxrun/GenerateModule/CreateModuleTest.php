@@ -26,15 +26,24 @@ class CreateModuleTest extends TestCase
     public function testFunctionalTestToCreateModule()
     {
         //Arrange
-        $shopRoot = vfsStream::setup('root', 755, [
-            "composer.json" => json_encode([]),
-            "modules" => [],
+        $io_hd = vfsStream::setup('root', 755, [
+            "oxid" => [
+                "composer.json" => file_get_contents(__DIR__ . '/testData/composer_origin.json'),
+                "source" => [
+                    "modules" => [],
+                ],
+                "vendor" => [],
+            ],
             "expect" => [
-                "composer.json" => json_encode(['autoload' => ['psr-4' => ['tm\\\\OxidModule\\\\' => 'modules/tm/OxidModule/']]]),
+                "composer.json" => file_get_contents(__DIR__ . '/testData/composer_expeced.json'),
                 "AllPlaceholder.txt" => $this->expectPlaceholder(),
                 "README.md" => "REDME for Module\n",
             ],
-        ])->url();
+        ]);
+
+        $shopRoot = $io_hd->getChild('oxid')->getChild('source')->url();
+        $expect   = $io_hd->getChild('expect')->url();
+
         $mockHandler = HandlerStack::create(
             new MockHandler([
                 new Response(200, ['Content-Length' => 0], file_get_contents(__DIR__ . '/testData/OxidModuleSkeleton.zip'))
@@ -56,8 +65,9 @@ class CreateModuleTest extends TestCase
 
         //Assert
         $this->assertFileExists("$shopRoot/modules/tm/OxidModule/");
-        $this->assertFileEquals("$shopRoot/expect/AllPlaceholder.txt", "$shopRoot/modules/tm/OxidModule/AllPlaceholder.txt");
-        $this->assertFileEquals("$shopRoot/expect/README.md", "$shopRoot/modules/tm/OxidModule/README.md");
+        $this->assertFileEquals("$expect/AllPlaceholder.txt", "$shopRoot/modules/tm/OxidModule/AllPlaceholder.txt");
+        $this->assertFileEquals("$expect/README.md", "$shopRoot/modules/tm/OxidModule/README.md");
+        $this->assertJsonFileEqualsJsonFile("$shopRoot/../composer.json", "$expect/composer.json");
     }
 
     protected function expectPlaceholder()

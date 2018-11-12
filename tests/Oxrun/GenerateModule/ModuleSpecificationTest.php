@@ -110,6 +110,22 @@ class ModuleSpecificationTest extends TestCase
         $moduleSpecification->getModuleId();
     }
 
+    public function testGetNameSpace()
+    {
+        //Arrange
+        $moduleSpecification = new ModuleSpecification();
+        $moduleSpecification
+            ->setModuleName('OxidModule')
+            ->setVendor('tm');
+
+        //Act
+        $expect = 'tm\OxidModule';
+        $actual = $moduleSpecification->getNamespace();
+
+        //Asser
+        $this->assertEquals($expect, $actual);
+    }
+
     public function dataModuleNames()
     {
         return [

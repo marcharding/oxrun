@@ -118,6 +118,15 @@ class ModuleSpecification
     }
 
     /**
+     * @return string
+     */
+    public function getNamespace()
+    {
+        $this->vaildRequirment();
+        return $this->replacement['VENDOR'] . '\\' . $this->normalizerModuleName;
+    }
+
+    /**
      * @return array
      */
     public function getPlaceholders()
@@ -145,7 +154,7 @@ class ModuleSpecification
             return $this->replacement;
         }
         $this->replacement['MODULE_ID'] = $this->getModuleId();
-        $this->replacement['MODULE_NAMESPACE'] = $this->replacement['VENDOR'] . '\\' . $this->normalizerModuleName;
+        $this->replacement['MODULE_NAMESPACE'] = $this->getNamespace();
         $this->replacement['MODULE_NAMESPACE_QUOTED'] = $this->replacement['VENDOR'] . '\\\\' . $this->normalizerModuleName;
         $this->replacement['COMPOSER_NAME'] = $this->getComposerName();
 

@@ -69,6 +69,7 @@ class CreateModule
     {
         $client     = $this->createHttpClient();
         $modulePath = $moduleSpecification->getDestinationPath($this->shopdir);
+        $namespace  = $moduleSpecification->getNamespace();
         $placholder = $moduleSpecification->getPlaceholders();
         $values     = $moduleSpecification->getPlaceholderValues();
 
@@ -82,6 +83,10 @@ class CreateModule
             ->ReadMe()
             ->Replacement($placholder, $values)
         ;
+
+        $composerConfig = new ComposerConfig();
+        $composerConfig
+            ->addAutoload($this->shopdir, $namespace, $modulePath);
     }
 
     /**
