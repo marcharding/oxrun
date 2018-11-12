@@ -10,6 +10,8 @@ namespace Oxrun\GenerateModule;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
@@ -29,32 +31,38 @@ class DownloadSkeletonTest extends TestCase
     private $downloadSkeleton;
 
     /**
-     * @var Client|ObjectProphecy
-     */
-    private $client;
-
-    /**
      * @var array
      */
     private $toUnlink = [];
 
+    /**
+     * @var MockHandler
+     */
+    private $mockHandler = null;
+
     protected function setUp()
     {
-        $this->client = $this->prophesize(Client::class);
-        $this->downloadSkeleton = new DownloadSkeleton($this->client->reveal());
+        $this->mockHandler = new MockHandler();
+        $client = new Client([
+            'handler' => HandlerStack::create($this->mockHandler)
+        ]);
+
+        $this->downloadSkeleton = new DownloadSkeleton($client);
     }
 
     public function testDownload()
     {
         //Arrage
         $url = "https://localhost/test.zip";
+        $client = $this->prophesize(Client::class);
+        $downloadSkeleton = new DownloadSkeleton($client->reveal());
         $response = new Response(200, [], 'Content of /testData/ModuleArchive.zip');
 
         //Assert
-        $this->client->get(Argument::is($url),Argument::any())->willReturn($response)->shouldBeCalled();
+        $client->get(Argument::is($url),Argument::any())->willReturn($response)->shouldBeCalled();
 
         //Act
-        $actual = $this->downloadSkeleton->download($url);
+        $actual = $downloadSkeleton->download($url);
 
         //Assert
         $this->assertInstanceOf(DownloadSkeleton::class, $actual);
@@ -64,9 +72,7 @@ class DownloadSkeletonTest extends TestCase
     {
         //Arrage
         $url = "https://localhost/test.zip";
-        $response = new Response(400, [], 'Content of /testData/ModuleArchive.zip');
-
-        $this->client->get(Argument::is($url),Argument::any())->willReturn($response);
+        $this->mock(new Response(400, [], 'Content of /testData/ModuleArchive.zip'));
 
         //Assert
         $this->expectException(BadResponseException::class);
@@ -79,9 +85,7 @@ class DownloadSkeletonTest extends TestCase
     {
         //Arrage
         $url = "https://localhost/test.zip";
-        $response = new Response(400, [], '');
-
-        $this->client->get(Argument::is($url),Argument::any())->willReturn($response);
+        $this->mock(new Response(400, [], ''));
 
         //Assert
         $this->expectException(BadResponseException::class);
@@ -97,24 +101,14 @@ class DownloadSkeletonTest extends TestCase
     {
         //Arrage
         $url = "https://localhost/test.zip";
+        $this->mock(new Response(200, [], file_get_contents(__DIR__ . '/testData/'.$zipname)));
         $tempnam = sys_get_temp_dir() . '/OXID_Module/'. basename($zipname, '.zip');
         $this->toUnlink[] = dirname($tempnam);
-
-        $this->client->get(Argument::is($url),Argument::any())->will(function ($args) use ($zipname) {
-            /** @var \GuzzleHttp\Psr7\Stream $stream */
-            $contents = file_get_contents(__DIR__ . '/testData/'.$zipname);
-            $stream = $args[1][RequestOptions::SINK];
-            $stream->write($contents);
-
-            return new Response(200, [], $contents);
-        });
-
 
         //Act
         $this->downloadSkeleton
             ->download($url)
             ->extractTo($tempnam);
-
 
         //Assert
         $this->assertFileExists($tempnam . '/' . 'metadata.php');
@@ -124,17 +118,10 @@ class DownloadSkeletonTest extends TestCase
     {
         //Arrage
         $url = "https://localhost/test.zip";
+        $this->mock(new Response(200, [], file_get_contents(__DIR__ . '/testData/NotOxidModuleArchiv.zip')));
+
         $tempnam = sys_get_temp_dir() . '/OXID_Module/NotOxidModuleArchiv';
         $this->toUnlink[] = dirname($tempnam);
-
-        $this->client->get(Argument::is($url),Argument::any())->will(function ($args)  {
-            /** @var \GuzzleHttp\Psr7\Stream $stream */
-            $contents = file_get_contents(__DIR__ . '/testData/NotOxidModuleArchiv.zip');
-            $stream = $args[1][RequestOptions::SINK];
-            $stream->write($contents);
-
-            return new Response(200, [], $contents);
-        });
 
         //Assert
         $this->expectExceptionMessage('Archive is not a OXID Module Archive');
@@ -167,5 +154,14 @@ class DownloadSkeletonTest extends TestCase
             exec('rm -rf '. $file . ' 2>&1',$output, $code);
         }
         $this->toUnlink = [];
+    }
+
+    /**
+     * Mock  Response
+     * @param Response $response
+     */
+    private function mock(Response $response)
+    {
+        $this->mockHandler->append($response);
     }
 }
