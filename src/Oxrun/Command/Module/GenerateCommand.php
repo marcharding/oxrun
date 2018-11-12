@@ -58,8 +58,18 @@ class GenerateCommand extends Command
 
         $skeletonUri = $input->getOption('skeleton');
 
+        $output->writeln("Module will be create ... <info>please wait</info> ...");
+        $output->writeln(" - Use Template: $skeletonUri", OutputInterface::VERBOSITY_VERBOSE);
+
         $createModule = new CreateModule($app->getShopDir(), $app->getName(), $app->getVersion());
         $createModule->run($skeletonUri, $this->moduleSpecification);
+
+        $destinationPath = $this->moduleSpecification->getDestinationPath($app->getShopDir());
+        $namespace = $this->moduleSpecification->getNamespace();
+
+        $output->write("Enable new namespace <comment>`$namespace`</comment>, ");
+        $output->writeln('run <comment>`composer dumpautoload`</comment> into <comment>`'.INSTALLATION_ROOT_PATH.'`</comment>');
+        $output->writeln("<info>Module is stored at <comment>{$destinationPath}</comment></info>");
     }
 
     protected function interact(InputInterface $input, OutputInterface $output)
