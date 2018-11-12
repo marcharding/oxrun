@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Module;
 
+use Oxrun\GenerateModule\CreateModule;
 use Oxrun\GenerateModule\InteractModuleForm;
 use Oxrun\GenerateModule\ModuleSpecification;
 use Symfony\Component\Console\Command\Command;
@@ -73,7 +74,7 @@ class GenerateCommand extends Command
         ;
 
         //Validate a throw
-        $this->moduleSpecification->getReplacement();
+        $this->moduleSpecification->getPlaceholders();
     }
 
     /**

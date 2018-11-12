@@ -18,6 +18,7 @@ use Oxrun\TestCase;
  */
 class ModuleSpecificationTest extends TestCase
 {
+
     public function testSetAllExitsPlaceholder()
     {
         //Arrange
@@ -33,18 +34,19 @@ class ModuleSpecificationTest extends TestCase
 
         //Assert
         $expect = [
-            'MODULE_ID' => 'oeModuleSkeleton',
-            'MODULE_NAME' => 'Module Skeleton',
-            'MODULE_DESCRIPTION' => 'is a great OXDID Module',
-            'VENDOR' => 'oe',
-            'AUTHOR_NAME' => 'Mrs. Developer',
-            'AUTHOR_EMAIL' => 'dev@localhost',
-            'MODULE_NAMESPACE' => 'oe\ModuleSkeleton',
-            'MODULE_NAMESPACE_QUOTED' => 'oe\\\\ModuleSkeleton',
-            'COMPOSER_NAME' => 'oe-module-skeleton',
+            '<MODULE_NAME>' => 'Module Skeleton',
+            '<MODULE_DESCRIPTION>' => 'is a great OXDID Module',
+            '<VENDOR>' => 'oe',
+            '<AUTHOR_NAME>' => 'Mrs. Developer',
+            '<AUTHOR_EMAIL>' => 'dev@localhost',
+            '<MODULE_ID>' => 'oeModuleSkeleton',
+            '<MODULE_NAMESPACE>' => 'oe\ModuleSkeleton',
+            '<MODULE_NAMESPACE_QUOTED>' => 'oe\\\\ModuleSkeleton',
+            '<COMPOSER_NAME>' => 'oe-module-skeleton',
         ];
 
-        $this->assertEquals($expect, $moduleSpecification->getReplacement());
+        $this->assertEquals(array_keys($expect), $moduleSpecification->getPlaceholders());
+        $this->assertEquals(array_values($expect), $moduleSpecification->getPlaceholderValues());
     }
 
     /**
@@ -128,4 +130,24 @@ class ModuleSpecificationTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @group active
+     */
+    public function testGetDestinationPath()
+    {
+        //Arrange
+        $moduleSpecification = new ModuleSpecification();
+        $moduleSpecification->setModuleName('my Module Name');
+        $moduleSpecification->setVendor('Vendor Name');
+
+        //Act
+        $expect = '/base/source/modules/vendorname/MyModuleName';
+        $actual = $moduleSpecification->getDestinationPath('/base/source/');
+
+        //Assert
+        $this->assertEquals($expect, $actual);
+    }
+
+
 }
