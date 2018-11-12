@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class ReplacementTest
- * @group active
+ *
  * @package Oxrun\GenerateModule\Test
  */
 class CreateModuleTest extends TestCase

@@ -147,9 +147,6 @@ class ModuleSpecificationTest extends TestCase
         ];
     }
 
-    /**
-     * @group active
-     */
     public function testGetDestinationPath()
     {
         //Arrange
