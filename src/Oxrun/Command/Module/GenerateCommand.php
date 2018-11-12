@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Module;
 
+use Oxrun\Application;
 use Oxrun\GenerateModule\CreateModule;
 use Oxrun\GenerateModule\InteractModuleForm;
 use Oxrun\GenerateModule\ModuleSpecification;
@@ -48,7 +49,17 @@ class GenerateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if (empty($this->moduleSpecification)) {
+            throw new \InvalidArgumentException('Please use the interactive mode');
+        }
 
+        /** @var Application $app */
+        $app = $this->getApplication();
+
+        $skeletonUri = $input->getOption('skeleton');
+
+        $createModule = new CreateModule($app->getShopDir(), $app->getName(), $app->getVersion());
+        $createModule->run($skeletonUri, $this->moduleSpecification);
     }
 
     protected function interact(InputInterface $input, OutputInterface $output)
