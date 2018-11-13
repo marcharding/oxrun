@@ -10,6 +10,11 @@ if (array_key_exists('v', $opt)) {
     }
 }
 
+if (file_exists(__DIR__.'/oxidesale')) {
+    exec('rm -rf '.__DIR__.'/oxidesale');
+}
+exec('composer install --no-dev -o');
+
 $pharName = "oxrun.phar";
 $pharFile = __DIR__ . '/' . $pharName;
 if (file_exists($pharFile)) {
@@ -29,9 +34,13 @@ $finder->files()
     ->exclude('test')
     ->exclude('tests')
     ->exclude('phpspec')
+    ->exclude('.travis')
+    ->exclude('docker')
     ->notName('*.phar')
     ->notName('.travis.yml')
     ->notName('box.json')
+    ->notName('docker-compose.yml')
+    ->notName('*.md')
     ->in(__DIR__);
 foreach ($finder as $fileInfo) {
     $file = str_replace(__DIR__, '', $fileInfo->getRealPath());

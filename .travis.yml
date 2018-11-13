@@ -9,27 +9,31 @@ env:
 before_script:
   - ls -l
   - mkdir -p build/logs
-  - composer selfupdate
   - composer install
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'
   - composer create-project --keep-vcs oxid-esales/oxideshop-project oxidesale ${OXID_VERSION}
   - echo "include __DIR__ . '/../../.travis/oxid_config.inc.php';" >> oxidesale/source/config.inc.php
-  - oxidesale/vendor/bin/reset-shop
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'
+  - mysql oxid < oxidesale/source/Setup/Sql/database_schema.sql
+  - mysql oxid < oxidesale/vendor/oxid-esales/oxideshop-demodata-ce/src/demodata.sql
+  - rm -rf oxidesale/source/Setup
+  - oxidesale/vendor/bin/oe-eshop-db_views_generate
+  - rm -rf oxidesale/source/tmp/*
   - cd oxidesale/source
 
 script:
-  - ls -l
   - ../../vendor/bin/phpunit ../../tests/ --debug --stop-on-error --stop-on-failure
 
-#
-#after_success:
-# - if [[ $TRAVIS_TAG != '' ]]; then php -d phar.readonly=0 build-phar -v"${TRAVIS_TAG}"; fi
-# - travis_retry php vendor/bin/coveralls -v
-#
-#deploy:
-#  provider: releases
-#  api_key: $GITHUB_TOKEN
-#  file: oxrun.phar
-#  skip_cleanup: true
-#  on:
-#    tags: true
+
+after_success:
+ - cd ../../
+ - if [[ $TRAVIS_TAG != '' ]]; then php -d phar.readonly=0 build-phar -v"${TRAVIS_TAG}"; fi
+ - travis_retry php vendor/bin/coveralls -v
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: oxrun.phar
+  skip_cleanup: true
+  on:
+    tags: true
