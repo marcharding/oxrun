@@ -28,7 +28,7 @@ script:
 after_success:
  - cd ../../
  - if [[ $TRAVIS_TAG != '' ]]; then php -d phar.readonly=0 build-phar -v"${TRAVIS_TAG}"; fi
- - travis_retry php vendor/bin/coveralls -v
+ - travis_retry php vendor/bin/php-coveralls -v
 
 deploy:
   provider: releases
