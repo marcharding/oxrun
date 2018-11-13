@@ -39,19 +39,37 @@ Execute oxrun inside your OXID eShop base directory (or subdirectory) if you wan
 
 # Available commands
 
+
 cache:clear
 -----------
 
 * Description: Clears the cache
-* Usage: `cache:clear`
+* Usage:
+
+  * `cache:clear [-f|--force]`
+
+Clears the cache
 
 ### Options:
+
+**force:**
+
+* Name: `--force`
+* Shortcut: `-f`
+* Accept value: no
+* Is value required: no
+* Description: Try to delete the cache anyway. [danger or permission denied]
+* Default: `false`
 
 cms:update
 ----------
 
 * Description: Updates a cms page
-* Usage: `cms:update [--title[="..."]] [--content[="..."]] [--language="..."] [--active="..."] ident`
+* Usage:
+
+  * `cms:update [--title [TITLE]] [--content [CONTENT]] [--language LANGUAGE] [--active ACTIVE] [--] <ident>`
+
+Updates a cms page
 
 ### Arguments:
 
@@ -90,7 +108,11 @@ config:get
 ----------
 
 * Description: Gets a config value
-* Usage: `config:get [--shopId[="..."]] [--moduleId[="..."]] variableName`
+* Usage:
+
+  * `config:get [--shopId [SHOPID]] [--moduleId [MODULEID]] [--] <variableName>`
+
+Gets a config value
 
 ### Arguments:
 
@@ -117,7 +139,11 @@ config:set
 ----------
 
 * Description: Sets a config value
-* Usage: `config:set [--variableType="..."] [--shopId[="..."]] [--moduleId[="..."]] variableName variableValue`
+* Usage:
+
+  * `config:set [--variableType VARIABLETYPE] [--shopId [SHOPID]] [--moduleId [MODULEID]] [--] <variableName> <variableValue>`
+
+Sets a config value
 
 ### Arguments:
 
@@ -155,7 +181,11 @@ config:shop:get
 ---------------
 
 * Description: Sets a shop config value
-* Usage: `config:shop:get [--shopId[="..."]] variableName`
+* Usage:
+
+  * `config:shop:get [--shopId [SHOPID]] [--] <variableName>`
+
+Sets a shop config value
 
 ### Arguments:
 
@@ -177,7 +207,11 @@ config:shop:set
 ---------------
 
 * Description: Sets a shop config value
-* Usage: `config:shop:set [--shopId[="..."]] variableName variableValue`
+* Usage:
+
+  * `config:shop:set [--shopId [SHOPID]] [--] <variableName> <variableValue>`
+
+Sets a shop config value
 
 ### Arguments:
 
@@ -204,11 +238,33 @@ db:dump
 -------
 
 * Description: Dumps the the current shop database
-* Usage: `db:dump [--file="..."]`
+* Usage:
 
-Dumps the the current shop database.
+  * `db:dump [--file FILE] [-t|--table TABLE] [-i|--ignoreViews] [-a|--anonymous] [-w|--withoutTableData WITHOUTTABLEDATA]`
 
-Requires php exec and MySQL CLI tools installed on your system.
+Dump the current shop database.
+
+usage:
+    oxrun db:dump --withoutTableData oxseo,oxvou%
+    - To dump all Tables, but `oxseo`, `oxvoucher`, and `oxvoucherseries` without data.
+      possibilities: oxseo%,oxuser,%logs%
+      
+    oxrun db:dump --table %user%
+    - to dump only those tables `oxuser` `oxuserbasketitems` `oxuserbaskets` `oxuserpayments` 
+
+    oxrun db:dump --anonymous # Perfect for Stage Server
+    - Those table without data: `oxseo`, `oxseologs`, `oxseohistory`, `oxuser`, `oxuserbasketitems`, `oxuserbaskets`, `oxuserpayments`, `oxnewssubscribed`, `oxremark`, `oxvouchers`, `oxvoucherseries`, `oxaddress`, `oxorder`, `oxorderarticles`, `oxorderfiles`, `oepaypal_order`, `oepaypal_orderpayments`.
+    
+    oxrun db:dump -v 
+    - With verbose mode you will see the mysqldump command
+      (`mysqldump -u 'root' -h 'oxid_db' -p ... `)
+      
+    oxrun db:dump --file dump.sql 
+    - Put the Output into a File
+    
+** Only existing tables will be exported. No matter what was required.
+    
+Requires php, exec and MySQL CLI tools installed on your system.
 
 ### Options:
 
@@ -218,11 +274,45 @@ Requires php exec and MySQL CLI tools installed on your system.
 * Is value required: yes
 * Description: Dump sql in to this file
 
+**table:**
+
+* Name: `--table`
+* Shortcut: `-t`
+* Is value required: yes
+* Description: name of table to dump only. Default all tables. Use comma separated list and or pattern e.g. %voucher%
+
+**ignoreViews:**
+
+* Name: `--ignoreViews`
+* Shortcut: `-i`
+* Accept value: no
+* Is value required: no
+* Description: Ignore views
+* Default: `false`
+
+**anonymous:**
+
+* Name: `--anonymous`
+* Shortcut: `-a`
+* Accept value: no
+* Is value required: no
+* Description: Do not export table with person related data.
+* Default: `false`
+
+**withoutTableData:**
+
+* Name: `--withoutTableData`
+* Shortcut: `-w`
+* Is value required: yes
+* Description: Table name to dump without data. Use comma separated list and or pattern e.g. %voucher%
+
 db:import
 ---------
 
 * Description: Import a sql file
-* Usage: `db:import file`
+* Usage:
+
+  * `db:import <file>`
 
 Imports an SQL file on the current shop database.
 
@@ -235,13 +325,49 @@ Requires php exec and MySQL CLI tools installed on your system.
 * Name: file
 * Description: The sql file which is to be imported
 
+
+db:list
+-------
+
+* Description: List of all Tables
+* Usage:
+
+  * `db:list [-p|--plain] [-t|--pattern PATTERN]`
+
+List Tables
+
+usage:
+    oxrun db:list --pattern oxseo%,oxuser
+    - To dump all Tables, but `oxseo`, `oxvoucher`, and `oxvoucherseries` without data.
+      possibilities: oxseo%,oxuser,%logs%
+      
+
+
 ### Options:
+
+**plain:**
+
+* Name: `--plain`
+* Shortcut: `-p`
+* Accept value: no
+* Is value required: no
+* Description: print list as comma separated.
+* Default: `false`
+
+**pattern:**
+
+* Name: `--pattern`
+* Shortcut: `-t`
+* Is value required: yes
+* Description: table name pattern test. e.g. oxseo%,oxuser
 
 db:query
 --------
 
 * Description: Executes a query
-* Usage: `db:query [--raw] query`
+* Usage:
+
+  * `db:query [--raw] [--] <query>`
 
 Executes an SQL query on the current shop database. Wrap your SQL in quotes.
 
@@ -270,7 +396,11 @@ install:shop
 ------------
 
 * Description: Installs the shop
-* Usage: `install:shop [--oxidVersion[="..."]] [--installationFolder[="..."]] [--dbHost="..."] [--dbUser="..."] [--dbPwd="..."] [--dbName="..."] [--dbPort[="..."]] [--installSampleData[="..."]] [--shopURL="..."] [--adminUser="..."] [--adminPassword="..."]`
+* Usage:
+
+  * `install:shop [--oxidVersion [OXIDVERSION]] [--installationFolder [INSTALLATIONFOLDER]] [--dbHost DBHOST] [--dbUser DBUSER] [--dbPwd DBPWD] [--dbName DBNAME] [--dbPort [DBPORT]] [--installSampleData [INSTALLSAMPLEDATA]] [--shopURL SHOPURL] [--adminUser ADMINUSER] [--adminPassword ADMINPASSWORD]`
+
+Installs the shop
 
 ### Options:
 
@@ -279,14 +409,13 @@ install:shop
 * Name: `--oxidVersion`
 * Is value required: no
 * Description: Oxid version
-* Default: `'v4.9.5'`
 
 **installationFolder:**
 
 * Name: `--installationFolder`
 * Is value required: no
 * Description: Installation folder
-* Default: `'/vagrant/web/oxrun'`
+* Default: `'/var/www/html/source'`
 
 **dbHost:**
 
@@ -341,18 +470,24 @@ install:shop
 * Name: `--adminUser`
 * Is value required: yes
 * Description: Admin user email/login
+* Default: `'admin@example.com'`
 
 **adminPassword:**
 
 * Name: `--adminPassword`
 * Is value required: yes
 * Description: Admin password
+* Default: `'oxid-123456'`
 
 misc:generate:documentation
 ---------------------------
 
 * Description: Generate a raw command documentation of the available commands
-* Usage: `misc:generate:documentation`
+* Usage:
+
+  * `misc:generate:documentation`
+
+Generate a raw command documentation of the available commands
 
 ### Arguments:
 
@@ -361,20 +496,23 @@ misc:generate:documentation
 * Name: command
 * Description: The command to execute
 
-### Options:
 
 misc:phpstorm:metadata
 ----------------------
 
-* Description: Generate a PhpStorm metadata file for autocompletion
-* Usage: `misc:phpstorm:metadata`
+* Description: Generate a PhpStorm metadata file for auto-completion.
+* Usage:
+
+  * `misc:phpstorm:metadata [-o|--output-dir OUTPUT-DIR]`
+
+Generate a PhpStorm metadata file for auto-completion.
 
 ### Options:
 
 **output-dir:**
 
-* Name: `--output-dir`, `-o`
-* Accept value: yes
+* Name: `--output-dir`
+* Shortcut: `-o`
 * Is value required: yes
 * Description: Writes the metadata for PhpStorm to the specified directory.
 
@@ -382,7 +520,11 @@ module:activate
 ---------------
 
 * Description: Activates a module
-* Usage: `module:activate module`
+* Usage:
+
+  * `module:activate <module>`
+
+Activates a module
 
 ### Arguments:
 
@@ -390,14 +532,16 @@ module:activate
 
 * Name: module
 * Description: Module name
-
-### Options:
 
 module:deactivate
 -----------------
 
 * Description: Deactivates a module
-* Usage: `module:deactivate module`
+* Usage:
+
+  * `module:deactivate <module>`
+
+Deactivates a module
 
 ### Arguments:
 
@@ -405,14 +549,16 @@ module:deactivate
 
 * Name: module
 * Description: Module name
-
-### Options:
 
 module:fix
 ----------
 
 * Description: Fixes a module
-* Usage: `module:fix module`
+* Usage:
+
+  * `module:fix <module>`
+
+Fixes a module
 
 ### Arguments:
 
@@ -420,14 +566,76 @@ module:fix
 
 * Name: module
 * Description: Module name
-
-### Options:
 
 module:generate
 ---------------
 
 * Description: Generates a module skeleton
-* Usage: `module:generate module`
+* Usage:
+
+  * `module:generate [-s|--skeleton SKELETON] [--name NAME] [--vendor VENDOR] [--description DESCRIPTION] [--author AUTHOR] [--email EMAIL]`
+
+Generates a module skeleton
+
+### Options:
+
+**skeleton:**
+
+* Name: `--skeleton`
+* Shortcut: `-s`
+* Is value required: yes
+* Description: Zip of a Oxid Module Skeleton
+* Default: `'https://github.com/OXIDprojects/oxid-module-skeleton/archive/v6_module.zip'`
+
+**name:**
+
+* Name: `--name`
+* Is value required: yes
+* Description: Module name
+
+**vendor:**
+
+* Name: `--vendor`
+* Is value required: yes
+* Description: Vendor
+
+**description:**
+
+* Name: `--description`
+* Is value required: yes
+* Description: Description of your Module: OXID eShop Module ...
+
+**author:**
+
+* Name: `--author`
+* Is value required: yes
+* Description: Author of Module
+
+**email:**
+
+* Name: `--email`
+* Is value required: yes
+* Description: Email of Author
+
+module:list
+-----------
+
+* Description: Lists all modules
+* Usage:
+
+  * `module:list`
+
+Lists all modules
+
+module:reload
+-------------
+
+* Description: Deactivate and activate a module
+* Usage:
+
+  * `module:reload [-f|--force] [--] <module>`
+
+Deactivate and activate a module
 
 ### Arguments:
 
@@ -438,19 +646,52 @@ module:generate
 
 ### Options:
 
-module:list
+**force:**
+
+* Name: `--force`
+* Shortcut: `-f`
+* Accept value: no
+* Is value required: no
+* Description: Force reload Module
+* Default: `false`
+
+route:debug
 -----------
 
-* Description: Lists all modules
-* Usage: `module:list`
+* Description: Returns the route. Which controller and parameters are called.
+* Usage:
+
+  * `route:debug [-c|--copy] [--] <url>`
+
+Returns the route. Which controller and parameters are called.
+
+### Arguments:
+
+**url:**
+
+* Name: url
+* Description: Website URL. Full or Path
 
 ### Options:
+
+**copy:**
+
+* Name: `--copy`
+* Shortcut: `-c`
+* Accept value: no
+* Is value required: no
+* Description: Copy file path from the class to the clipboard (only MacOS)
+* Default: `false`
 
 user:password
 -------------
 
 * Description: Sets a new password
-* Usage: `user:password username password`
+* Usage:
+
+  * `user:password <username> <password>`
+
+Sets a new password
 
 ### Arguments:
 
@@ -464,10 +705,13 @@ user:password
 * Name: password
 * Description: New password
 
-### Options:
-
 views:update
 ------------
 
 * Description: Updates the views
-* Usage: `views:update`
+* Usage:
+
+  * `views:update`
+
+Updates the views
+
