@@ -1,11 +1,11 @@
 {
-  "name": "marcharding/oxrun",
-  "description": "Oxrun provides a cli toolset for the OXID eShop Community Edition",
+  "name": "oxidprojects/oxrun",
+  "description": "Oxrun provides a cli toolset for the OXID eShop v6.x",
   "license": "MIT",
   "support": {
-    "issues": "https://github.com/marcharding/oxrun/issues"
+    "issues": "https://github.com/oxidprojects/oxrun/issues"
   },
-  "homepage": "https://github.com/marcharding/oxrun",
+  "homepage": "https://github.com/oxidprojects/oxrun",
   "keywords": [
     "oxid",
     "installer",
