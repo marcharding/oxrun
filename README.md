@@ -7,6 +7,10 @@ Oxrun provides a cli toolset for the OXID eShop Community Edition.
 
 Thanks to the [netz98 magerun](https://github.com/netz98/n98-magerun) project which heavily inspired oxrun.
 
+Copyright (c) 2015 Marc Harding http://www.marcharding.de (https://github.com/marcharding/oxrun)
+
+Copyright (c) 2018 Tobias Matthaiou http://www.tobimat.eu
+
 ## Installation
 
 PHP 7.0 is required.  
