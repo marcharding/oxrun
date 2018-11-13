@@ -12,11 +12,7 @@ Thanks to the [netz98 magerun](https://github.com/netz98/n98-magerun) project wh
 PHP 7.0 is required.  
 OXID v6 is required.
 
-If you are using composer (which you probably are), just add `"OXIDprojects/oxrun": "dev-master"` to your composer.json and run composer install.
-
-You can then use oxrun by calling `vendor/bin/oxrun` or add `vendor/bin` to your $PATH to be able to just call `oxrun`.
-
-You can also install oxrun by simply downloading the phar file from the release tab.
+##### 1. As a separate command `oxrun`
 
 Here is a bash snippet which automatically downloads the latest release from github:
 
@@ -30,6 +26,15 @@ Alternatively you can also make the phar itself executable and copy it to your /
     sudo mv oxrun.phar /usr/local/bin/oxrun
 
 You can then run oxrun by just calling `oxrun`
+
+##### 2. As part of the OXID eShop installation `vendor/bin/oxrun`
+ 
+`composer require oxidprojects/oxrun`.
+
+You can then use oxrun by calling `vendor/bin/oxrun` or add `vendor/bin` to your $PATH to be able to just call `oxrun`.
+
+You can also install oxrun by simply downloading the phar file from the release tab.
+
 
 # Usage
 
