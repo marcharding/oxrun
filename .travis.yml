@@ -1,34 +1,35 @@
 language: php
 
 php:
-  - 5.6
+  - 7.1
 
 env:
-  - OXID_VERSION="v4.10.4"
-  - OXID_VERSION="v4.9.9"
-  - OXID_VERSION="v4.8.12"
-  - OXID_VERSION="v4.7.14"
+  - OXID_VERSION="dev-b-6.1-ce"
 
 before_script:
+  - ls -l
   - mkdir -p build/logs
-  - curl -s https://getcomposer.org/installer | php
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then php composer.phar config -g github-oauth.github.com "${GITHUB_TOKEN}"; fi'
-  - php composer.phar install
+  - composer selfupdate
+  - composer install
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'
-  - bin/oxrun install:shop --oxidVersion="${OXID_VERSION}" --dbUser=root --installationFolder=../ --shopURL=http://local.oxrun --adminUser=admin@local.oxrun --adminPassword=oxrunpassword
-  - chmod 777 ../config.inc.php
+  - composer create-project --keep-vcs oxid-esales/oxideshop-project oxidesale ${OXID_VERSION}
+  - echo "include __DIR__ . '/../../.travis/oxid_config.inc.php';" >> oxidesale/source/config.inc.php
+  - oxidesale/vendor/bin/reset-shop
+  - cd oxidesale/source
 
 script:
-  - vendor/bin/phpunit --debug --stop-on-error --stop-on-failure
+  - ls -l
+  - ../../vendor/bin/phpunit ../../tests/ --debug --stop-on-error --stop-on-failure
 
-after_success:
- - if [[ $TRAVIS_TAG != '' ]]; then php -d phar.readonly=0 build-phar -v"${TRAVIS_TAG}"; fi
- - travis_retry php vendor/bin/coveralls -v
-
-deploy:
-  provider: releases
-  api_key: $GITHUB_TOKEN
-  file: oxrun.phar
-  skip_cleanup: true
-  on:
-    tags: true
+#
+#after_success:
+# - if [[ $TRAVIS_TAG != '' ]]; then php -d phar.readonly=0 build-phar -v"${TRAVIS_TAG}"; fi
+# - travis_retry php vendor/bin/coveralls -v
+#
+#deploy:
+#  provider: releases
+#  api_key: $GITHUB_TOKEN
+#  file: oxrun.phar
+#  skip_cleanup: true
+#  on:
+#    tags: true
