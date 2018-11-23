@@ -4,11 +4,13 @@
 // composer bin autoload
 if (is_file(__DIR__ . '/../../../autoload.php')) {
     $autoloader = require_once __DIR__ . '/../../../autoload.php';
+    $file = __DIR__ . '/../../../composer/installed.json';
 }
 
 // default autoload
 if (is_file(__DIR__ . '/../vendor/autoload.php')) {
     $autoloader = require_once __DIR__ . '/../vendor/autoload.php';
+    $file = __DIR__ . '/../vendor/composer/installed.json';
 }
 
 $application = new \Oxrun\Application($autoloader, 'oxrun', '@package_version@');
@@ -21,6 +23,23 @@ foreach ($regexIterator as $commandPath) {
     $commandClass = str_replace(array($commandSourceDir, '/', '.php'), array('', '\\', ''), $commandPath);
     $application->add(new $commandClass);
 }
+
+$nio = new \Composer\IO\NullIO();
+$factory = new \Composer\Factory();
+$localRepository = new \Composer\Repository\InstalledFilesystemRepository(new \Composer\Json\JsonFile($file));
+$commandsClasses = [];
+$packages = $localRepository->getPackages();
+
+foreach ($packages as $package) {
+    $extra = $package->getExtra();
+    $oxideshop = isset($extra['oxideshop']) ? $extra['oxideshop'] : [];
+    $consoleCommands = isset($oxideshop['console-commands']) && is_array($oxideshop['console-commands']) ?
+    $oxideshop['console-commands'] : [];
+    foreach ($consoleCommands as $commandClass) {
+        $application->add(new $commandClass);
+    }
+}
+
 
 $application->run();
 
