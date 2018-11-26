@@ -13,7 +13,8 @@
   ],
   "require": {
     "symfony/console": "^2",
-    "symfony/finder":"^2",
+    "symfony/finder": "^2",
+    "symfony/dependency-injection": "^3",
     "guzzlehttp/guzzle": "^6.0",
     "raulfraile/distill": "0.9.*",
     "composer/composer": "^1"
