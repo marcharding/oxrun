@@ -15,8 +15,7 @@
     "symfony/console": "^2",
     "symfony/finder":"^2",
     "guzzlehttp/guzzle": "^6.0",
-    "raulfraile/distill": "0.9.*",
-    "nikic/php-parser": "1.4.*"
+    "raulfraile/distill": "0.9.*"
   },
   "require-dev": {
     "phpunit/phpunit": "^6",
