@@ -22,7 +22,7 @@ before_script:
   - cd oxidesale/source
 
 script:
-  - ../../vendor/bin/phpunit ../../tests/ --debug --stop-on-error --stop-on-failure
+  - ../../vendor/bin/phpunit -c ../../phpunit.xml --debug --stop-on-error --stop-on-failure
 
 
 after_success:
