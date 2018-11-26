@@ -1,10 +1,10 @@
 version: '3'
 
 services:
-    php5.6:
-      image: mesa/oxid:php5.6
+    oxid_php70:
+      image: mesa/oxid:php7.0
       restart: always
-      container_name: oxid_php5.6
+      container_name: oxid_php70
       command: installOxid
       working_dir: /data/source/oxrun
       ports:
@@ -20,7 +20,7 @@ services:
         MYSQL_DATABASE: 'oxid'
         MYSQL_USER: "oxid"
         MYSQL_PASSWORD: "oxid"
-        OXID_SHOP_VERSION: "v4.10.4"
+        OXID_SHOP_VERSION: "dev-b-6.1-ce"
         OXID_SHOP_URL: "http://localhost:8082"
         OXID_IDEBUG: 0
         OXID_ADMIN_PASSWORD: admin@local.oxrun
