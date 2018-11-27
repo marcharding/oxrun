@@ -47,5 +47,9 @@
       "email":"github@tobimat.de"
     }
   ],
+  "suggest": {
+    "oxid-community/moduleinternals": "To has more command",
+    "oxid-professional-services/oxid-console": "a other console cli"
+  },
   "bin": ["bin/oxrun"]
 }

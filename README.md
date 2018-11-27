@@ -46,6 +46,26 @@ To use oxrun just execute `php oxrun.phar` or `oxrun` (see above).
 
 Execute oxrun inside your OXID eShop base directory (or subdirectory) if you want to interact with an existing shop. It will automatically try to find the oxid boostrap.php and load it.
 
+# Defining your own command
+
+It is possible to adding new console command via `services.yaml` file. For this you have to deposit in your repo a `/services.yaml` file
+and install it with composer.
+
+That's how she looks
+
+```yaml
+    services:
+      company_name.project.command.hello_world:
+        class: OxidEsales\DemoComponent\Command\HelloWorldCommand
+        tags:
+          - { name: 'console.command' }
+```
+
+[Template for your command](https://github.com/OXIDprojects/oxrun/blob/composer-command-collector/tests/Oxrun/CommandCollection/testData/HelloWorldCommand.php)
+
+Example: https://github.com/OXIDprojects/oxid-module-internals/blob/master/services.yaml
+
+
 # Available commands
 
 
