@@ -267,33 +267,48 @@ Clears the cache
 * Description: Try to delete the cache anyway. [danger or permission denied]
 * Default: `false`
 
-route:debug
------------
+cms:update
+----------
 
-* Description: Returns the route. Which controller and parameters are called.
+* Description: Updates a cms page
 * Usage:
 
-  * `route:debug [-c|--copy] [--] <url>`
+  * `cms:update [--title [TITLE]] [--content [CONTENT]] [--language LANGUAGE] [--active ACTIVE] [--] <ident>`
 
-Returns the route. Which controller and parameters are called.
+Updates a cms page
 
 ### Arguments:
 
-**url:**
+**ident:**
 
-* Name: url
-* Description: Website URL. Full or Path
+* Name: ident
+* Description: Content ident
 
 ### Options:
 
-**copy:**
+**title:**
 
-* Name: `--copy`
-* Shortcut: `-c`
-* Accept value: no
+* Name: `--title`
 * Is value required: no
-* Description: Copy file path from the class to the clipboard (only MacOS)
-* Default: `false`
+* Description: Content title
+
+**content:**
+
+* Name: `--content`
+* Is value required: no
+* Description: Content body
+
+**language:**
+
+* Name: `--language`
+* Is value required: yes
+* Description: Content language
+
+**active:**
+
+* Name: `--active`
+* Is value required: yes
+* Description: Content active
 
 config:get
 ----------
@@ -325,37 +340,6 @@ Gets a config value
 * Name: `--moduleId`
 * Is value required: no
 * Description: <none>
-
-config:shop:set
----------------
-
-* Description: Sets a shop config value
-* Usage:
-
-  * `config:shop:set [--shopId [SHOPID]] [--] <variableName> <variableValue>`
-
-Sets a shop config value
-
-### Arguments:
-
-**variableName:**
-
-* Name: variableName
-* Description: Variable name
-
-**variableValue:**
-
-* Name: variableValue
-* Description: Variable value
-
-### Options:
-
-**shopId:**
-
-* Name: `--shopId`
-* Is value required: no
-* Description: oxbaseshop
-* Default: `'oxbaseshop'`
 
 config:set
 ----------
@@ -425,6 +409,277 @@ Sets a shop config value
 * Description: oxbaseshop
 * Default: `'oxbaseshop'`
 
+config:shop:set
+---------------
+
+* Description: Sets a shop config value
+* Usage:
+
+  * `config:shop:set [--shopId [SHOPID]] [--] <variableName> <variableValue>`
+
+Sets a shop config value
+
+### Arguments:
+
+**variableName:**
+
+* Name: variableName
+* Description: Variable name
+
+**variableValue:**
+
+* Name: variableValue
+* Description: Variable value
+
+### Options:
+
+**shopId:**
+
+* Name: `--shopId`
+* Is value required: no
+* Description: oxbaseshop
+* Default: `'oxbaseshop'`
+
+db:dump
+-------
+
+* Description: Create a dump, with mysqldump
+* Usage:
+
+  * `db:dump [--file FILE] [-t|--table TABLE] [-i|--ignoreViews] [-a|--anonymous] [-w|--withoutTableData WITHOUTTABLEDATA]`
+
+Create a dump from the current database.
+
+usage:
+
+    oxrun db:dump --withoutTableData oxseo,oxvou%
+    - To dump all Tables, but `oxseo`, `oxvoucher`, and `oxvoucherseries` without data.
+      possibilities: oxseo%,oxuser,%logs%
+      
+    oxrun db:dump --table %user%
+    - to dump only those tables `oxuser` `oxuserbasketitems` `oxuserbaskets` `oxuserpayments` 
+
+    oxrun db:dump --anonymous # Perfect for Stage Server
+    - Those table without data: `oxseo`, `oxseologs`, `oxseohistory`, `oxuser`, `oxuserbasketitems`, `oxuserbaskets`, `oxuserpayments`, `oxnewssubscribed`, `oxremark`, `oxvouchers`, `oxvoucherseries`, `oxaddress`, `oxorder`, `oxorderarticles`, `oxorderfiles`, `oepaypal_order`, `oepaypal_orderpayments`.
+    
+    oxrun db:dump -v
+    - With verbose mode you will see the mysqldump command
+      (`mysqldump -u 'root' -h 'oxid_db' -p ... `)
+      
+    oxrun db:dump --file dump.sql 
+    - Put the Output into a File
+    
+** Only existing tables will be exported. No matter what was required.
+    
+## System requirement:
+
+    * php
+    * MySQL CLI tools.
+
+
+### Options:
+
+**file:**
+
+* Name: `--file`
+* Is value required: yes
+* Description: Save dump at this location.
+
+**table:**
+
+* Name: `--table`
+* Shortcut: `-t`
+* Is value required: yes
+* Description: Only names of tables are dumped. Default all tables. Use comma separated list and or pattern e.g. %voucher%
+
+**ignoreViews:**
+
+* Name: `--ignoreViews`
+* Shortcut: `-i`
+* Accept value: no
+* Is value required: no
+* Description: Ignore views
+* Default: `false`
+
+**anonymous:**
+
+* Name: `--anonymous`
+* Shortcut: `-a`
+* Accept value: no
+* Is value required: no
+* Description: Export not table with person related data.
+* Default: `false`
+
+**withoutTableData:**
+
+* Name: `--withoutTableData`
+* Shortcut: `-w`
+* Is value required: yes
+* Description: Export tables only with their CREATE statement. So without content. Use comma separated list and or pattern e.g. %voucher%
+
+db:import
+---------
+
+* Description: Import a sql file
+* Usage:
+
+  * `db:import <file>`
+
+Imports an SQL file on the current shop database.
+
+Requires php exec and MySQL CLI tools installed on your system.
+
+### Arguments:
+
+**file:**
+
+* Name: file
+* Description: The sql file which is to be imported
+
+### Options:
+
+db:list
+-------
+
+* Description: List of all Tables
+* Usage:
+
+  * `db:list [-p|--plain] [-t|--pattern PATTERN]`
+
+List Tables
+
+usage:
+    oxrun db:list --pattern oxseo%,oxuser
+    - To dump all Tables, but `oxseo`, `oxvoucher`, and `oxvoucherseries` without data.
+      possibilities: oxseo%,oxuser,%logs%
+      
+
+
+### Options:
+
+**plain:**
+
+* Name: `--plain`
+* Shortcut: `-p`
+* Accept value: no
+* Is value required: no
+* Description: print list as comma separated.
+* Default: `false`
+
+**pattern:**
+
+* Name: `--pattern`
+* Shortcut: `-t`
+* Is value required: yes
+* Description: table name pattern test. e.g. oxseo%,oxuser
+
+db:query
+--------
+
+* Description: Executes a query
+* Usage:
+
+  * `db:query [--raw] [--] <query>`
+
+Executes an SQL query on the current shop database. Wrap your SQL in quotes.
+
+If your query produces a result (e.g. a SELECT statement), the output will be returned via the table component. Add the raw option for raw output.
+
+Requires php exec and MySQL CLI tools installed on your system.
+
+### Arguments:
+
+**query:**
+
+* Name: query
+* Description: The query which is to be executed
+
+### Options:
+
+**raw:**
+
+* Name: `--raw`
+* Accept value: no
+* Is value required: no
+* Description: Raw output
+* Default: `false`
+
+misc:generate:documentation
+---------------------------
+
+* Description: Generate a raw command documentation of the available commands
+* Usage:
+
+  * `misc:generate:documentation`
+
+Generate a raw command documentation of the available commands
+
+### Arguments:
+
+**command:**
+
+* Name: command
+* Description: The command to execute
+
+### Options:
+
+misc:phpstorm:metadata
+----------------------
+
+* Description: Generate a PhpStorm metadata file for auto-completion.
+* Usage:
+
+  * `misc:phpstorm:metadata [-o|--output-dir OUTPUT-DIR]`
+
+Generate a PhpStorm metadata file for auto-completion.
+
+### Options:
+
+**output-dir:**
+
+* Name: `--output-dir`
+* Shortcut: `-o`
+* Is value required: yes
+* Description: Writes the metadata for PhpStorm to the specified directory.
+
+module:activate
+---------------
+
+* Description: Activates a module
+* Usage:
+
+  * `module:activate <module>`
+
+Activates a module
+
+### Arguments:
+
+**module:**
+
+* Name: module
+* Description: Module name
+
+### Options:
+
+module:deactivate
+-----------------
+
+* Description: Deactivates a module
+* Usage:
+
+  * `module:deactivate <module>`
+
+Deactivates a module
+
+### Arguments:
+
+**module:**
+
+* Name: module
+* Description: Module name
+
+### Options:
+
 module:generate
 ---------------
 
@@ -487,44 +742,6 @@ Lists all modules
 
 ### Options:
 
-module:activate
----------------
-
-* Description: Activates a module
-* Usage:
-
-  * `module:activate <module>`
-
-Activates a module
-
-### Arguments:
-
-**module:**
-
-* Name: module
-* Description: Module name
-
-### Options:
-
-module:deactivate
------------------
-
-* Description: Deactivates a module
-* Usage:
-
-  * `module:deactivate <module>`
-
-Deactivates a module
-
-### Arguments:
-
-**module:**
-
-* Name: module
-* Description: Module name
-
-### Options:
-
 module:reload
 -------------
 
@@ -553,6 +770,34 @@ Deactivate and activate a module
 * Description: Force reload Module
 * Default: `false`
 
+route:debug
+-----------
+
+* Description: Returns the route. Which controller and parameters are called.
+* Usage:
+
+  * `route:debug [-c|--copy] [--] <url>`
+
+Returns the route. Which controller and parameters are called.
+
+### Arguments:
+
+**url:**
+
+* Name: url
+* Description: Website URL. Full or Path
+
+### Options:
+
+**copy:**
+
+* Name: `--copy`
+* Shortcut: `-c`
+* Accept value: no
+* Is value required: no
+* Description: Copy file path from the class to the clipboard (only MacOS)
+* Default: `false`
+
 user:password
 -------------
 
@@ -576,49 +821,6 @@ Sets a new password
 * Description: New password
 
 ### Options:
-
-cms:update
-----------
-
-* Description: Updates a cms page
-* Usage:
-
-  * `cms:update [--title [TITLE]] [--content [CONTENT]] [--language LANGUAGE] [--active ACTIVE] [--] <ident>`
-
-Updates a cms page
-
-### Arguments:
-
-**ident:**
-
-* Name: ident
-* Description: Content ident
-
-### Options:
-
-**title:**
-
-* Name: `--title`
-* Is value required: no
-* Description: Content title
-
-**content:**
-
-* Name: `--content`
-* Is value required: no
-* Description: Content body
-
-**language:**
-
-* Name: `--language`
-* Is value required: yes
-* Description: Content language
-
-**active:**
-
-* Name: `--active`
-* Is value required: yes
-* Description: Content active
 
 views:update
 ------------

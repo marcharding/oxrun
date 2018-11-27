@@ -45,18 +45,18 @@ class DumpCommand extends Command
     {
         $this
             ->setName('db:dump')
-            ->setDescription('Dumps the the current shop database')
+            ->setDescription('Create a dump, with mysqldump')
             ->addOption(
                 'file',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Dump sql in to this file'
+                'Save dump at this location.'
             )
             ->addOption(
                 'table',
                 't',
                 InputOption::VALUE_REQUIRED,
-                'name of table to dump only. Default all tables. Use comma separated list and or pattern e.g. %voucher%'
+                'Only names of tables are dumped. Default all tables. Use comma separated list and or pattern e.g. %voucher%'
             )
             ->addOption(
                 'ignoreViews',
@@ -68,20 +68,21 @@ class DumpCommand extends Command
                 'anonymous',
                 'a',
                 InputOption::VALUE_NONE,
-                'Do not export table with person related data.'
+                'Export not table with person related data.'
             )
             ->addOption(
         'withoutTableData',
         'w',
         InputOption::VALUE_REQUIRED,
-        'Table name to dump without data. Use comma separated list and or pattern e.g. %voucher%'
+        'Export tables only with their CREATE statement. So without content. Use comma separated list and or pattern e.g. %voucher%'
             );
 
         $anonymousTables= implode('`, `', $this->anonymousTables);
         $help = <<<HELP
-Dump the current shop database.
+Create a dump from the current database.
 
 <info>usage:</info>
+
     <comment>oxrun {$this->getName()} --withoutTableData oxseo,oxvou%</comment>
     - To dump all Tables, but `oxseo`, `oxvoucher`, and `oxvoucherseries` without data.
       possibilities: <comment>oxseo%,oxuser,%logs%</comment>
@@ -92,7 +93,7 @@ Dump the current shop database.
     <comment>oxrun {$this->getName()} --anonymous</comment> <info># Perfect for Stage Server</info>
     - Those table without data: `{$anonymousTables}`.
     
-    <comment>oxrun {$this->getName()} -v </comment>
+    <comment>oxrun {$this->getName()} -v</comment>
     - With verbose mode you will see the mysqldump command
       (`mysqldump -u 'root' -h 'oxid_db' -p ... `)
       
@@ -101,7 +102,11 @@ Dump the current shop database.
     
 ** Only existing tables will be exported. No matter what was required.
     
-Requires <comment>php</comment>, <comment>exec</comment> and <comment>MySQL CLI tools</comment> installed on your system.
+## System requirement:
+
+    * <comment>php</comment>
+    * <comment>MySQL CLI tools</comment>.
+
 HELP;
         $this->setHelp($help);
     }

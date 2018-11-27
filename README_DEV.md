@@ -14,14 +14,13 @@ Docker start. The image installs itself OXID and DB.
     
 Start PHPUnit test
 
-    docker-compose exec php5.6 vendor/bin/phpunit
+    docker-compose exec oxid_php70 vendor/bin/phpunit
     
 Start `oxrun`
 
-    docker-compose exec php5.6 oxrun list
+    docker-compose exec oxid_php70 oxrun list
 
 In `docker-compose.yml` you could change the OXID version.
-OXID v6 works not yet currently . A list of versions 
-can be found at [github.com](https://github.com/OXID-eSales/oxideshop_ce/tags?per_page=9999).
+can be found at [github.com](https://github.com/OXID-eSales/oxideshop_project/branches).
 
-    docker-compose.yml: services->php5.6->environment->OXID_SHOP_VERSION = 'v4.9.11'
+    docker-compose.yml: services->oxid_php70->environment->OXID_SHOP_VERSION = 'b-6.1-ce'
