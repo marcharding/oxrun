@@ -1,0 +1,7 @@
+services:
+  oxid_esales.demo_component.command.hello_world:
+    class: OxidEsales\DemoComponent\Command\HelloWorldCommand
+    public: true
+    autowire: true
+    tags:
+      - { name: 'console.command', command: 'demo-component:say-hello' }

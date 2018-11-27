@@ -1,0 +1,57 @@
+[
+    {
+        "name": "oxidesales/democomponent",
+        "version": "v5.2.3",
+        "version_normalized": "5.2.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/OXID-eSales/DemoComponent.git",
+            "reference": "2f543c0407cc04624e5f9b0c1533734b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/OXID-eSales/DemoComponent/zipball/2f543c0407cc04624e5f9b0c1533734b",
+            "reference": "2f543c0407cc04624e5f9b0c1533734b",
+            "shasum": ""
+        },
+        "require": {
+            "ext-curl": "*",
+            "ext-openssl": "*",
+            "lib-curl": ">=7.26.0",
+            "lib-openssl": ">=1.0.1",
+            "php": ">=5.6"
+        },
+        "time": "2018-10-09T10:21:26+00:00",
+        "type": "oxideshop-module",
+        "extra": {
+            "oxideshop": {
+                "blacklist-filter": [
+                    "documentation/**/*.*",
+                    "CHANGELOG.md",
+                    "composer.json",
+                    "CONTRIBUTING.md",
+                    "README.md"
+                ],
+                "target-directory": "oe/democomponent"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "OxidEsales\\DemoComponent\\": "../../../source/modules/oe/democomponent"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "GPL-3.0-only",
+            "proprietary"
+        ],
+        "description": "This is the DemoComponent module for the OXID eShop.",
+        "homepage": "https://www.oxid-esales.com/en/home.html",
+        "keywords": [
+            "OXID",
+            "eshop",
+            "modules"
+        ]
+    }
+]

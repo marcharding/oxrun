@@ -50,10 +50,20 @@ class CommunityCollection implements CommandCollection
             }
         }
 
+        $errors = [];
         foreach ($symfonyContainer->findTaggedServiceIds('console.command') as $id => $tags) {
             $definition = $symfonyContainer->getDefinition($id);
-            $class = $definition->getClass();
+            $class = '\\';
+            $class .= trim($definition->getClass(), '\\');
+            if (!class_exists($class)) {
+                $errors[] = "Class '$class' not found in Service: $id'";
+                continue;
+            }
             $application->add(new $class);
+        }
+
+        if (!empty($errors)) {
+            throw new \Exception('- '. implode("\n- ", $errors));
         }
     }
 }
