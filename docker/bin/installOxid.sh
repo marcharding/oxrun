@@ -2,6 +2,12 @@ cd #!/usr/bin/env bash
 
 ln -fs ${DOCKER_DOCUMENT_ROOT}/oxrun/bin/oxrun /usr/local/bin
 
+if [ ! -f "${DOCKER_DOCUMENT_ROOT}/oxrun/vendor" ]; then
+    pushd ${DOCKER_DOCUMENT_ROOT}/oxrun/ && \
+    composer install --no-interaction && \
+    popd;
+fi
+
 if [ ! -f "${DOCKER_DOCUMENT_ROOT}/config.inc.php" ]; then
 
     echo "Install Shop";
