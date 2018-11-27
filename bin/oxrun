@@ -22,8 +22,8 @@ $autoloader = require_once $OXRUN_VENDOR_PATH . 'autoload.php';
 $application = new \Oxrun\Application($autoloader, 'oxrun', '@package_version@');
 
 try {
-    (new OxrunCollection())->addCommandTo($application);
     (new CommunityCollection())->addCommandTo($application);
+    (new OxrunCollection())->addCommandTo($application);
 } catch (\Exception $e) {
     $consoleOutput = new ConsoleOutput();
     $consoleOutput->writeln('<comment>Command Collection: '.$e->getMessage().'</comment>');
