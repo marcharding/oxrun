@@ -1,0 +1,14 @@
+services:
+  class.with_out_backslash:
+    class: OxidEsales\DemoComponent\Command\HelloWorldCommand
+    public: true
+    autowire: true
+    tags:
+      - { name: 'console.command', command: 'demo-component:say-hello' }
+
+  class.with_prefix_backslash:
+    class: \OxidEsales\DemoComponent\Command\HelloWorldCommand
+    public: true
+    autowire: true
+    tags:
+      - { name: 'console.command', command: 'demo-component:say-hello' }
