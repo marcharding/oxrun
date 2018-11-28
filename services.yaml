@@ -1,0 +1,40 @@
+services:
+  oxid_community.oxrun.cache.clear:
+    class: Oxrun\Command\Cache\ClearCommand
+    tags:
+      - { name: 'console.command' }
+
+  oxid_community.oxrun.database.dump:
+    class: Oxrun\Command\Database\DumpCommand
+    tags:
+      - { name: 'console.command' }
+
+  oxid_community.oxrun.database.list:
+    class: Oxrun\Command\Database\ListCommand
+    tags:
+      - { name: 'console.command' }
+
+  oxid_community.oxrun.module.activate:
+    class: Oxrun\Command\Module\ActivateCommand
+    tags:
+      - { name: 'console.command' }
+
+  oxid_community.oxrun.module.deactivate:
+    class: Oxrun\Command\Module\DeactivateCommand
+    tags:
+      - { name: 'console.command' }
+
+  oxid_community.oxrun.module.list:
+    class: Oxrun\Command\Module\ListCommand
+    tags:
+      - { name: 'console.command' }
+
+  oxid_community.oxrun.module.reload:
+    class: Oxrun\Command\Module\ReloadCommand
+    tags:
+      - { name: 'console.command' }
+
+  oxid_community.oxrun.user.Password:
+    class: Oxrun\Command\User\PasswordCommand
+    tags:
+      - { name: 'console.command' }
