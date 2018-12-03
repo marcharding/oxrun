@@ -39,25 +39,6 @@ class ActivateCommand extends Command implements \Oxrun\Command\EnableInterface
     {
         $this->checkModulelist();
 
-        $actualVersion = $this->getApplication()->getOxidVersion();
-
-        if (version_compare($actualVersion, '4.9.0') >= 0) {
-            $this->executeVersion490($input, $output);
-        } elseif (version_compare($actualVersion, '4.8.0') >= 0) {
-            $this->executeVersion480($input, $output);
-        } elseif (version_compare($actualVersion, '4.7.0') >= 0) {
-            $this->executeVersion470($input, $output);
-        }
-    }
-
-    /**
-     * Executes the current command.
-     *
-     * @param InputInterface $input An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
-     */
-    protected function executeVersion490(InputInterface $input, OutputInterface $output)
-    {
         $sModule = $input->getArgument('module');
 
         $oModule = oxNew('oxModule');
@@ -79,41 +60,4 @@ class ActivateCommand extends Command implements \Oxrun\Command\EnableInterface
         }
     }
 
-    /**
-     * Executes the current command.
-     *
-     * @param InputInterface $input An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
-     */
-    protected function executeVersion480(InputInterface $input, OutputInterface $output)
-    {
-        $this->executeVersion470($input, $output);
-    }
-
-    /**
-     * Executes the current command.
-     *
-     * @param InputInterface $input An InputInterface instance
-     * @param OutputInterface $output An OutputInterface instance
-     */
-    protected function executeVersion470(InputInterface $input, OutputInterface $output)
-    {
-        $sModule = $input->getArgument('module');
-
-        $oModule = oxNew('oxModule');
-
-        if (!$oModule->load($sModule)) {
-            $output->writeLn("<error>Cannot load module $sModule.</error>");
-        }
-
-        if (!$oModule->isActive()) {
-            if ($oModule->activate() === true) {
-                $output->writeLn("<info>Module $sModule activated.</info>");
-            } else {
-                $output->writeLn("<error>Module $sModule could not be activated.</error>");
-            }
-        } else {
-            $output->writeLn("<error>Module $sModule already activated.</error>");
-        }
-    }
 }
