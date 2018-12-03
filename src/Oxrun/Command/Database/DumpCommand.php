@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Database;
 
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -11,8 +12,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class DumpCommand
  * @package Oxrun\Command\Database
  */
-class DumpCommand extends Command
+class DumpCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
+
     /**
      * Tables with no contents
      *
@@ -259,7 +262,7 @@ HELP;
      */
     public function isEnabled()
     {
-        return function_exists('exec') && $this->getApplication()->bootstrapOxid();
+        return function_exists('exec');
     }
 
     /**

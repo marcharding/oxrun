@@ -9,6 +9,7 @@
 namespace Oxrun\Command\Module;
 
 use Oxrun\Command\Cache\ClearCommand;
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,8 +17,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ReloadCommand extends Command
+class ReloadCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
 
     /**
      * Configures the current command.
@@ -59,13 +61,5 @@ class ReloadCommand extends Command
         $deactivateCommand->execute($argvInputDeactivate, $output);
         $clearCommand->execute($argvInputClearCache, $output);
         $activateCommand->execute($argvInputActivate, $output);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
     }
 }

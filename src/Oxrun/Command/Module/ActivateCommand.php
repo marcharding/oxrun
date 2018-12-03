@@ -3,6 +3,7 @@
 namespace Oxrun\Command\Module;
 
 use Oxrun\Traits\ModuleListCheckTrait;
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,8 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class ActivateCommand
  * @package Oxrun\Command\Module
  */
-class ActivateCommand extends Command
+class ActivateCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
     use ModuleListCheckTrait;
 
     /**
@@ -114,13 +116,4 @@ class ActivateCommand extends Command
             $output->writeLn("<error>Module $sModule already activated.</error>");
         }
     }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
-    }
-
 }

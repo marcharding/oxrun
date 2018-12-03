@@ -9,6 +9,7 @@
 namespace Oxrun\Command\Database;
 
 use Oxrun\Application;
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableHelper;
@@ -17,8 +18,10 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-class ListCommand extends Command
+class ListCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
+
     protected function configure()
     {
         $this
@@ -113,13 +116,5 @@ HELP;
         $existsTable = \oxDb::getDb()->getAll($sqlstament);
 
         return $existsTable;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
     }
 }

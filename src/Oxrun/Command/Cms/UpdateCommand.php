@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Cms;
 
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,8 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class UpdateCommand
  * @package Oxrun\Command\Cms
  */
-class UpdateCommand extends Command
+class UpdateCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
 
     /**
      * Configures the current command.
@@ -73,13 +75,5 @@ class UpdateCommand extends Command
         if ($oxContent->save()) {
             $output->writeLn("<info>Content with ident {$input->getArgument('ident')} updated.</info>");
         }
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
     }
 }

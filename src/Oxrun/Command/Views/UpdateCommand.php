@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Views;
 
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,8 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class UpdateCommand
  * @package Oxrun\Command\Views
  */
-class UpdateCommand extends Command
+class UpdateCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
 
     /**
      * Configures the current command.
@@ -41,15 +43,4 @@ class UpdateCommand extends Command
             $output->writeln('<error>Views could not be updated.</error>');
         }
     }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        /** @var \Oxrun\Application $application */
-        $application = $this->getApplication();
-        return $application->bootstrapOxid();
-    }
-
 }

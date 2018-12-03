@@ -6,6 +6,7 @@ use Oxrun\Application;
 use Oxrun\GenerateModule\CreateModule;
 use Oxrun\GenerateModule\InteractModuleForm;
 use Oxrun\GenerateModule\ModuleSpecification;
+use Oxrun\Traits\NoNeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,8 +17,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class GenerateCommand
  * @package Oxrun\Command\Module
  */
-class GenerateCommand extends Command
+class GenerateCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NoNeedDatabase;
+
     /**
      * @var string
      */
@@ -97,13 +100,4 @@ class GenerateCommand extends Command
         //Validate a throw
         $this->moduleSpecification->getPlaceholders();
     }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
-    }
-
 }
