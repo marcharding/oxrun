@@ -11,7 +11,9 @@ class ClearCommandTest extends TestCase
     public function testExecute()
     {
         $app = new Application();
-        $app->add(new ClearCommand());
+        $clearCommand = new ClearCommand();
+        $app->bootstrapOxid($clearCommand->needDatabaseConnection());
+        $app->add($clearCommand);
 
         $command = $app->find('cache:clear');
 
@@ -32,7 +34,9 @@ class ClearCommandTest extends TestCase
     public function testDontClearCompileFolderIfIsNotSameOwner()
     {
         $app = new Application();
-        $app->add(new ClearCommand());
+        $clearCommand = new ClearCommand();
+        $app->add($clearCommand);
+        $app->bootstrapOxid($clearCommand->needDatabaseConnection());
 
         $oxconfigfile = new \oxConfigFile($app->getShopDir() . DIRECTORY_SEPARATOR . 'config.inc.php');
         $compileDir   = $oxconfigfile->getVar('sCompileDir');

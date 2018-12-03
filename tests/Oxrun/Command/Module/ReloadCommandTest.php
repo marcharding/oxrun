@@ -17,11 +17,13 @@ class ReloadCommandTest extends TestCase
 {
     public function testExecute()
     {
+        $reloadCommand = new ReloadCommand();
         $app = new Application();
-        $app->add(new ReloadCommand());
+        $app->add($reloadCommand);
         $app->add(new DeactivateCommand());
         $app->add(new ClearCommand());
         $app->add(new ActivateCommand());
+        $app->bootstrapOxid($reloadCommand->needDatabaseConnection());
 
         $command = $app->find('module:reload');
 
