@@ -16,7 +16,6 @@ use Prophecy\Argument;
 /**
  * Class OxrunCollectionTest
  * @package Oxrun\CommandCollection\Tests
- * @group active
  */
 class OxrunCollectionTest extends TestCase
 {

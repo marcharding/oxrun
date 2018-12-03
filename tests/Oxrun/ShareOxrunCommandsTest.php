@@ -16,7 +16,6 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 /**
  * Class ShareOxrunCommandsTest
  * @package Oxrun
- * @group active
  */
 class ShareOxrunCommandsTest extends TestCase
 {
