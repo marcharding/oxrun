@@ -63,11 +63,11 @@ class EnableAdapter
      */
     protected function isEnabledOxrunCommand()
     {
-        if (!$this->command instanceof \Oxrun\Command\EnableInterface) {
-            throw new \Exception('Command `' . get_class($this->command) . '` must implement: ' . EnableInterface::class);
-        }
+        $dbconnect = false;
 
-        $dbconnect = $this->command->needDatabaseConnection();
+        if ($this->command instanceof \Oxrun\Command\EnableInterface) {
+            $dbconnect = $this->command->needDatabaseConnection();
+        }
 
         return $this->command->getApplication()->bootstrapOxid($dbconnect);
     }

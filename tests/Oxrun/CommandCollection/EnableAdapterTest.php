@@ -75,7 +75,7 @@ class EnableAdapterTest extends TestCase
         $this->assertFalse($enableAdapter->isEnabled());
     }
 
-    public function testShouldBeAOxrunCommand()
+    public function testItCanRunASharendCommand()
     {
         //Arrange
         /** @var \Oxrun\Application $app */
@@ -83,14 +83,16 @@ class EnableAdapterTest extends TestCase
         /** @var Command|ObjectProphecy|EnableInterface $command */
         $command = $this->prophesize(Command::class);
         $command->getApplication()->willReturn($app->reveal());
-        $commandReveal = $command->reveal();
 
         //Assert
-        $this->expectExceptionMessage('Command `' . get_class($commandReveal) . '` must implement: ' . EnableInterface::class);
+        $app->bootstrapOxid(Argument::is(false))->willReturn(true)->shouldBeCalled();
 
         //Act
-        $enableAdapter = new EnableAdapter($commandReveal);
-        $enableAdapter->isEnabled();
+        $enableAdapter = new EnableAdapter($command->reveal());
+        $actual = $enableAdapter->isEnabled();
+
+        //Assert
+        $this->assertTrue($actual);
     }
 
 }
