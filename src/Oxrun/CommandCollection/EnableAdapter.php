@@ -46,27 +46,15 @@ class EnableAdapter
 
     /**
      * @return bool
-     * @throws \Exception
      */
     public function isEnabled()
-    {
-        if ($this->command->getApplication() instanceof \Oxrun\Application) {
-            return $this->isEnabledOxrunCommand();
-        } else {
-            return $this->command->isEnabled();
-        }
-    }
-
-    /**
-     * @return mixed
-     * @throws \Exception
-     */
-    protected function isEnabledOxrunCommand()
     {
         $dbconnect = false;
 
         if ($this->command instanceof \Oxrun\Command\EnableInterface) {
             $dbconnect = $this->command->needDatabaseConnection();
+        } elseif (false == $this->command->isEnabled()) {
+            return false;
         }
 
         return $this->command->getApplication()->bootstrapOxid($dbconnect);

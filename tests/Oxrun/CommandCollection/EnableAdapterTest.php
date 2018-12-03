@@ -23,18 +23,21 @@ use Symfony\Component\Console\Output\NullOutput;
  */
 class EnableAdapterTest extends TestCase
 {
-    public function testCommandIsEnableFromCommunity()
+    /**
+     * @var \Oxrun\Application|ObjectProphecy
+     */
+    private $app;
+
+    /**
+     * @var Command|ObjectProphecy|EnableInterface
+     */
+    private $command;
+
+    protected function setUp()
     {
-        //Arrange
-        $command = $this->prophesize(Command::class);
-        $command->getApplication()->willReturn(null);
-
-        //Act
-        $enableAdapter = new EnableAdapter($command->reveal());
-        $command->isEnabled()->willReturn(true)->shouldBeCalled();
-
-        //Assert
-        $this->assertTrue($enableAdapter->isEnabled());
+        $this->app = $this->prophesize(\Oxrun\Application::class);
+        $this->command = $this->prophesize(Command::class);
+        $this->command->getApplication()->willReturn($this->app->reveal());
     }
 
     public function testAdapterPassMethodsToCommand()
@@ -55,44 +58,56 @@ class EnableAdapterTest extends TestCase
         $enableAdapter->run(new ArrayInput([]), new NullOutput());
     }
 
-    public function testByOxrunApplicationEnableIfFoundOxidFramework()
+    public function testCommunityCommandIsDisable()
     {
         //Arrange
-        /** @var Command|ObjectProphecy|EnableInterface $command */
-        $command = $this->prophesize(Command::class);
-        $command->willImplement(EnableInterface::class);
-        /** @var \Oxrun\Application $app */
-        $app = $this->prophesize(\Oxrun\Application::class);
+        $enableAdapter = new EnableAdapter($this->command->reveal());
 
         //Assert
-        $command->getApplication()->willReturn($app->reveal())->shouldBeCalled();
-        $command->needDatabaseConnection()->willReturn(true)->shouldBeCalled();
-        $command->isEnabled()->shouldNotBeCalled();
-        $app->bootstrapOxid(Argument::is(true))->willReturn(false)->shouldBeCalled();
+        $this->command->isEnabled()->willReturn(false)->shouldBeCalled();
 
         //Act
-        $enableAdapter = new EnableAdapter($command->reveal());
-        $this->assertFalse($enableAdapter->isEnabled());
+        $actual = $enableAdapter->isEnabled();
+
+        //Assert
+        $this->assertFalse($actual);
     }
 
-    public function testItCanRunASharendCommand()
+    public function testCommunityCommandIsEnable()
     {
         //Arrange
-        /** @var \Oxrun\Application $app */
-        $app = $this->prophesize(\Oxrun\Application::class);
-        /** @var Command|ObjectProphecy|EnableInterface $command */
-        $command = $this->prophesize(Command::class);
-        $command->getApplication()->willReturn($app->reveal());
+        $enableAdapter = new EnableAdapter($this->command->reveal());
+        $this->command->isEnabled()->willReturn(true);
 
         //Assert
-        $app->bootstrapOxid(Argument::is(false))->willReturn(true)->shouldBeCalled();
+        $this->app->bootstrapOxid(Argument::is(false))->willReturn(true)->shouldBeCalled();
 
         //Act
-        $enableAdapter = new EnableAdapter($command->reveal());
         $actual = $enableAdapter->isEnabled();
 
         //Assert
         $this->assertTrue($actual);
     }
 
+    /**
+     * @group active
+     */
+    public function testOxrunCommandCheckWithDatabaseConnection()
+    {
+        //Arrange
+        $this->command = $this->prophesize(Command::class);
+        $this->command->willImplement(EnableInterface::class);
+        $this->command->getApplication()->willReturn($this->app->reveal());
+        $enableAdapter = new EnableAdapter($this->command->reveal());
+
+        //Assert
+        $this->command->needDatabaseConnection()->willReturn(true)->shouldBeCalled();
+        $this->app->bootstrapOxid(Argument::is(true))->willReturn(false)->shouldBeCalled();
+
+        //Act
+        $actual = $enableAdapter->isEnabled();
+
+        //Assert
+        $this->assertFalse($actual);
+    }
 }
