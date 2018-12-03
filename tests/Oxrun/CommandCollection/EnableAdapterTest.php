@@ -12,6 +12,7 @@ use Oxrun\Command\EnableInterface;
 use Oxrun\CommandCollection\EnableAdapter;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -43,19 +44,31 @@ class EnableAdapterTest extends TestCase
     public function testAdapterPassMethodsToCommand()
     {
         //Arrange
-        /** @var Command $command */
         $command = $this->prophesize(Command::class);
-
-        //Assert
-        $command->getHelp()->shouldBeCalled();
-        $command->setAliases(Argument::is('BlBla'))->shouldBeCalled();
-        $command->run(Argument::type(ArrayInput::class), Argument::type(NullOutput::class))->shouldBeCalled();
-
-        //Act
         $enableAdapter = new EnableAdapter($command->reveal());
-        $enableAdapter->getHelp();
-        $enableAdapter->setAliases('BlBla');
-        $enableAdapter->run(new ArrayInput([]), new NullOutput());
+        $symfonyCommandClass = new \ReflectionClass(Command::class);
+        $command_methods = $symfonyCommandClass->getMethods(\ReflectionMethod::IS_PUBLIC);
+
+        /** @var \ReflectionMethod $reflectionMethod */
+        foreach ($command_methods as $reflectionMethod) {
+            $method_name = $reflectionMethod->getName();
+
+            if ($method_name == '__construct') {
+                continue;
+            }
+
+            $reflectionParameters = $reflectionMethod->getParameters();
+            $method_arguments = $this->simulateArguments($reflectionParameters);
+
+            $mock_method = $command->$method_name();
+            $this->addMockArguments($mock_method, count($reflectionParameters));
+
+            //Assert
+            $mock_method->shouldBeCalled();
+
+            //Act
+            call_user_func_array([$enableAdapter, $method_name], $method_arguments);
+        }
     }
 
     public function testCommunityCommandIsDisable()
@@ -109,5 +122,42 @@ class EnableAdapterTest extends TestCase
 
         //Assert
         $this->assertFalse($actual);
+    }
+
+    /**
+     * @param MethodProphecy $mock_method
+     * @param integer        $numberOfParameters
+     */
+    private function addMockArguments($mock_method, $numberOfParameters)
+    {
+        $arguments = [];
+        for ($i = 1; $i <= $numberOfParameters; $i++) {
+            $arguments[] = Argument::any();
+        }
+        if (!empty($arguments)) {
+            $mock_method->withArguments($arguments);
+        }
+    }
+
+    /**
+     * @param array $parameter
+     * @return array
+     */
+    private function simulateArguments($parameter)
+    {
+        $arguments = [];
+
+        /** @var \ReflectionParameter $reflectionParameter */
+        foreach ($parameter as $reflectionParameter) {
+            $parameterClass = $reflectionParameter->getClass();
+            if ($parameterClass) {
+                $classOrInterface = $parameterClass->getName();
+                $arguments[] = $this->prophesize($classOrInterface)->reveal();
+            } else {
+                $arguments[] = '';
+            }
+        }
+
+        return $arguments;
     }
 }
