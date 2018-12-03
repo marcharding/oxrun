@@ -59,7 +59,9 @@ class CommunityCollection implements CommandCollection
                 $errors[] = "Class '$class' not found in Service: $id'";
                 continue;
             }
-            $application->add(new $class);
+
+            $enableAdapter = new EnableAdapter(new $class);
+            $application->add($enableAdapter);
         }
 
         if (!empty($errors)) {
