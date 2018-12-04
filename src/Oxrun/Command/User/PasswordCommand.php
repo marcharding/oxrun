@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\User;
 
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,8 +12,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class PasswordCommand
  * @package Oxrun\Command\User
  */
-class PasswordCommand extends Command
+class PasswordCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
 
     /**
      * Configures the current command.
@@ -50,13 +52,4 @@ class PasswordCommand extends Command
         $oxUser->save();
         $output->writeln('<info>New password set.</info>');
     }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
-    }
-
 }

@@ -3,6 +3,7 @@
 namespace Oxrun\Command\Module;
 
 use Oxrun\Traits\ModuleListCheckTrait;
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,8 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class ListCommand
  * @package Oxrun\Command\Module
  */
-class ListCommand extends Command
+class ListCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
     use ModuleListCheckTrait;
 
     /**
@@ -59,13 +61,4 @@ class ListCommand extends Command
             ->setRows(array_merge($activeModules, $deactiveModules));
         $table->render();
     }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
-    }
-
 }

@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Misc;
 
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,8 +15,10 @@ use Symfony\Component\Finder\Finder;
  *
  * @package Oxrun\Command\Misc
  */
-class PhpstormMetadataCommand extends Command
+class PhpstormMetadataCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
+
     /**
      * Configures the current command.
      */
@@ -171,13 +174,5 @@ EOT;
         }
 
         $output->writeln($metaContent);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
     }
 }

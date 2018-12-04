@@ -1,17 +1,22 @@
 <?php
 
-namespace Oxrun\Command\Database;
+namespace Oxrun\Command\Database\Test;
 
 use Oxrun\Application;
+use Oxrun\Command\EnableInterface;
 use Oxrun\TestCase;
+use Oxrun\Command\Database\DumpCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class DumpCommandTest extends TestCase
 {
     public function testExecute()
     {
+        $dumpCommand = new DumpCommand();
+
         $app = new Application();
-        $app->add(new DumpCommand());
+        $app->add($dumpCommand);
+        $app->bootstrapOxid($dumpCommand->needDatabaseConnection());
 
         $command = $app->find('db:dump');
 

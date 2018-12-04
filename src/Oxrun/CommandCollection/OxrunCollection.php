@@ -24,7 +24,9 @@ class OxrunCollection implements CommandCollection
         foreach ($regexIterator as $commandPath) {
             $commandClass = '\\Oxrun\\Command';
             $commandClass .= str_replace(array($commandSourceDir, '/', '.php'), array('', '\\', ''), $commandPath);
-            $application->add(new $commandClass);
+
+            $enableAdapter = new EnableAdapter(new $commandClass);
+            $application->add($enableAdapter);
         }
     }
 }

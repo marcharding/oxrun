@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Cache;
 
+use Oxrun\Traits\NoNeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -12,8 +13,10 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
  * Class ClearCommand
  * @package Oxrun\Command\Cache
  */
-class ClearCommand extends Command
+class ClearCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+
+    use NoNeedDatabase;
 
     /**
      * Configures the current command.
@@ -65,14 +68,6 @@ class ClearCommand extends Command
         }
 
         throw new FileNotFoundException("$configfile");
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
     }
 
     /**

@@ -72,7 +72,7 @@ class CommunityCollectionTest extends TestCase
         $communityCollection = new CommunityCollection();
 
         //Assert
-        $this->app->add(Argument::type( \OxidEsales\DemoComponent\Command\HelloWorldCommand::class))->shouldBeCalled();
+        $this->app->add(Argument::type( CommandCollection\EnableAdapter::class))->shouldBeCalled();
 
         //Act
         $communityCollection->addCommandTo($this->app->reveal());
@@ -85,7 +85,7 @@ class CommunityCollectionTest extends TestCase
         $this->mockShopDir('installed_one_package.json', 'different_spellings_class_name.yml');
 
         //Assert
-        $this->app->add(Argument::type( \OxidEsales\DemoComponent\Command\HelloWorldCommand::class))->shouldBeCalledTimes(2);
+        $this->app->add(Argument::type( CommandCollection\EnableAdapter::class))->shouldBeCalledTimes(2);
 
         //Act
         $communityCollection->addCommandTo($this->app->reveal());
@@ -99,7 +99,7 @@ class CommunityCollectionTest extends TestCase
 
         //Assert
         $this->expectExceptionMessage("- Class '\OxidEsales\DemoComponent\Command\NotImplemented' not found in Service: class.command.notimplemented'");
-        $this->app->add(Argument::type( \OxidEsales\DemoComponent\Command\HelloWorldCommand::class))->shouldBeCalled();
+        $this->app->add(Argument::type( CommandCollection\EnableAdapter::class))->shouldBeCalled();
 
         //Act
         $communityCollection->addCommandTo($this->app->reveal());

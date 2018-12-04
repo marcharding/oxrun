@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Config;
 
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,8 +13,10 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class GetCommand
  * @package Oxrun\Command\Config
  */
-class GetCommand extends Command
+class GetCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+
+    use NeedDatabase;
 
     /**
      * Configures the current command.
@@ -49,13 +52,5 @@ class GetCommand extends Command
             $shopConfVar = 0;
         }
         $output->writeln("<info>{$input->getArgument('variableName')} has value {$shopConfVar}</info>");
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
     }
 }

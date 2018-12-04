@@ -3,6 +3,7 @@
 namespace Oxrun\Command\Module;
 
 use Oxrun\Traits\ModuleListCheckTrait;
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,8 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class DeactivateCommand
  * @package Oxrun\Command\Module
  */
-class DeactivateCommand extends Command
+class DeactivateCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
     use ModuleListCheckTrait;
 
     /**
@@ -115,13 +117,4 @@ class DeactivateCommand extends Command
         }
 
     }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
-    }
-
 }

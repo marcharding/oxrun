@@ -3,6 +3,7 @@
 namespace Oxrun\Command\Misc;
 
 use Oxrun\Application;
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,8 +15,9 @@ use Symfony\Component\Console\Tester\CommandTester;
  * Class GenerateDocumentationCommand
  * @package Oxrun\Command\Misc
  */
-class GenerateDocumentationCommand extends Command
+class GenerateDocumentationCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
 
     protected $skipCommands = array('help');
 
@@ -86,13 +88,5 @@ class GenerateDocumentationCommand extends Command
             $commandOutput = trim($commandOutput);
             $output->writeLn($commandOutput . PHP_EOL);
         }
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
     }
 }

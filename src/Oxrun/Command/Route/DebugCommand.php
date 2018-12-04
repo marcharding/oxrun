@@ -9,6 +9,7 @@
 namespace Oxrun\Command\Route;
 
 use Distill\Exception\IO\Exception;
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\TableHelper;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -17,8 +18,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class DebugCommand extends Command
+class DebugCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
+
     /**
      * @var array
      */
@@ -75,14 +78,6 @@ class DebugCommand extends Command
                 $output->writeln('<comment>File path has been copied.</comment>');
             };
         }
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid(true);
     }
 
     /**

@@ -16,12 +16,11 @@ use Prophecy\Argument;
 /**
  * Class OxrunCollectionTest
  * @package Oxrun\CommandCollection\Tests
- * @group active
  */
 class OxrunCollectionTest extends TestCase
 {
     /**
-     * @var \Oxrun\Application|ObjectProphecy
+     * @var \Oxrun\Application
      */
     private $app;
 
@@ -37,17 +36,13 @@ class OxrunCollectionTest extends TestCase
     public function testToLoadAllCommand()
     {
         //Arrange
-        $communityCollection = new OxrunCollection();
-        $assertOxrunCommand = function ($command) {
-            $strpos = strpos(get_class($command), 'Oxrun\\Command');
-            return $strpos === 0 ;
-        };
+        $oxrunCollection = new OxrunCollection();
 
         //Act
-        $communityCollection->addCommandTo($this->app->reveal());
+        $oxrunCollection->addCommandTo($this->app->reveal());
 
         //Assert
-        $this->app->add(Argument::that($assertOxrunCommand))->shouldHaveBeenCalled();
+        $this->app->add(Argument::type(CommandCollection\EnableAdapter::class))->shouldHaveBeenCalled();
     }
 
     protected function setUp()

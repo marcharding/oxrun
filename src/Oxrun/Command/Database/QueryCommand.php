@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Database;
 
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,8 +14,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class QueryCommand
  * @package Oxrun\Command\Database
  */
-class QueryCommand extends Command
+class QueryCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
 
     /**
      * Configures the current command.
@@ -104,7 +106,7 @@ HELP;
      */
     public function isEnabled()
     {
-        return function_exists('exec') && $this->getApplication()->bootstrapOxid();
+        return function_exists('exec');
     }
 
 }

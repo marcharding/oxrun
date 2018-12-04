@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Config;
 
+use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,8 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class ShopSetCommand
  * @package Oxrun\Command\Config
  */
-class ShopSetCommand extends Command
+class ShopSetCommand extends Command implements \Oxrun\Command\EnableInterface
 {
+    use NeedDatabase;
 
     /**
      * Configures the current command.
@@ -42,13 +44,4 @@ class ShopSetCommand extends Command
         $oxShop->save();
         $output->writeln("<info>Shopconfig {$input->getArgument('variableName')} set to {$input->getArgument('variableValue')}</info>");
     }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->getApplication()->bootstrapOxid();
-    }
-
 }
