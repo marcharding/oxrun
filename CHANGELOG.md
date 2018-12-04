@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
-## 3.2.0 - 2018-12-02
+## 3.3.0 - 2018-12-02
 
 ### Added
 
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove OXID version switch. Command module:activate and module:deactivate works >v6.x
 
-## 3.1.0 - 2018-11-28
+## 3.2.0 - 2018-11-28
 
 ### Added
 
