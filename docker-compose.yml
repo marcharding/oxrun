@@ -25,7 +25,7 @@ services:
         OXID_IDEBUG: 0
         OXID_ADMIN_PASSWORD: admin@local.oxrun
         OXID_ADMIN_USERNAME: oxrunpassword
-
+#        COMPOSER_AUTH: '{"http-basic": {"enterprise-edition.packages.oxid-esales.com": {"username": "XXXX", "password": "XXXX"}}}'
     oxid_db:
       image: mesa/oxid:db
       restart: always
