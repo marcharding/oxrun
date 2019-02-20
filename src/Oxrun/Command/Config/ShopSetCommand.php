@@ -26,8 +26,7 @@ class ShopSetCommand extends Command implements \Oxrun\Command\EnableInterface
             ->setName('config:shop:set')
             ->setDescription('Sets a shop config value')
             ->addArgument('variableName', InputArgument::REQUIRED, 'Variable name')
-            ->addArgument('variableValue', InputArgument::REQUIRED, 'Variable value')
-            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, 'oxbaseshop', 'oxbaseshop');
+            ->addArgument('variableValue', InputArgument::REQUIRED, 'Variable value');
     }
 
     /**

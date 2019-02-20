@@ -29,7 +29,6 @@ class SetCommand extends Command implements \Oxrun\Command\EnableInterface
             ->addArgument('variableName', InputArgument::REQUIRED, 'Variable name')
             ->addArgument('variableValue', InputArgument::REQUIRED, 'Variable value')
             ->addOption('variableType', null, InputOption::VALUE_REQUIRED, 'Variable type')
-            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
             ->addOption('moduleId', null, InputOption::VALUE_OPTIONAL, '');
     }
 

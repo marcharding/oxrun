@@ -102,9 +102,6 @@ class EnableAdapterTest extends TestCase
         $this->assertTrue($actual);
     }
 
-    /**
-     * @group active
-     */
     public function testOxrunCommandCheckWithDatabaseConnection()
     {
         //Arrange

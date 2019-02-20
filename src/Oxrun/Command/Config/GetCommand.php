@@ -27,7 +27,6 @@ class GetCommand extends Command implements \Oxrun\Command\EnableInterface
             ->setName('config:get')
             ->setDescription('Gets a config value')
             ->addArgument('variableName', InputArgument::REQUIRED, 'Variable name')
-            ->addOption('shopId', null, InputOption::VALUE_OPTIONAL, null)
             ->addOption('moduleId', null, InputOption::VALUE_OPTIONAL, '');
     }
 
