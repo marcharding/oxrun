@@ -8,7 +8,9 @@ use Oxrun\Helper\DatenbaseConnection;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class Application
@@ -72,7 +74,6 @@ class Application extends BaseApplication
         return array(new HelpCommand(), new Custom\ListCommand());
     }
 
-
     /**
      * @return \Symfony\Component\Console\Input\InputDefinition
      */
@@ -80,16 +81,37 @@ class Application extends BaseApplication
     {
         $inputDefinition = parent::getDefaultInputDefinition();
 
-        $shopDirOption = new InputOption(
-            '--shopDir',
-            '',
-            InputOption::VALUE_OPTIONAL,
-            'Force oxid base dir. No auto detection'
+        $inputDefinition->addOption(
+            new InputOption(
+                '--shopDir',
+                '',
+                InputOption::VALUE_OPTIONAL,
+                'Force oxid base dir. No auto detection'
+            )
         );
-        $inputDefinition->addOption($shopDirOption);
+
+        $inputDefinition->addOption(
+            new InputOption(
+                '--shopId',
+                '-m',
+                InputOption::VALUE_OPTIONAL,
+                'Shop Id (EE Relevant)',
+                1
+            )
+        );
 
         return $inputDefinition;
     }
+
+    public function doRun(InputInterface $input, OutputInterface $output)
+    {
+        if (true === $input->hasParameterOption(['--shopId', '-m'])) {
+            $_GET['shp'] = $input->getParameterOption(['--shopId', '-m']);
+        }
+
+        return parent::doRun($input, $output);
+    }
+
 
     /**
      * Oxid bootstrap.php is loaded.
