@@ -41,6 +41,9 @@ if [ ! -f "${DOCKER_DOCUMENT_ROOT}/config.inc.php" ]; then
     echo "Copy demo asset ...";
     ${install_dir}/vendor/bin/oe-eshop-demodata_install
 
+    echo "Oxid eshop migration ...";
+    ${install_dir}/vendor/bin/oe-eshop-doctrine_migration migrations:migrate
+
     echo "Create OXID views ...";
     oxrun view:update --shopDir ${DOCKER_DOCUMENT_ROOT}
 
