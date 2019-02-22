@@ -28,7 +28,7 @@ class ListCommand extends \Symfony\Component\Console\Command\ListCommand
         if ($application->bootstrapOxid(false) && $application->canConnectToDB() == false) {
             $output->writeln('');
             $output->writeln('<error>  Can\'t connect to Database. Most of the Commands are disabled </error>');
-            $output->writeln('<error>  Error Message: ' . $application->getDatenbaseConnection()->getLastErrorMsg() . '</error>');
+            $output->writeln('<error>  Error Message: ' . $application->getDatabaseConnection()->getLastErrorMsg() . '</error>');
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Oxrun\Helper;
 
 use Oxrun\TestCase;
 
-class DatenbaseConnectionTest extends TestCase
+class DatabaseConnectionTest extends TestCase
 {
     /**
      * @var
@@ -17,7 +17,7 @@ class DatenbaseConnectionTest extends TestCase
     protected static $config;
 
     /**
-     * @var DatenbaseConnection
+     * @var DatabaseConnection
      */
     protected $testSubject;
 
@@ -38,8 +38,8 @@ class DatenbaseConnectionTest extends TestCase
     {
         $port = isset(self::$config->dbPort) ? self::$config->dbPort : 3306;
 
-        $datenbaseConnection = new DatenbaseConnection();
-        $datenbaseConnection
+        $databaseConnection = new DatabaseConnection();
+        $databaseConnection
             // Must be right to work correct
             ->setHost( self::$config->dbHost)
             ->setPort($port)
@@ -47,7 +47,7 @@ class DatenbaseConnectionTest extends TestCase
             ->setPass(self::$config->dbPwd)
             ->setDatabase(self::$config->dbName);
 
-        $this->testSubject = $datenbaseConnection;
+        $this->testSubject = $databaseConnection;
     }
 
     public function testCanParseHostPort()

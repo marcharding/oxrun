@@ -4,7 +4,7 @@ namespace Oxrun;
 
 use Composer\Autoload\ClassLoader;
 use Oxrun\Command\Custom;
-use Oxrun\Helper\DatenbaseConnection;
+use Oxrun\Helper\DatabaseConnection;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -46,9 +46,9 @@ class Application extends BaseApplication
     protected $oxidConfigContent;
 
     /**
-     * @var DatenbaseConnection
+     * @var databaseConnection
      */
-    protected $datenbaseConnection = null;
+    protected $databaseConnection = null;
 
     /**
      * @var string
@@ -56,9 +56,9 @@ class Application extends BaseApplication
     protected $oxid_version = "0.0.0";
 
     /**
-     * @param ClassLoader   $autoloader
-     * @param string $name
-     * @param string $version
+     * @param ClassLoader   $autoloader The composer autoloader
+     * @param string        $name
+     * @param string        $version
      */
     public function __construct($autoloader = null, $name = 'UNKNOWN', $version = 'UNKNOWN')
     {
@@ -107,6 +107,7 @@ class Application extends BaseApplication
     {
         if (true === $input->hasParameterOption(['--shopId', '-m'])) {
             $_GET['shp'] = $input->getParameterOption(['--shopId', '-m']);
+            $_GET['actshop'] = $input->getParameterOption(['--shopId', '-m']);
         }
 
         return parent::doRun($input, $output);
@@ -138,11 +139,12 @@ class Application extends BaseApplication
      *
      * @return bool
      */
-    protected function findBootstrapFile() {
+    protected function findBootstrapFile()
+    {
         $input = new ArgvInput();
-        if($input->getParameterOption('--shopDir')) {
+        if ($input->getParameterOption('--shopDir')) {
             $oxBootstrap = $input->getParameterOption('--shopDir'). '/bootstrap.php';
-            if( $this->checkBootstrapOxidInclude( $oxBootstrap ) === true ) {
+            if ($this->checkBootstrapOxidInclude($oxBootstrap) === true) {
                 return true;
             }
             return false;
@@ -152,7 +154,7 @@ class Application extends BaseApplication
         $currentWorkingDirectory = getcwd();
         do {
             $oxBootstrap = $currentWorkingDirectory . '/bootstrap.php';
-            if( $this->checkBootstrapOxidInclude( $oxBootstrap ) === true ) {
+            if ($this->checkBootstrapOxidInclude($oxBootstrap) === true) {
                 return true;
                 break;
             }
@@ -165,7 +167,8 @@ class Application extends BaseApplication
      * Check if bootstrap file exists
      *
      * @param String $oxBootstrap Path to oxid bootstrap.php
-     * @param bool $skipViews Add 'blSkipViewUsage' to OXIDs config.
+     * @param bool   $skipViews   Add 'blSkipViewUsage' to OXIDs config.
+     *
      * @return bool
      */
     public function checkBootstrapOxidInclude($oxBootstrap)
@@ -175,7 +178,7 @@ class Application extends BaseApplication
             if (strpos(file_get_contents($oxBootstrap), 'OX_BASE_PATH') !== false) {
                 $this->shopDir = dirname($oxBootstrap);
 
-                require_once $oxBootstrap;
+                include_once $oxBootstrap;
 
                 // If we've an autoloader we must re-register it to avoid conflicts with a composer autoloader from shop
                 if (null !== $this->autoloader) {
@@ -201,9 +204,7 @@ class Application extends BaseApplication
             return $this->oxid_version;
         }
 
-        if ($this->findVersionOnOxidLegacy() == false) {
-            $this->findVersionOnOxid6();
-        }
+        $this->findVersionOnOxid6();
 
         return $this->oxid_version;
     }
@@ -230,47 +231,100 @@ class Application extends BaseApplication
         if ($this->shopDir && file_exists($configfile)) {
             $oxConfigFile = new \OxConfigFile($configfile);
 
-            $datenbaseConnection = $this->getDatenbaseConnection();
-            $datenbaseConnection
+            $databaseConnection = $this->getDatabaseConnection();
+            $databaseConnection
                 ->setHost($oxConfigFile->getVar('dbHost'))
                 ->setUser($oxConfigFile->getVar('dbUser'))
                 ->setPass($oxConfigFile->getVar('dbPwd'))
                 ->setDatabase($oxConfigFile->getVar('dbName'));
 
-            return $this->hasDBConnection = $datenbaseConnection->canConnectToMysql();
+            return $this->hasDBConnection = $databaseConnection->canConnectToMysql();
         }
 
         return $this->hasDBConnection = false;
     }
 
     /**
-     * @return DatenbaseConnection
+     * @return DatabaseConnection
      */
-    public function getDatenbaseConnection()
+    public function getDatabaseConnection()
     {
-        if ($this->datenbaseConnection === null) {
-            $this->datenbaseConnection = new DatenbaseConnection();
+        if ($this->databaseConnection === null) {
+            $this->databaseConnection = new DatabaseConnection();
         }
 
-        return $this->datenbaseConnection;
+        return $this->databaseConnection;
     }
 
     /**
-     * Find Version on Place into Oxid Legacy Code
+     * Completely switch shop
      *
-     * @return bool
+     * @param string $shopId The shop id
+     *
+     * @return void
      */
-    protected function findVersionOnOxidLegacy()
+    public function switchToShopId($shopId)
     {
-        $pkgInfo = $this->getShopDir() . DIRECTORY_SEPARATOR . 'pkg.info';
-        if (file_exists($pkgInfo)) {
-            $pkgInfo = parse_ini_file($pkgInfo);
-            $this->oxid_version = $pkgInfo['version'];
-            return true;
+        $_POST['shp'] = $shopId;
+        $_POST['actshop'] = $shopId;
+        
+        $keepThese = [\OxidEsales\Eshop\Core\ConfigFile::class];
+        $registryKeys = \OxidEsales\Eshop\Core\Registry::getKeys();
+        foreach ($registryKeys as $key) {
+            if (in_array($key, $keepThese)) {
+                continue;
+            }
+            \OxidEsales\Eshop\Core\Registry::set($key, null);
         }
-        return false;
+
+        $utilsObject = new \OxidEsales\Eshop\Core\UtilsObject;
+        $utilsObject->resetInstanceCache();
+        \OxidEsales\Eshop\Core\Registry::set(\OxidEsales\Eshop\Core\UtilsObject::class, $utilsObject);
+
+        \OxidEsales\Eshop\Core\Module\ModuleVariablesLocator::resetModuleVariables();
+        \OxidEsales\Eshop\Core\Registry::getSession()->setVariable('shp', $shopId);
+
+        //ensure we get rid of all instances of config, even the one in Core\Base
+        \OxidEsales\Eshop\Core\Registry::set(\OxidEsales\Eshop\Core\Config::class, null);
+        \OxidEsales\Eshop\Core\Registry::getConfig()->setConfig(null);
+        \OxidEsales\Eshop\Core\Registry::set(\OxidEsales\Eshop\Core\Config::class, null);
+
+        $moduleVariablesCache = new \OxidEsales\Eshop\Core\FileCache();
+        $shopIdCalculator = new \OxidEsales\Eshop\Core\ShopIdCalculator($moduleVariablesCache);
+
+        if (($shopId != $shopIdCalculator->getShopId())
+            || ($shopId != \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId())
+        ) {
+            throw new \Exception('Failed to switch to subshop id ' . $shopId . " Calculate ID: " . $shopIdCalculator->getShopId() . " Config ShopId: " . \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId());
+        }
     }
 
+    /**
+     * Get YAML string, either from file or from string
+     *
+     * @param string $ymlString The relative file path, from shop root OR a YAML string
+     * @param string $basePath  Alternative root dir path, if a file is used
+     *
+     * @return string
+     */
+    public function getYaml($ymlString, $basePath = '')
+    {
+        // is it a file?
+        if (strpos(strtolower($ymlString), '.yml') !== false
+            || strpos(strtolower($ymlString), '.yaml') !== false
+        ) {
+            if ($basePath == '') {
+                $basePath = $this->getShopDir() . DIRECTORY_SEPARATOR;
+            }
+            $ymlFile = $basePath . $ymlString;
+            if (file_exists($ymlFile)) {
+                $ymlString = file_get_contents($ymlFile);
+            }
+        }
+        
+        return $ymlString;
+    }
+        
     /**
      * Find Version up to OXID 6 Version
      * @throws \Exception
