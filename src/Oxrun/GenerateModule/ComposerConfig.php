@@ -8,6 +8,7 @@
 
 namespace Oxrun\GenerateModule;
 
+use Composer\Json as Composer;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -40,18 +41,20 @@ class ComposerConfig
      * @param $namespace
      * @param $path
      * @param $composer_json
+     * @throws \Exception
      */
     protected function save($namespace, $path, $composer_json)
     {
         $namespace = rtrim($namespace, '\\');
         $namespace .= '\\';
 
-        $content = \GuzzleHttp\json_decode(file_get_contents($composer_json), true);
+        $jsonFile = new Composer\JsonFile($composer_json);
+
+        $content = $jsonFile->read();
 
         $content['autoload']['psr-4'][$namespace] = $path;
         $content['autoload-dev']['psr-4'][$namespace . 'Tests\\'] = $path . '/tests';
 
-        $json_encode = \GuzzleHttp\json_encode($content, JSON_PRETTY_PRINT);
-        file_put_contents($composer_json, $json_encode);
+        $jsonFile->write($content);
     }
 }
