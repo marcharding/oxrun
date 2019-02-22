@@ -3,6 +3,7 @@
 namespace Oxrun;
 
 use Composer\Autoload\ClassLoader;
+use OxidEsales\Eshop\Core\Registry;
 use Oxrun\Command\Custom;
 use Oxrun\Helper\DatabaseConnection;
 use Symfony\Component\Console\Application as BaseApplication;
@@ -193,6 +194,71 @@ class Application extends BaseApplication
         return false;
     }
 
+    /**
+     * Add custom command folder in OXID source directory
+     *
+     * @return void
+     */
+    public function addCustomCommandDir()
+    {
+        // always add modules dir
+        $this->addModulesCommandDirs();
+
+        $commandSourceDir          = INSTALLATION_ROOT_PATH . '/oxruncmds';
+        if (!file_exists($commandSourceDir)) {
+            return;
+        }
+        $recursiveIteratorIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($commandSourceDir));
+        $regexIterator             = new \RegexIterator($recursiveIteratorIterator, '/.*Command\.php$/');
+        
+        foreach ($regexIterator as $commandPath) {
+            $commandClass = str_replace(array($commandSourceDir, '/', '.php'), array('', '\\', ''), $commandPath);
+            if (!class_exists($commandClass)) {
+                echo "\nClass $commandClass does not exist!\n";
+                continue;
+            }
+            try {
+                $instance = new $commandClass;
+                if ($this->isCommandCompatibleClass($instance)) {
+                    $this->add($instance);
+                }
+            } catch (\Exception $ex) {
+                echo "\nError loading class $commandClass!\n";
+            }
+        }
+    }
+
+    /**
+     * Add modules folder in OXID source directory
+     * Every module may have a subfolder "[C|c]ommand[s]" containing
+     * oxrun commands which we try to load here
+     *
+     * @return void
+     */
+    protected function addModulesCommandDirs()
+    {
+        $config = Registry::getConfig();
+        $modulesRootPath = $config->getModulesDir();
+        $paths = $this->getPathsOfAvailableModules();
+        $pathToPhpFiles = $this->getPhpFilesMatchingPatternForCommandFromGivenPaths(
+            $paths
+        );
+        $classes = $this->getAllClassesFromPhpFiles($pathToPhpFiles);
+        foreach ($classes as $commandClass) {
+            if (!class_exists($commandClass)) {
+                echo "\nClass $commandClass does not exist!\n";
+                continue;
+            }
+            try {
+                $instance = new $commandClass;
+                if ($this->isCommandCompatibleClass($instance)) {
+                    $this->add($instance);
+                }
+            } catch (\Exception $ex) {
+                echo "\nError loading class $commandClass!\n";
+            }
+        }
+    }
 
     /**
      * @return mixed|string
@@ -351,5 +417,131 @@ class Application extends BaseApplication
         }
 
         $this->oxid_version = \OxidEsales\Eshop\Core\ShopVersion::getVersion();
+    }
+
+    /**
+     * Filter out classes with predefined criteria to be accepted as valid `Command` classes.
+     *
+     * A given class should match the following criteria:
+     *   a) Extends `Symfony\Component\Console\Command\Command`;
+     *   b) Is not `Symfony\Component\Console\Command\Command` itself.
+     *
+     * @param string $class
+     *
+     * @return boolean
+     */
+    private function isCommandCompatibleClass($class)
+    {
+        return is_subclass_of($class, Command::class) && $class !== Command::class;
+    }
+    /**
+     * Return list of paths to all available modules.
+     *
+     * @return string[]
+     */
+    private function getPathsOfAvailableModules()
+    {
+        $config = Registry::getConfig();
+        $modulesRootPath = $config->getModulesDir();
+        $modulePaths = $config->getConfigParam('aModulePaths');
+        if (!is_dir($modulesRootPath)) {
+            return [];
+        }
+        if (!is_array($modulePaths)) {
+            return [];
+        }
+        $fullModulePaths = array_map(function ($modulePath) use ($modulesRootPath) {
+            return $modulesRootPath . $modulePath;
+        }, array_values($modulePaths));
+        return array_filter($fullModulePaths, function ($fullModulePath) {
+            return is_dir($fullModulePath);
+        });
+    }
+    /**
+     * Return list of PHP files matching `Command` specific pattern.
+     *
+     * @param string $path Path to collect files from
+     *
+     * @return string[]
+     */
+    private function getPhpFilesMatchingPatternForCommandFromGivenPath($path)
+    {
+        $folders = ['Commands','commands','Command'];
+        foreach ($folders as $f) {
+            $cPath = $path . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR;
+            if (!is_dir($cPath)) {
+                continue;
+            }
+            $files = glob("$cPath*[cC]ommand\.php");
+            return $files;
+        }
+        return [];
+    }
+    /**
+     * Convert array of arrays to flat list array.
+     *
+     * @param array[] $nonFlatArray
+     *
+     * @return array
+     */
+    private function getFlatArray($nonFlatArray)
+    {
+        return array_reduce($nonFlatArray, 'array_merge', []);
+    }
+    /**
+     * Helper method for `getPhpFilesMatchingPatternForCommandFromGivenPath`
+     *
+     * @param string[] $paths
+     *
+     * @return string[]
+     */
+    private function getPhpFilesMatchingPatternForCommandFromGivenPaths($paths)
+    {
+        return $this->getFlatArray(array_map(function ($path) {
+            return $this->getPhpFilesMatchingPatternForCommandFromGivenPath($path);
+        }, $paths));
+    }
+    /**
+     * Get list of defined classes from given PHP file.
+     *
+     * @param string $pathToPhpFile
+     *
+     * @return string[]
+     */
+    private function getAllClassesFromPhpFile($pathToPhpFile)
+    {
+        $classesBefore = get_declared_classes();
+        try {
+            require_once $pathToPhpFile;
+        } catch (\Throwable $exception) {
+            print "Can not add Command $pathToPhpFile:\n";
+            print $exception->getMessage() . "\n";
+        }
+        $classesAfter = get_declared_classes();
+        $newClasses = array_diff($classesAfter, $classesBefore);
+        if (count($newClasses) > 1) {
+            //try to find the correct class name to use
+            //this avoids warnings when module developer use there own command base class, that is not instantiable
+            $name = basename($pathToPhpFile, '.php');
+            foreach ($newClasses as $newClass) {
+                if ($newClass == $name) {
+                    return [$newClass];
+                }
+            }
+        }
+        return $newClasses;
+    }
+    /**
+     * Helper method for `getAllClassesFromPhpFile`
+     *
+     * @param string[] $pathToPhpFiles
+     *
+     * @return string[]
+     */
+    private function getAllClassesFromPhpFiles($pathToPhpFiles)
+    {
+        return $this->getFlatArray(array_map(function ($pathToPhpFile) {
+            return $this->getAllClassesFromPhpFile($pathToPhpFile);
+        }, $pathToPhpFiles));
     }
 }
