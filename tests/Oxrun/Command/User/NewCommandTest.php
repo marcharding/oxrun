@@ -15,7 +15,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * Class NewCommandTest
  * @package Oxrun\Command\User
- * @group active
  */
 class NewCommandTest extends TestCase
 {
