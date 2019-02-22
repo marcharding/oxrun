@@ -29,6 +29,7 @@ class ActivateCommand extends Command implements \Oxrun\Command\EnableInterface
             ->addArgument('module', InputArgument::REQUIRED, 'Module name');
     }
 
+    
     /**
      * Executes the current command.
      *
@@ -37,27 +38,47 @@ class ActivateCommand extends Command implements \Oxrun\Command\EnableInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->checkModulelist();
+        $shopId = $input->getOption('shopId');
+        if ($shopId) {
+            $this->getApplication()->switchToShopId($shopId);
+        }
+        
+        $this->checkModulelist($shopId);
 
+        $this->executeActivate($input, $output);
+    }
+
+    /**
+     * Executes the current command.
+     *
+     * @param InputInterface $input An InputInterface instance
+     * @param OutputInterface $output An OutputInterface instance
+     */
+    protected function executeActivate(InputInterface $input, OutputInterface $output)
+    {
         $sModule = $input->getArgument('module');
+        $shopId = $input->getOption('shopId');
 
-        $oModule = oxNew('oxModule');
-        $oModuleCache = oxNew('oxModuleCache', $oModule);
-        $oModuleInstaller = oxNew('oxModuleInstaller', $oModuleCache);
+        $oModule = oxNew(\OxidEsales\Eshop\Core\Module\Module::class);
+        $oModuleCache = oxNew(\OxidEsales\Eshop\Core\Module\ModuleCache::class, $oModule);
+        $oModuleInstaller = oxNew(\OxidEsales\Eshop\Core\Module\ModuleInstaller::class, $oModuleCache);
 
         if (!$oModule->load($sModule)) {
             $output->writeLn("<error>Cannot load module $sModule.</error>");
         }
 
         if (!$oModule->isActive()) {
-            if ($oModuleInstaller->activate($oModule) === true) {
-                $output->writeLn("<info>Module $sModule activated.</info>");
-            } else {
-                $output->writeLn("<error>Module $sModule could not be activated.</error>");
+            try {
+                if ($oModuleInstaller->activate($oModule) === true) {
+                    $output->writeLn("<info>Module $sModule activated for shopId $shopId.</info>");
+                } else {
+                    $output->writeLn("<error>Module $sModule could not be activated for shopId $shopId.</error>");
+                }
+            } catch (\Exception $ex) {
+                $output->writeLn("<error>Exception actiating module: $sModule for shop $shopId: {$ex->getMessage()}</error>");
             }
         } else {
-            $output->writeLn("<error>Module $sModule already activated.</error>");
+            $output->writeLn("<comment>Module $sModule already activated for shopId $shopId.</comment>");
         }
     }
-
 }
