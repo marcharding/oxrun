@@ -8,13 +8,13 @@
 namespace Oxrun\Helper;
 
 /**
- * Class DatenbaseConnection
+ * Class DatabaseConnection
  *
  * Connect direct to Database
  *
  * @package Oxrun\Helper
  */
-class DatenbaseConnection
+class DatabaseConnection
 {
 
     /**
@@ -54,7 +54,7 @@ class DatenbaseConnection
 
     /**
      * @param string $host
-     * @return DatenbaseConnection
+     * @return DatabaseConnection
      */
     public function setHost($host)
     {
@@ -78,7 +78,7 @@ class DatenbaseConnection
 
     /**
      * @param int $port
-     * @return DatenbaseConnection
+     * @return DatabaseConnection
      */
     public function setPort($port)
     {
@@ -96,7 +96,7 @@ class DatenbaseConnection
 
     /**
      * @param string $user
-     * @return DatenbaseConnection
+     * @return DatabaseConnection
      */
     public function setUser($user)
     {
@@ -106,7 +106,7 @@ class DatenbaseConnection
 
     /**
      * @param string $pass
-     * @return DatenbaseConnection
+     * @return DatabaseConnection
      */
     public function setPass($pass)
     {
@@ -116,7 +116,7 @@ class DatenbaseConnection
 
     /**
      * @param string $database
-     * @return DatenbaseConnection
+     * @return DatabaseConnection
      */
     public function setDatabase($database)
     {

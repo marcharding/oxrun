@@ -34,7 +34,7 @@ class ActivateCommandTest extends TestCase
             )
         );
 
-        $this->assertContains('Module oepaypal activated.', $commandTester->getDisplay());
+        $this->assertContains('Module oepaypal activated', $commandTester->getDisplay());
 
 
         $commandTester = new CommandTester($command);
@@ -45,7 +45,7 @@ class ActivateCommandTest extends TestCase
             )
         );
 
-        $this->assertContains('Module oepaypal already activated.', $commandTester->getDisplay());
+        $this->assertContains('Module oepaypal already activated', $commandTester->getDisplay());
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
@@ -55,8 +55,6 @@ class ActivateCommandTest extends TestCase
             )
         );
 
-        $this->assertContains('Cannot load module not_and_existing_module.', $commandTester->getDisplay());
-
+        $this->assertContains('Cannot load module not_and_existing_module', $commandTester->getDisplay());
     }
-
 }

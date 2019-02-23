@@ -9,45 +9,30 @@ namespace Oxrun\Helper;
 
 use Oxrun\TestCase;
 
-class DatenbaseConnectionTest extends TestCase
+class DatabaseConnectionTest extends TestCase
 {
-    /**
-     * @var
-     */
-    protected static $config;
 
     /**
-     * @var DatenbaseConnection
+     * @var DatabaseConnection
      */
     protected $testSubject;
-
-    /**
-     * This method is called before the first test of this test class is run.
-     *
-     * @since Method available since Release 3.4.0
-     */
-    public static function setUpBeforeClass()
-    {
-        self::$config = new \BootstrapConfigFileReader();
-    }
 
     /**
      * @inheritDoc
      */
     protected function setUp()
     {
-        $port = isset(self::$config->dbPort) ? self::$config->dbPort : 3306;
-
-        $datenbaseConnection = new DatenbaseConnection();
-        $datenbaseConnection
+        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $databaseConnection = new DatabaseConnection();
+        $databaseConnection
             // Must be right to work correct
-            ->setHost( self::$config->dbHost)
-            ->setPort($port)
-            ->setUser(self::$config->dbUser)
-            ->setPass(self::$config->dbPwd)
-            ->setDatabase(self::$config->dbName);
+            ->setHost($oConfig->getConfigParam('dbHost'))
+            ->setPort('3306')
+            ->setUser($oConfig->getConfigParam('dbUser'))
+            ->setPass($oConfig->getConfigParam('dbPwd'))
+            ->setDatabase($oConfig->getConfigParam('dbName'));
 
-        $this->testSubject = $datenbaseConnection;
+        $this->testSubject = $databaseConnection;
     }
 
     public function testCanParseHostPort()
@@ -55,7 +40,7 @@ class DatenbaseConnectionTest extends TestCase
         $this->testSubject->setHost('127.0.0.1:3336');
 
         self::assertEquals('127.0.0.1', $this->testSubject->getHost());
-        self::assertEquals(3336,        $this->testSubject->getPort());
+        self::assertEquals(3336, $this->testSubject->getPort());
     }
 
     public function testHasNotConnected()
@@ -63,7 +48,7 @@ class DatenbaseConnectionTest extends TestCase
         $this->testSubject->setDatabase('oxid_unbekannt');
 
         self::assertFalse($this->testSubject->canConnectToMysql());
-        self::assertContains("SQLSTATE[HY000]", $this->testSubject->getLastErrorMsg());
+        self::assertContains("database 'oxid_unbekannt'", $this->testSubject->getLastErrorMsg());
     }
 
     /**

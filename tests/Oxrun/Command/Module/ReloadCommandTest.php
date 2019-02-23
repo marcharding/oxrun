@@ -10,20 +10,24 @@ namespace Oxrun\Command\Module;
 
 use Oxrun\Application;
 use Oxrun\Command\Cache\ClearCommand;
+use Oxrun\CommandCollection\EnableAdapter;
 use Oxrun\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * Class ReloadCommandTest
+ * @package Oxrun\Command\Module
+ * @group active
+ */
 class ReloadCommandTest extends TestCase
 {
     public function testExecute()
     {
-        $reloadCommand = new ReloadCommand();
         $app = new Application();
-        $app->add($reloadCommand);
-        $app->add(new DeactivateCommand());
-        $app->add(new ClearCommand());
-        $app->add(new ActivateCommand());
-        $app->bootstrapOxid($reloadCommand->needDatabaseConnection());
+        $app->add(new EnableAdapter(new ReloadCommand()));
+        $app->add(new EnableAdapter(new DeactivateCommand()));
+        $app->add(new EnableAdapter(new ClearCommand()));
+        $app->add(new EnableAdapter(new ActivateCommand()));
 
         $command = $app->find('module:reload');
 
@@ -31,8 +35,7 @@ class ReloadCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'invoicepdf',
-                '--force'  => true
+                'module' => 'oepaypal'
             )
         );
 
