@@ -6,6 +6,10 @@ use Oxrun\Application;
 use Oxrun\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * Class PasswordCommandTest
+ * @package Oxrun\Command\User
+ */
 class PasswordCommandTest extends TestCase
 {
     /**
