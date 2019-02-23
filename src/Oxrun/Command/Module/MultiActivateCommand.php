@@ -34,6 +34,8 @@ use Symfony\Component\Yaml\Yaml;
  *   2:
  *     - oepaypal
  *     - oxpspaymorrow
+ *
+ * @see example/modules.yml.dist
  */
 class MultiActivateCommand extends Command implements \Oxrun\Command\EnableInterface
 {
@@ -49,12 +51,12 @@ class MultiActivateCommand extends Command implements \Oxrun\Command\EnableInter
             ->setDescription('Activates multiple modules, based on a YAML file')
             ->addOption('skipDeactivation', 's', InputOption::VALUE_NONE, "Skip deactivation of modules, only activate.")
             ->addOption('skipClear', 'c', InputOption::VALUE_NONE, "Skip cache clearing.")
-            ->addArgument('module', InputArgument::REQUIRED, 'YAML module list filename or YAML string');
+            ->addArgument('module', InputArgument::REQUIRED, 'YAML module list filename or YAML string. The file path is relative to the shop installation_root_path/oxrun_config/');
 
         $help = <<<HELP
 <info>usage:</info>
 <comment>oxrun module:multiactivate configs/modules.yml</comment>
-- to activate all modules defined in the file "configs/modules.yml" based
+- to activate all modules defined in the YAML file. [Example: modules.yml.dist](example/modules.yml.dist) based
 on a white- or blacklist
 
 Example:

@@ -32,6 +32,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * Values without "variableType" are considered strings
  * @package Oxrun\Command\Config
+ * @see example/malls.yml.dist
  */
 class MultiSetCommand extends Command  implements \Oxrun\Command\EnableInterface
 {
@@ -44,7 +45,7 @@ class MultiSetCommand extends Command  implements \Oxrun\Command\EnableInterface
         $this
             ->setName('config:multiset')
             ->setDescription('Sets multiple config values from yaml file')
-            ->addArgument('configfile', InputArgument::REQUIRED, 'The file containing the config values, see malls.yml.dist. The file path is relative to the shop root. You can also pass a YAML string on the command line.');
+            ->addArgument('configfile', InputArgument::REQUIRED, 'The file containing the config values, see example/malls.yml.dist. The file path is relative to the shop installation_root_path/oxrun_config/. You can also pass a YAML string on the command line.');
 
         $help = <<<HELP
 <info>YAML example:</info>
@@ -68,6 +69,7 @@ config:
     blReverseProxyActive: 
 ...
 ```
+[Example: malls.yml.dist](example/malls.yml.dist)
 
 If you want, you can also specify __a YAML string on the command line instead of a file__, e.g.:
 

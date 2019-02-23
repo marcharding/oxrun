@@ -24,7 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - When generating a module, the Composer.json file is now edited with the original classe.
 - oxrun can now use in EE
 - The file docker-compose.yml has been prepared to install an EE. You have to deposit the access data and change it to ee manuel.
-
+- Security risk: Better keep the config files outside of the public `source/` folder. 
+  The YAML files are searched under the directory: `INSTALLATION_ROOT_PATH/oxrun_config/`. In the same level as `source/` and `vendor/` folder.
 
 ## 3.3.0 - 2018-12-02
 
