@@ -35,7 +35,8 @@ class ReloadCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'oepaypal'
+                'module' => 'oepaypal',
+                '--force'  => true
             )
         );
 
