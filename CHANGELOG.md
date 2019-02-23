@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added new commands
+
+1. `module:multiactivate` activate Module by a Yaml File
+2. `db:anonymize` anonymize relevant OXID db tables
+3. `config:multiset` Sets multiple config values from yaml file
+4. `log:exceptionlog` show you oxid exceptionlog in a table format
+5. `user:create` create a new User
+6. `oxid:shops` show all shops. (EE only)
+
+### Added
+
+- new option for every command `--shopId` or `-m` select a shop for oxrun
+
+### Changed
+
+- When generating a module, the Composer.json file is now edited with the original classe.
+- oxrun can now use in EE
+- The file docker-compose.yml has been prepared to install an EE. You have to deposit the access data and change it to ee manuel.
+
 
 ## 3.3.0 - 2018-12-02
 

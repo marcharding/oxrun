@@ -11,6 +11,8 @@ Copyright (c) 2015 Marc Harding http://www.marcharding.de (https://github.com/ma
 
 Copyright (c) 2018 Tobias Matthaiou http://www.tobimat.eu
 
+Copyright (c) 2018 Stefan Moises https://www.rent-a-hero.de/
+
 ## Installation
 
 PHP 7.0 is required.  
