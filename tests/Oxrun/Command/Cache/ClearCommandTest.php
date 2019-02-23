@@ -3,6 +3,7 @@
 namespace Oxrun\Command\Cache;
 
 use Oxrun\Application;
+use Oxrun\CommandCollection\EnableAdapter;
 use Oxrun\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -11,9 +12,7 @@ class ClearCommandTest extends TestCase
     public function testExecute()
     {
         $app = new Application();
-        $clearCommand = new ClearCommand();
-        $app->bootstrapOxid($clearCommand->needDatabaseConnection());
-        $app->add($clearCommand);
+        $app->add(new EnableAdapter(new ClearCommand()));
 
         $command = $app->find('cache:clear');
 

@@ -265,8 +265,8 @@ class Application extends BaseApplication
      */
     public function switchToShopId($shopId)
     {
-        $_POST['shp'] = $shopId;
-        $_POST['actshop'] = $shopId;
+        $_GET['shp'] = $shopId;
+        $_GET['actshop'] = $shopId;
         
         $keepThese = [\OxidEsales\Eshop\Core\ConfigFile::class];
         $registryKeys = \OxidEsales\Eshop\Core\Registry::getKeys();
@@ -302,7 +302,7 @@ class Application extends BaseApplication
     /**
      * Get YAML string, either from file or from string
      *
-     * @param string $ymlString The relative file path, from shop root OR a YAML string
+     * @param string $ymlString The relative file path, from shop INSTALLATION_ROOT_PATH/oxrun_config/ OR a YAML string
      * @param string $basePath  Alternative root dir path, if a file is used
      *
      * @return string
@@ -314,7 +314,8 @@ class Application extends BaseApplication
             || strpos(strtolower($ymlString), '.yaml') !== false
         ) {
             if ($basePath == '') {
-                $basePath = $this->getShopDir() . DIRECTORY_SEPARATOR;
+                $DS = DIRECTORY_SEPARATOR;
+                $basePath = $this->getShopDir() . "{$DS}..{$DS}oxrun_config{$DS}";
             }
             $ymlFile = $basePath . $ymlString;
             if (file_exists($ymlFile)) {
