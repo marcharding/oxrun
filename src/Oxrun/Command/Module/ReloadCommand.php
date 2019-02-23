@@ -8,10 +8,9 @@
 
 namespace Oxrun\Command\Module;
 
-use Oxrun\Command\Cache\ClearCommand;
 use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -47,10 +46,10 @@ class ReloadCommand extends Command implements \Oxrun\Command\EnableInterface
         $clearCommand      = $app->find('cache:clear');
         $deactivateCommand = $app->find('module:deactivate');
         $activateCommand   = $app->find('module:activate');
-
-        $argvInputClearCache = new ArgvInput([''], $clearCommand->getDefinition());
-        $argvInputDeactivate = new ArgvInput(['', $input->getArgument('module')], $deactivateCommand->getDefinition());
-        $argvInputActivate   = new ArgvInput(['', $input->getArgument('module')], $activateCommand->getDefinition());
+        
+        $argvInputClearCache = $this->createInputArray($clearCommand, $input);
+        $argvInputDeactivate = $this->createInputArray($deactivateCommand, $input, ['module' => $input->getArgument('module')]);
+        $argvInputActivate   = $this->createInputArray($activateCommand, $input,['module' => $input->getArgument('module')]);
 
         if ($input->getOption('force')) {
             $argvInputClearCache->setOption('force', true);
@@ -61,5 +60,25 @@ class ReloadCommand extends Command implements \Oxrun\Command\EnableInterface
         $deactivateCommand->execute($argvInputDeactivate, $output);
         $clearCommand->execute($argvInputClearCache, $output);
         $activateCommand->execute($argvInputActivate, $output);
+    }
+
+    /**
+     * @param Command$command
+     * @param InputInterface $input
+     */
+    protected function createInputArray($command, $input, $extraOption = [])
+    {
+        //default --shopId
+        $command->getDefinition()->addOption(new InputOption('--shopId', 'm', InputOption::VALUE_REQUIRED));
+
+        $parameters = array_merge(
+            ['--shopId' => $input->getOption('shopId')],
+            $extraOption
+        );
+
+        return new ArrayInput(
+            $parameters,
+            $command->getDefinition()
+        );
     }
 }

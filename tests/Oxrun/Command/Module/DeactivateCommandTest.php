@@ -23,6 +23,6 @@ class DeactivateCommandTest extends TestCase
             )
         );
 
-        $this->assertContains('Module oepaypal deactivated', $commandTester->getDisplay());
+        $this->assertContains('Module oepaypal deactivated for shopId 1.', $commandTester->getDisplay());
     }
 }
