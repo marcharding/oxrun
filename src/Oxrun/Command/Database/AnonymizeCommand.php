@@ -189,7 +189,11 @@ HELP;
             if ($input->getOption('debug') === true) {
                 $output->writeln('<info>' . $sQ . '</info>');
             }
-            $returnValue = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute($sQ);
+            try {
+                \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute($sQ);
+            } catch (\Exception $e) {
+                $output->writeln("<comment>SQL warn: `{$tableName}` ".$e->getMessage().'</comment>');
+            }
         }
         $output->writeln('<info>Anonymizing done.</info>');
     }
