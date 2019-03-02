@@ -6,11 +6,12 @@ services:
       restart: always
       container_name: oxid_php70
       command: installOxid
-      working_dir: /data/source/oxrun
+      working_dir: /data/source/
       ports:
         - "8082:80"
       volumes:
-        - ./:/data/source/oxrun
+        - ./oxid-esale:/data
+        - ./:/oxrun
         - ./docker/bin/installOxid.sh:/usr/local/bin/installOxid
       links:
         - oxid_db
@@ -22,9 +23,6 @@ services:
         MYSQL_PASSWORD: "oxid"
         OXID_SHOP_VERSION: "dev-b-6.1-ce"
         OXID_SHOP_URL: "http://localhost:8082"
-        OXID_IDEBUG: 0
-        OXID_ADMIN_PASSWORD: admin@local.oxrun
-        OXID_ADMIN_USERNAME: oxrunpassword
 #        COMPOSER_AUTH: '{"http-basic": {"enterprise-edition.packages.oxid-esales.com": {"username": "XXXX", "password": "XXXX"}}}'
     oxid_db:
       image: mesa/oxid:db
@@ -37,3 +35,4 @@ services:
         MYSQL_DATABASE: oxid
         MYSQL_USER: oxid
         MYSQL_PASSWORD: 'oxid'
+

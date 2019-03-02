@@ -1,9 +1,9 @@
 cd #!/usr/bin/env bash
 
-ln -fs ${DOCKER_DOCUMENT_ROOT}/oxrun/bin/oxrun /usr/local/bin
+ln -fs /oxrun/bin/oxrun /usr/local/bin
 
-if [ ! -f "${DOCKER_DOCUMENT_ROOT}/oxrun/vendor" ]; then
-    pushd ${DOCKER_DOCUMENT_ROOT}/oxrun/ && \
+if [ ! -f "/oxrun/vendor" ]; then
+    pushd /oxrun/ && \
     composer install --no-interaction && \
     popd;
 fi
