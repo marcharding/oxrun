@@ -314,8 +314,7 @@ class Application extends BaseApplication
             || strpos(strtolower($ymlString), '.yaml') !== false
         ) {
             if ($basePath == '') {
-                $DS = DIRECTORY_SEPARATOR;
-                $basePath = $this->getShopDir() . "{$DS}..{$DS}oxrun_config{$DS}";
+                $basePath = $this->getOxrunConfigPath();
             }
             $ymlFile = $basePath . $ymlString;
             if (file_exists($ymlFile)) {
@@ -324,6 +323,21 @@ class Application extends BaseApplication
         }
         
         return $ymlString;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOxrunConfigPath()
+    {
+        $DS = DIRECTORY_SEPARATOR;
+        $base = $this->getShopDir() . "{$DS}..{$DS}oxrun_config{$DS}";
+
+        if (file_exists($base) == false) {
+            mkdir($base, 0755, true);
+        }
+
+        return $base;
     }
         
     /**
