@@ -2,6 +2,7 @@
 
 namespace Oxrun\Command\Cache;
 
+use OxidEsales\Eshop\Core\Registry;
 use Oxrun\Traits\NoNeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -48,6 +49,8 @@ class ClearCommand extends Command implements \Oxrun\Command\EnableInterface
         } else {
             $this->oneByOneClear($compileDir);
         }
+
+        $this->enterpriseCache($output);
 
         $output->writeln('<info>Cache cleared.</info>');
     }
@@ -121,6 +124,31 @@ class ClearCommand extends Command implements \Oxrun\Command\EnableInterface
             global $argv;
             $owner = posix_getpwuid($owner);
             throw new \Exception("Please run command as `${owner['name']}` user." . PHP_EOL . "    sudo -u ${owner['name']} " . join(' ', $argv));
+        }
+    }
+
+    /**
+     * Clear Cache form a Enterprise Edtion
+     */
+    protected function enterpriseCache(OutputInterface $output)
+    {
+        if (class_exists('\OxidEsales\Facts\Facts') == false) {
+            return;
+        }
+
+        if ((Registry::get(\OxidEsales\Facts\Facts::class))->isEnterprise() == false) {
+            return;
+        }
+
+        try {
+            Registry::get('\OxidEsales\Eshop\Core\Cache\Generic\Cache')->flush();
+            $output->writeln('<info>Generic\Cache is cleared</info>');
+
+            Registry::get('\OxidEsales\Eshop\Core\Cache\DynamicContent\ContentCache')->reset(true);
+            $output->writeln('<info>DynamicContent\Cache is cleared</info>');
+
+        } catch (\Exception $e) {
+            $output->writeln('<error>Only enterprise cache could\'t be cleared: '.$e->getMessage().'</error>');
         }
     }
 }

@@ -17,7 +17,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * Class ReloadCommandTest
  * @package Oxrun\Command\Module
- * @group active
  */
 class ReloadCommandTest extends TestCase
 {

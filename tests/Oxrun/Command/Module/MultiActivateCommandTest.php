@@ -11,7 +11,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * Class MultiActivateCommandTest
  * @package Oxrun\Command\Module
- * @group active
  */
 class MultiActivateCommandTest extends TestCase
 {
