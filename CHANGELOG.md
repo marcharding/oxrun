@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - new option for every command `--shopId` or `-m` select a shop for oxrun
+- command `cache:clear` can now clear the GenericCache and DynamicContentCache in a EE version.
 
 ### Changed
 
@@ -26,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The file docker-compose.yml has been prepared to install an EE. You have to deposit the access data and change it to ee manuel.
 - Security risk: Better keep the config files outside of the public `source/` folder. 
   The YAML files are searched under the directory: `INSTALLATION_ROOT_PATH/oxrun_config/`. In the same level as `source/` and `vendor/` folder.
+- Deployment Docker. The OXID eSale source code is outside of the Container.
 
 ## 3.3.0 - 2018-12-02
 
