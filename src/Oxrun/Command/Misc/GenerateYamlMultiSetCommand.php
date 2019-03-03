@@ -14,6 +14,7 @@ use Oxrun\Helper\MulitSetConfigConverter;
 use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -56,6 +57,9 @@ class GenerateYamlMultiSetCommand extends Command implements \Oxrun\Command\Enab
     {
         $this
             ->setName('misc:generate:yaml:multiset')
+            ->addOption('configfile', 'c', InputOption::VALUE_REQUIRED, 'The Config file to change or create if not exits', 'dev.yml')
+            ->addOption('oxvarname', '', InputOption::VALUE_REQUIRED, 'Dump configs by oxvarname. One name or as comma separated List')
+            ->addOption('oxmodule', '', InputOption::VALUE_REQUIRED, 'Dump configs by oxmodule. One name or as comma separated List')
             ->setDescription('Generate a Yaml File for command `config:multiset`');
     }
 
@@ -68,31 +72,54 @@ class GenerateYamlMultiSetCommand extends Command implements \Oxrun\Command\Enab
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $yaml = ['config' => []];
+
+        $path = $this->getSavePath($input);
+        if (file_exists($path)) {
+            $yaml = Yaml::parse(file_get_contents($path));
+        }
+
         $config = Registry::getConfig();
         $shopIds = $config->getShopIds();
 
-        foreach ($shopIds as $id) {
-            $yaml['config'][$id] = $this->getConfigFromShop($id);
+        if ($shopId = $input->getOption('shopId')) {
+            $shopIds = [$shopId];
         }
 
-        $path = $this->getSavePath();
+        foreach ($shopIds as $id) {
+            if (isset($yaml['config'][$id]) == false) {
+                $yaml['config'][$id] = [];
+            }
+
+            $dbConfig = $this->getConfigFromShop($id, $input);
+            $yaml['config'][$id] = array_merge($yaml['config'][$id], $dbConfig);
+        }
+
         file_put_contents($path, Yaml::dump($yaml, 4, 5, Yaml::DUMP_OBJECT_AS_MAP));
 
-        $output->writeln("<comment>Config saved. use `oxrun config:multiset shopConfigs.yml`</comment>");
+        $output->writeln("<comment>Config saved. use `oxrun config:multiset ".$input->getOption('configfile')."`</comment>");
     }
 
     /**
      * @param $shopId
      */
-    protected function getConfigFromShop($shopId)
+    protected function getConfigFromShop($shopId, InputInterface $input)
     {
         $decodeValueQuery = Registry::getConfig()->getDecodeValueQuery();
-        $ignore = implode("', '", $this->ignoreVariablen);
 
-        $SQL =  "SELECT oxvarname, oxvartype, {$decodeValueQuery} as oxvarvalue, oxmodule
+        $SQL = "SELECT oxvarname, oxvartype, {$decodeValueQuery} as oxvarvalue, oxmodule
                     FROM oxconfig
-                    WHERE oxshopid = ?
-                      AND NOT oxvarname IN ('$ignore')";
+                    WHERE oxshopid = ?";
+
+        if ($option = $input->getOption('oxvarname')) {
+            $SQL .= $this->andWhere('oxvarname', $option);
+        } else {
+            $ignore = implode("', '", $this->ignoreVariablen);
+            $SQL .= " AND NOT oxvarname IN ('$ignore')";
+        }
+
+        if ($option = $input->getOption('oxmodule')) {
+            $SQL .= $this->andWhere('oxmodule', $option);
+        }
 
         $dbConf = DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC)->getAll($SQL, [$shopId]);
         $yamlConf = [];
@@ -110,9 +137,24 @@ class GenerateYamlMultiSetCommand extends Command implements \Oxrun\Command\Enab
     /**
      * @return string
      */
-    public function getSavePath()
+    public function getSavePath(InputInterface $input)
     {
+        $filename = $input->getOption('configfile');
         $oxrunConfigPath = $this->getApplication()->getOxrunConfigPath();
-        return $oxrunConfigPath . 'shopConfigs.yml';
+        return $oxrunConfigPath . $filename;
+    }
+
+    /**
+     * @param $column
+     * @return string
+     */
+    protected function andWhere($column, $input)
+    {
+        $list = explode(',', $input);
+        $list = array_map('trim', $list);
+        $list = DatabaseProvider::getDb()->quoteArray($list);
+        $list = implode(',', $list);
+
+        return " AND $column IN ($list)";
     }
 }
