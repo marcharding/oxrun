@@ -45,9 +45,14 @@ class MultiSetCommand extends Command  implements \Oxrun\Command\EnableInterface
         $this
             ->setName('config:multiset')
             ->setDescription('Sets multiple config values from yaml file')
-            ->addArgument('configfile', InputArgument::REQUIRED, 'The file containing the config values, see example/malls.yml.dist. The file path is relative to the shop installation_root_path/oxrun_config/. You can also pass a YAML string on the command line.');
+            ->addArgument('configfile', InputArgument::REQUIRED, 'The file containing the config values, see example/malls.yml.dist. (e.g. dev.yml, stage.yml, prod.yml)');
 
         $help = <<<HELP
+The file path is relative to the shop installation_root_path/oxrun_config/. 
+You can also pass a YAML string on the command line.
+
+To create YAML use command `oxrun misc:generate:yaml:multiset --help`
+
 <info>YAML example:</info>
 ```yaml
 config:
