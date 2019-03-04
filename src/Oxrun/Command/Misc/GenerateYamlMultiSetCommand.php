@@ -96,7 +96,7 @@ class GenerateYamlMultiSetCommand extends Command implements \Oxrun\Command\Enab
 
         file_put_contents($path, Yaml::dump($yaml, 2, 4, Yaml::DUMP_OBJECT_AS_MAP));
 
-        $output->writeln("<comment>Config saved. use `oxrun config:multiset ".$input->getOption('configfile')."`</comment>");
+        $output->writeln("<comment>Config saved. use `oxrun config:multiset ".basename($path)."`</comment>");
     }
 
     /**
@@ -141,6 +141,9 @@ class GenerateYamlMultiSetCommand extends Command implements \Oxrun\Command\Enab
     {
         $filename = $input->getOption('configfile');
         $oxrunConfigPath = $this->getApplication()->getOxrunConfigPath();
+        if (false == preg_match('/\.ya?ml$/', $filename)) {
+            $filename .= '.yml';
+        }
         return $oxrunConfigPath . $filename;
     }
 

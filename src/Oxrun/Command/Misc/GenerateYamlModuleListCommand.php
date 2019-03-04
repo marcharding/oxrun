@@ -8,6 +8,7 @@
 
 namespace Oxrun\Command\Misc;
 
+use OxidEsales\Eshop\Core\Module\ModuleList;
 use OxidEsales\Eshop\Core\Registry;
 use Oxrun\Command\EnableInterface;
 use Oxrun\Traits\ModuleListCheckTrait;
@@ -35,9 +36,9 @@ class GenerateYamlModuleListCommand extends Command implements EnableInterface
         $this
             ->setName('misc:generate:yaml:module')
             ->addOption('configfile', 'c', InputOption::VALUE_REQUIRED, 'The Config file to change or create if not exits', 'dev_module.yml')
-            ->addOption('whitelist', '', InputOption::VALUE_NONE, 'Takes modules that are always activated. All others remain deactive.')
-            ->addOption('blacklist', '', InputOption::VALUE_NONE, 'Takes modules that always need to be disabled. All others are activated.')
-            ->setDescription('Generate a Yaml File for command `config:multiset`');
+            ->addOption('whitelist', 'w', InputOption::VALUE_NONE, 'Takes modules that are always activated. All others remain deactive.')
+            ->addOption('blacklist', 'b', InputOption::VALUE_NONE, 'Takes modules that always need to be disabled. All others are activated.')
+            ->setDescription('Generate a Yaml File for command `module:multiactivate`');
     }
 
     /**
@@ -86,7 +87,7 @@ class GenerateYamlModuleListCommand extends Command implements EnableInterface
 
         file_put_contents($path, Yaml::dump($yaml, 3, 2));
 
-        $output->writeln("<comment>Module saved use `oxrun module:multiactivate ".$input->getOption('configfile')."`</comment>");
+        $output->writeln("<comment>Module saved use `oxrun module:multiactivate ".basename($path)."`</comment>");
     }
 
     /**
@@ -94,10 +95,10 @@ class GenerateYamlModuleListCommand extends Command implements EnableInterface
      *
      * @return array
      */
-    public function getActiveModules($shopId)
+    protected function getActiveModules($shopId)
     {
         $this->checkModulelist($shopId);
-        $oxModuleList = oxNew(\OxidEsales\EshopCommunity\Core\Module\ModuleList::class);
+        $oxModuleList = Registry::get(ModuleList::class);
 
         return $activeModules = array_keys($oxModuleList->getActiveModuleInfo());
     }
@@ -107,10 +108,10 @@ class GenerateYamlModuleListCommand extends Command implements EnableInterface
      *
      * @return array
      */
-    public function getDeactiveModules($shopId)
+    protected function getDeactiveModules($shopId)
     {
         $this->checkModulelist($shopId);
-        $oxModuleList = oxNew(\OxidEsales\EshopCommunity\Core\Module\ModuleList::class);
+        $oxModuleList = Registry::get(ModuleList::class);
 
         return $deactiveModules = $oxModuleList->getDisabledModules();
     }
@@ -122,7 +123,9 @@ class GenerateYamlModuleListCommand extends Command implements EnableInterface
     {
         $filename = $input->getOption('configfile');
         $oxrunConfigPath = $this->getApplication()->getOxrunConfigPath();
-
+        if (false == preg_match('/\.ya?ml$/', $filename)) {
+            $filename .= '.yml';
+        }
         return $oxrunConfigPath . $filename;
     }
 }
