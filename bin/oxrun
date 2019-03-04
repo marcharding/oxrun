@@ -3,8 +3,7 @@
 
 namespace Oxrun;
 
-use Oxrun\CommandCollection\CommunityCollection;
-use Oxrun\CommandCollection\OxrunCollection;
+use Oxrun\CommandCollection\ContainerCollection;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 // composer bin autoload
@@ -22,11 +21,10 @@ $autoloader = require_once $OXRUN_VENDOR_PATH . 'autoload.php';
 $application = new \Oxrun\Application($autoloader, 'oxrun', '@package_version@');
 
 try {
-    (new CommunityCollection())->addCommandTo($application);
-    (new OxrunCollection())->addCommandTo($application);
+    (new ContainerCollection())->addCommandTo($application);
 } catch (\Exception $e) {
     $consoleOutput = new ConsoleOutput();
-    $consoleOutput->writeln('<comment>Command Collection: '.$e->getMessage().'</comment>');
+    $consoleOutput->writeln('<error>Command Collection: '.$e->getMessage().'</error>');
 }
 
 $application->run();
