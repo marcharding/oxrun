@@ -38,7 +38,7 @@ class ListCommand extends Command implements \Oxrun\Command\EnableInterface
     {
         $this->checkModulelist();
 
-        $oxModuleList = oxNew('oxModuleList');
+        $oxModuleList = oxNew(\OxidEsales\EshopCommunity\Core\Module\ModuleList::class);
 
         $activeModules = array_keys($oxModuleList->getActiveModuleInfo());
         $deactiveModules = $oxModuleList->getDisabledModules();;

@@ -36,7 +36,7 @@ class GenerateYamlMultiSetCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                '--configfile' => 'shopConfigs.yml',
+                '--configfile' => 'shopConfigs',
             )
         );
         $expectPath = self::$unlinkFile = $app->getOxrunConfigPath() . 'shopConfigs.yml';
@@ -54,7 +54,7 @@ class GenerateYamlMultiSetCommandTest extends TestCase
         Registry::getConfig()->saveShopConfVar('str', 'unitVarC', 'cdef1');
 
         $dev_yml = ['config' => ['1' => ['varA' => 'besteht']]];
-        $shopDir = ['oxrun_config' => ['dev.yml' => Yaml::dump($dev_yml)]];
+        $shopDir = ['oxrun_config' => ['dev.yaml' => Yaml::dump($dev_yml)]];
         $app->checkBootstrapOxidInclude($this->fillShopDir($shopDir)->getVirtualBootstrap());
 
 
@@ -64,12 +64,12 @@ class GenerateYamlMultiSetCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                '--configfile' => 'dev.yml',
+                '--configfile' => 'dev.yaml',
                 '--oxvarname' => 'unitVarB,unitVarC',
             )
         );
 
-        $actual = Yaml::parse(file_get_contents($app->getOxrunConfigPath() . 'dev.yml'));
+        $actual = Yaml::parse(file_get_contents($app->getOxrunConfigPath() . 'dev.yaml'));
         $expect = ['config' => [
             '1' => [
                 'varA' => 'besteht',
@@ -100,7 +100,7 @@ class GenerateYamlMultiSetCommandTest extends TestCase
             )
         );
 
-        $actual = Yaml::parse(file_get_contents($app->getOxrunConfigPath() . 'dev.yml'));
+        $actual = Yaml::parse(file_get_contents($app->getOxrunConfigPath() . 'dev_config.yml'));
         $expect = ['config' => [
             '1' => [
                 'unitModuleB' => [
@@ -141,7 +141,7 @@ class GenerateYamlMultiSetCommandTest extends TestCase
             )
         );
 
-        $actual = Yaml::parse(file_get_contents($app->getOxrunConfigPath() . 'dev.yml'));
+        $actual = Yaml::parse(file_get_contents($app->getOxrunConfigPath() . 'dev_config.yml'));
         $expect = ['config' => [
             '2' => [
                 'unitSecondShopName' => [
