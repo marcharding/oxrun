@@ -14,8 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 4. `log:exceptionlog` show you oxid exceptionlog in a table format
 5. `user:create` create a new User
 6. `oxid:shops` show all shops. (EE only)
-7. `misc:generate:yaml:multiset` create a YAML file for command `config:multiset`. With all Shop Configs.
-8. `misc:generate:yaml:module` create a YAML file for command `module:multiactivate`. With all Shop Configs.
+7. `misc:generate:yaml:multiset` create a YAML file for command `config:multiset`.
+8. `misc:generate:yaml:module` create a YAML file for command `module:multiactivate`.
 
 ### Added
 
