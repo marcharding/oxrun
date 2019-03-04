@@ -56,7 +56,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function tearDown()
     {
-        $this->vfsStreamDirectory == null;
+        $this->vfsStreamDirectory = null;
         parent::tearDown();
     }
 
