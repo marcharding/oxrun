@@ -20,7 +20,6 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Class GenerateYamlModuleCommandTest
  * @package Oxrun\Command
- * @group active
  */
 class GenerateYamlModuleCommandTest extends TestCase
 {

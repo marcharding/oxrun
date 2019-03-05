@@ -6,18 +6,18 @@
  * Time: 08:18
  */
 
-namespace Oxrun\CommandCollection\Tests;
+namespace Oxrun\Tests\CommandCollection;
 
 use Oxrun\CommandCollection;
-use Oxrun\CommandCollection\OxrunCollection;
 use Oxrun\TestCase;
 use Prophecy\Argument;
+use Symfony\Component\Console\Command\Command;
 
 /**
- * Class OxrunCollectionTest
+ * Class DICollectionTest
  * @package Oxrun\CommandCollection\Tests
  */
-class OxrunCollectionTest extends TestCase
+class DICollectionTest extends TestCase
 {
     /**
      * @var \Oxrun\Application
@@ -27,7 +27,7 @@ class OxrunCollectionTest extends TestCase
     public function testHasInterfaceCommandCollection()
     {
         //Act
-        $actual = new OxrunCollection();
+        $actual = new CommandCollection\DICollection();
 
         //Assert
         $this->assertInstanceOf(CommandCollection::class, $actual);
@@ -36,9 +36,10 @@ class OxrunCollectionTest extends TestCase
     public function testToLoadAllCommand()
     {
         //Arrange
-        $oxrunCollection = new OxrunCollection();
+        $oxrunCollection = new CommandCollection\DICollection();
 
         //Act
+        $oxrunCollection->addFromDi(new Command('test'));
         $oxrunCollection->addCommandTo($this->app->reveal());
 
         //Assert

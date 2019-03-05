@@ -6,7 +6,7 @@
  * Time: 15:58
  */
 
-namespace Oxrun\CommandCollection\Tests;
+namespace Oxrun\Tests\CommandCollection;
 
 use Oxrun\Command\EnableInterface;
 use Oxrun\CommandCollection\EnableAdapter;
