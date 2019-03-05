@@ -116,12 +116,10 @@ class CommunityPassTest extends TestCase
         $installed_json = 'installed_one_package.json',
         $service_yml = 'standard.yml'
     ) {
-        $oxid_fs['source']['bootstrap.php'] = '<?php OX_BASE_PATH';
         $oxid_fs['vendor']['composer']['installed.json'] = file_get_contents(self::getTestData($installed_json));
         $oxid_fs['vendor']['oxidesales']['democomponent']['services.yaml'] = file_get_contents(self::getTestData('service_yml/'. $service_yml));
 
         $this->oxid_fs_source = $this->fillShopDir($oxid_fs)->getVfsStreamUrl();
-
     }
 
     protected static function getTestData($filepath)

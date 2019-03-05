@@ -61,7 +61,7 @@ class ContainerCollectionTest extends \Oxrun\TestCase
         $this->assertFileExists($this->oxid_fs_source.'/../vendor/oxidprojects/OxrunCommands.php.meta');
         $this->assertContains('installed.json', file_get_contents($this->oxid_fs_source.'/../vendor/oxidprojects/OxrunCommands.php.meta'));
     }
-    
+
     public function testAlwayFindOxRunCommandIfThrowException()
     {
         //Arrgange
