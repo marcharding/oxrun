@@ -34,11 +34,14 @@ class CommunityPass implements CompilerPassInterface
 
     /**
      * CommunityPass constructor.
-     * @param $shopDir
+     * @param string $shopDir
+     *
+     * @throws \Exception
      */
     public function __construct($shopDir)
     {
         $this->shopDir = $shopDir;
+        $this->valid();
     }
 
     /**
@@ -73,11 +76,7 @@ class CommunityPass implements CompilerPassInterface
     protected function findServicesYaml(ContainerBuilder $container)
     {
         $OXID_VENDOR_PATH = $this->shopDir . '/../vendor/';
-        $installed_json = $OXID_VENDOR_PATH . $this->installed_json;
-
-        if (!file_exists($installed_json)) {
-            throw new \Exception('File not found: ' . $this->installed_json . '. (usage: composer install)');
-        }
+        $installed_json = $this->getInstalledJsonPath();
 
         CacheCheck::addFile($installed_json);
 
@@ -92,6 +91,26 @@ class CommunityPass implements CompilerPassInterface
                 CacheCheck::addFile($serviceFile);
                 $loader->load($serviceFile);
             }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getInstalledJsonPath()
+    {
+        $installed_json = $this->shopDir . '/../vendor/' . $this->installed_json;
+
+        return $installed_json;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function valid()
+    {
+        if (!file_exists($this->getInstalledJsonPath())) {
+            throw new \Exception('File not found: ' . $this->installed_json . '. (usage: composer install)');
         }
     }
 }

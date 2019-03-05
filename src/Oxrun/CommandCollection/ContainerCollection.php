@@ -4,6 +4,7 @@ namespace Oxrun\CommandCollection;
 
 use Oxrun\CommandCollection;
 use Symfony\Component\Config\ConfigCache;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -28,17 +29,24 @@ class ContainerCollection implements CommandCollection
     private $template = '';
 
     /**
+     * @var bool
+     */
+    private $isFoundShopDir = false;
+
+    /**
      * @param \Oxrun\Application $application
      * @throws \Exception
      */
     public function addCommandTo(\Oxrun\Application $application)
     {
-        if (!$application->bootstrapOxid(false)) {
-            return;
-        }
+        $this->isFoundShopDir = $application->bootstrapOxid(false);
 
-        $this->shopDir = $application->getShopDir();
-        $this->template = $this->shopDir . '/../vendor/oxidprojects';
+        if ($this->isFoundShopDir) {
+            $this->shopDir = $application->getShopDir();
+            $this->template = $this->shopDir . '/../vendor/oxidprojects';
+        } else {
+            $this->template = sys_get_temp_dir();
+        }
 
         /** @var DICollection $commandContainer */
         $commandContainer = $this->getContainer()->get('command_container');
@@ -70,10 +78,8 @@ class ContainerCollection implements CommandCollection
         
         $symfonyContainer->setDefinition('command_container', new Definition(DICollection::class));
 
-        //Find any Command
-        $symfonyContainer->addCompilerPass(new Aggregator\CommunityPass($this->shopDir));
-        $symfonyContainer->addCompilerPass(new Aggregator\OxrunPass());
-        
+        $this->findCommands($symfonyContainer);
+
         $symfonyContainer->compile();
 
         $phpDumper = new PhpDumper($symfonyContainer);
@@ -93,5 +99,25 @@ class ContainerCollection implements CommandCollection
     protected function getContainerPath()
     {
         return $this->template . '/OxrunCommands.php';
+    }
+
+    /**
+     * @param ContainerBuilder $symfonyContainer
+     */
+    protected function findCommands($symfonyContainer)
+    {
+        if ($this->isFoundShopDir) {
+            try {
+                //Find Community Commands
+                $symfonyContainer->addCompilerPass(new Aggregator\CommunityPass($this->shopDir));
+
+            } catch (\Exception $e) {
+                $consoleOutput = new ConsoleOutput();
+                $consoleOutput->writeln('<comment>Command Collection: '.$e->getMessage().'</comment>');
+            }
+        }
+
+        //Find Oxrun Commands
+        $symfonyContainer->addCompilerPass(new Aggregator\OxrunPass());
     }
 }
