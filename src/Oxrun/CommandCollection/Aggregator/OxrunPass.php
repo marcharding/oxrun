@@ -31,7 +31,7 @@ class OxrunPass implements CompilerPassInterface
         foreach ($regexIterator as $commandPath) {
             CacheCheck::addFile($commandPath);
 
-            $commandClass = '\\Oxrun\\Command';
+            $commandClass = 'Oxrun\\Command';
             $commandClass .= str_replace(array($commandSourceDir, '/', '.php'), array('', '\\', ''), $commandPath);
 
             $definitionCmd = new Definition($commandClass);

@@ -41,13 +41,12 @@ class CommunityPassTest extends TestCase
     {
         //Arrange
         @unlink($this->oxid_fs_source . '/../vendor/composer/installed.json');
-        $communityCollection = new Aggregator\CommunityPass($this->oxid_fs_source);
 
         //Assert
         $this->expectExceptionMessage('File not found: /composer/installed.json');
 
         //Act
-        $communityCollection->process($this->containerBuilder);
+        new Aggregator\CommunityPass($this->oxid_fs_source);
     }
 
     public function testReadServiceYamlModule()

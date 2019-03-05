@@ -59,12 +59,14 @@ class ContainerCollection implements CommandCollection
      */
     protected function getContainer()
     {
-        $containerCache = new ConfigCache($this->getContainerPath(), true);
+        $containerCache = new ConfigCache($this->getContainerPath(), false);
         if (!$containerCache->isFresh()) {
             $this->buildContainer($containerCache);
         }
 
-        include_once $this->getContainerPath();
+        if (!in_array('oxidprojects\OxrunCommands', get_declared_classes())) {
+            include $this->getContainerPath();
+        }
 
         return new \oxidprojects\OxrunCommands();
     }

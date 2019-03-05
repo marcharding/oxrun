@@ -45,7 +45,6 @@ class OxrunPassTest extends TestCase
 
     protected function setUp()
     {
-
         $this->definition = $this->prophesize(Definition::class);
         $this->definition->hasTag(Argument::any())->willReturn(false);
 
