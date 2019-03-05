@@ -1,6 +1,6 @@
 # Oxrun
 
-[![Build Status](https://travis-ci.org/OXIDprojects/oxrun.svg)](https://travis-ci.org/OXIDprojects/oxrun)
+[![Build Status](https://travis-ci.org/OXIDprojects/oxrun.svg?branch=master)](https://travis-ci.org/OXIDprojects/oxrun)
 [![Coverage Status](https://coveralls.io/repos/github/OXIDprojects/oxrun/badge.svg?branch=master)](https://coveralls.io/github/OXIDprojects/oxrun?branch=master)
 
 Oxrun provides a cli toolset for the OXID eShop Community Edition.
