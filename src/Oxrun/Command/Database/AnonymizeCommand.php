@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Class AnonymizeCommand
@@ -128,6 +129,25 @@ Relevant tables are:
 {$tables}
 HELP;
         $this->setHelp($help);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function interact(InputInterface $input, OutputInterface $output)
+    {
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion(
+            '<info>Are you really sure</info> that you are</info><comment> NOT on a productive</comment> shop? (write "sure"): ',
+            false,
+            '/sure/i'
+        );
+        $userIsSure = $helper->ask($input, $output, $question);
+
+        if ($userIsSure == false) {
+            $output->writeln('<comment>Operation was canceled</comment>');
+            exit();
+        }
     }
 
     /**
