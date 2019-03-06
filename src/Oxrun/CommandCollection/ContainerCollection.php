@@ -59,7 +59,7 @@ class ContainerCollection implements CommandCollection
      */
     protected function getContainer()
     {
-        $containerCache = new ConfigCache($this->getContainerPath(), false);
+        $containerCache = new ConfigCache($this->getContainerPath(), true);
         if (!$containerCache->isFresh()) {
             $this->buildContainer($containerCache);
         }
