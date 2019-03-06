@@ -26,6 +26,7 @@ class AnonymizeCommandTest extends TestCase
                 'command' => $command->getName(),
                 '--debug' => true,
                 '--keepdomain' => '@shoptimax.de',
+                '--no-interaction' => true
             )
         );
 
