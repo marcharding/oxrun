@@ -9,6 +9,6 @@
     $this->sShopURL     = 'http://localhost'; // eShop base url, required
     $this->sSSLShopURL  = null;            // eShop SSL url, optional
     $this->sAdminSSLURL = null;            // eShop Admin SSL url, optional
-    $this->sShopDir     = __DIR__.'/../oxidesale/source';
-    $this->sCompileDir  = __DIR__.'/../oxidesale/source/tmp';
+    $this->sShopDir     = __DIR__.'/../oxid-esale/source';
+    $this->sCompileDir  = __DIR__.'/../oxid-esale/source/tmp';
 

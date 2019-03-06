@@ -10,8 +10,8 @@ if (array_key_exists('v', $opt)) {
     }
 }
 
-if (file_exists(__DIR__.'/oxidesale')) {
-    exec('rm -rf '.__DIR__.'/oxidesale');
+if (file_exists(__DIR__.'/oxid-esale')) {
+    exec('rm -rf '.__DIR__.'/oxid-esale');
 }
 exec('composer install --no-dev -o');
 
