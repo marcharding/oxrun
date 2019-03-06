@@ -10,6 +10,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * Class AnonymizeCommandTest
  * @package Oxrun\Command\Database
+ * @group active
  */
 class AnonymizeCommandTest extends TestCase
 {
@@ -26,8 +27,8 @@ class AnonymizeCommandTest extends TestCase
                 'command' => $command->getName(),
                 '--debug' => true,
                 '--keepdomain' => '@shoptimax.de',
-                '--no-interaction' => true
-            )
+            ),
+            ['interactive' => false]
         );
 
         $this->assertContains('oxaddress', $commandTester->getDisplay());
