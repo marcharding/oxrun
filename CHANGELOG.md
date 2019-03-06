@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The YAML files are searched under the directory: `INSTALLATION_ROOT_PATH/oxrun_config/`. In the same level as `source/` and `vendor/` folder.
 - Deployment Docker. The OXID eSale source code is outside of the Container.
 - Now starts 2x faster. The first start will collect the command and save it as a DI container in `oxide-esale/vendor/oxideprojects/OxrunCommands.php`. 
+- README.md has now a "table of content" a list of commands. And will autogenerate by travis.
 
 ## 3.3.0 - 2018-12-02
 
