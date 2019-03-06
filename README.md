@@ -67,76 +67,271 @@ That's how she looks
 
 Example: https://github.com/OXIDprojects/oxid-module-internals/blob/master/services.yaml
 
-# Available commands
+Available commands
+------------------
 
-misc:phpstorm:metadata
-----------------------
+##### cache
+  - [cache:clear](#cacheclear)   Clear OXID cache
+##### cms
+  - [cms:update](#cmsupdate)   Updates a cms page
+##### config
+  - [config:get](#configget)   Gets a config value
+  - [config:multiset](#configmultiset)   Sets multiple config values from yaml file
+  - [config:set](#configset)   Sets a config value
+  - [config:shop:get](#configshopget)   Sets a shop config value
+  - [config:shop:set](#configshopset)   Sets a shop config value
+##### db
+  - [db:anonymize](#dbanonymize)   Anonymize relevant OXID db tables
+  - [db:dump](#dbdump)   Create a dump, with mysqldump
+  - [db:import](#dbimport)   Import a sql file
+  - [db:list](#dblist)   List of all Tables
+  - [db:query](#dbquery)   Executes a query
+##### log
+  - [log:exceptionlog](#logexceptionlog)   Read EXCEPTION_LOG.txt and display entries.
+##### misc
+  - [misc:generate:documentation](#miscgeneratedocumentation)   Generate a raw command documentation of the available commands
+  - [misc:generate:yaml:module](#miscgenerateyamlmodule)   Generate a Yaml File for command `module:multiactivate`
+  - [misc:generate:yaml:multiset](#miscgenerateyamlmultiset)   Generate a Yaml File for command `config:multiset`
+  - [misc:phpstorm:metadata](#miscphpstormmetadata)   Generate a PhpStorm metadata file for auto-completion.
+##### module
+  - [module:activate](#moduleactivate)   Activates a module
+  - [module:deactivate](#moduledeactivate)   Deactivates a module
+  - [module:generate](#modulegenerate)   Generates a module skeleton
+  - [module:list](#modulelist)   Lists all modules
+  - [module:multiactivate](#modulemultiactivate)   Activates multiple modules, based on a YAML file
+  - [module:reload](#modulereload)   Deactivate and activate a module
+##### oxid
+  - [oxid:shops](#oxidshops)   Lists the shops
+##### route
+  - [route:debug](#routedebug)   Returns the route. Which controller and parameters are called.
+##### user
+  - [user:create](#usercreate)   Creates a new user
+  - [user:password](#userpassword)   Sets a new password
+##### views
+  - [views:update](#viewsupdate)   Updates the views
 
-* Description: Generate a PhpStorm metadata file for auto-completion.
+
+cache:clear
+-----------
+
+* Description: Clear OXID cache
 * Usage:
 
-  * `misc:phpstorm:metadata [-o|--output-dir OUTPUT-DIR]`
+  * `cache:clear [-f|--force]`
 
-Generate a PhpStorm metadata file for auto-completion.
+Clear OXID cache
 
 ### Options:
 
-**output-dir:**
+**force:**
 
-* Name: `--output-dir`
-* Shortcut: `-o`
-* Is value required: yes
-* Description: Writes the metadata for PhpStorm to the specified directory.
-
-misc:generate:documentation
----------------------------
-
-* Description: Generate a raw command documentation of the available commands
-* Usage:
-
-  * `misc:generate:documentation`
-
-Generate a raw command documentation of the available commands
-
-### Arguments:
-
-**command:**
-
-* Name: command
-* Description: The command to execute
-
-### Options:
-
-db:query
---------
-
-* Description: Executes a query
-* Usage:
-
-  * `db:query [--raw] [--] <query>`
-
-Executes an SQL query on the current shop database. Wrap your SQL in quotes.
-
-If your query produces a result (e.g. a SELECT statement), the output will be returned via the table component. Add the raw option for raw output.
-
-Requires php exec and MySQL CLI tools installed on your system.
-
-### Arguments:
-
-**query:**
-
-* Name: query
-* Description: The query which is to be executed
-
-### Options:
-
-**raw:**
-
-* Name: `--raw`
+* Name: `--force`
+* Shortcut: `-f`
 * Accept value: no
 * Is value required: no
-* Description: Raw output
+* Description: Try to delete the cache anyway. [danger or permission denied]
 * Default: `false`
+
+cms:update
+----------
+
+* Description: Updates a cms page
+* Usage:
+
+  * `cms:update [--title [TITLE]] [--content [CONTENT]] [--language LANGUAGE] [--active ACTIVE] [--] <ident>`
+
+Updates a cms page
+
+### Arguments:
+
+**ident:**
+
+* Name: ident
+* Description: Content ident
+
+### Options:
+
+**title:**
+
+* Name: `--title`
+* Is value required: no
+* Description: Content title
+
+**content:**
+
+* Name: `--content`
+* Is value required: no
+* Description: Content body
+
+**language:**
+
+* Name: `--language`
+* Is value required: yes
+* Description: Content language
+
+**active:**
+
+* Name: `--active`
+* Is value required: yes
+* Description: Content active
+
+config:get
+----------
+
+* Description: Gets a config value
+* Usage:
+
+  * `config:get [--moduleId [MODULEID]] [--] <variableName>`
+
+Gets a config value
+
+### Arguments:
+
+**variableName:**
+
+* Name: variableName
+* Description: Variable name
+
+### Options:
+
+**moduleId:**
+
+* Name: `--moduleId`
+* Is value required: no
+* Description: <none>
+
+config:multiset
+---------------
+
+* Description: Sets multiple config values from yaml file
+* Usage:
+
+  * `config:multiset <configfile>`
+
+The file path is relative to the shop installation_root_path/oxrun_config/. 
+You can also pass a YAML string on the command line.
+
+To create YAML use command `oxrun misc:generate:yaml:multiset --help`
+
+YAML example:
+```yaml
+config:
+  1:
+    blReverseProxyActive: 
+      variableType: bool
+      variableValue: false
+    # simple string type
+    sMallShopURL: http://myshop.dev.local
+    sMallSSLShopURL: http://myshop.dev.local
+    myMultiVal:
+      variableType: aarr
+      variableValue:
+        - /foo/bar/
+        - /bar/foo/
+      # optional module id
+      moduleId: my_module
+  2:
+    blReverseProxyActive: 
+...
+```
+[Example: malls.yml.dist](example/malls.yml.dist)
+
+If you want, you can also specify __a YAML string on the command line instead of a file__, e.g.:
+
+```bash
+../vendor/bin/oxrun module:multiset $'config:
+  1:
+    foobar: barfoo
+' --shopId=1
+```    
+
+### Arguments:
+
+**configfile:**
+
+* Name: configfile
+* Description: The file containing the config values, see example/malls.yml.dist. (e.g. dev.yml, stage.yml, prod.yml)
+
+### Options:
+
+config:set
+----------
+
+* Description: Sets a config value
+* Usage:
+
+  * `config:set [--variableType VARIABLETYPE] [--moduleId [MODULEID]] [--] <variableName> <variableValue>`
+
+Sets a config value
+
+### Arguments:
+
+**variableName:**
+
+* Name: variableName
+* Description: Variable name
+
+**variableValue:**
+
+* Name: variableValue
+* Description: Variable value
+
+### Options:
+
+**variableType:**
+
+* Name: `--variableType`
+* Is value required: yes
+* Description: Variable type
+
+**moduleId:**
+
+* Name: `--moduleId`
+* Is value required: no
+* Description: <none>
+
+config:shop:get
+---------------
+
+* Description: Sets a shop config value
+* Usage:
+
+  * `config:shop:get <variableName>`
+
+Sets a shop config value
+
+### Arguments:
+
+**variableName:**
+
+* Name: variableName
+* Description: Variable name
+
+### Options:
+
+config:shop:set
+---------------
+
+* Description: Sets a shop config value
+* Usage:
+
+  * `config:shop:set <variableName> <variableValue>`
+
+Sets a shop config value
+
+### Arguments:
+
+**variableName:**
+
+* Name: variableName
+* Description: Variable name
+
+**variableValue:**
+
+* Name: variableValue
+* Description: Variable value
+
+### Options:
 
 db:anonymize
 ------------
@@ -181,62 +376,6 @@ Array
 * Shortcut: `-k`
 * Is value required: no
 * Description: Domain which should NOT be anonymized, default is "@foobar.com". Data with this domain in the email address will NOT be anonymized.
-
-db:import
----------
-
-* Description: Import a sql file
-* Usage:
-
-  * `db:import <file>`
-
-Imports an SQL file on the current shop database.
-
-Requires php exec and MySQL CLI tools installed on your system.
-
-### Arguments:
-
-**file:**
-
-* Name: file
-* Description: The sql file which is to be imported
-
-### Options:
-
-db:list
--------
-
-* Description: List of all Tables
-* Usage:
-
-  * `db:list [-p|--plain] [-t|--pattern PATTERN]`
-
-List Tables
-
-usage:
-    oxrun db:list --pattern oxseo%,oxuser
-    - To dump all Tables, but `oxseo`, `oxvoucher`, and `oxvoucherseries` without data.
-      possibilities: oxseo%,oxuser,%logs%
-      
-
-
-### Options:
-
-**plain:**
-
-* Name: `--plain`
-* Shortcut: `-p`
-* Accept value: no
-* Is value required: no
-* Description: print list as comma separated.
-* Default: `false`
-
-**pattern:**
-
-* Name: `--pattern`
-* Shortcut: `-t`
-* Is value required: yes
-* Description: table name pattern test. e.g. oxseo%,oxuser
 
 db:dump
 -------
@@ -315,205 +454,280 @@ usage:
 * Is value required: yes
 * Description: Export tables only with their CREATE statement. So without content. Use comma separated list and or pattern e.g. %voucher%
 
-cache:clear
------------
+db:import
+---------
 
-* Description: Clears the cache
+* Description: Import a sql file
 * Usage:
 
-  * `cache:clear [-f|--force]`
+  * `db:import <file>`
 
-Clears the cache
+Imports an SQL file on the current shop database.
+
+Requires php exec and MySQL CLI tools installed on your system.
+
+### Arguments:
+
+**file:**
+
+* Name: file
+* Description: The sql file which is to be imported
 
 ### Options:
 
-**force:**
+db:list
+-------
 
-* Name: `--force`
-* Shortcut: `-f`
+* Description: List of all Tables
+* Usage:
+
+  * `db:list [-p|--plain] [-t|--pattern PATTERN]`
+
+List Tables
+
+usage:
+    oxrun db:list --pattern oxseo%,oxuser
+    - To dump all Tables, but `oxseo`, `oxvoucher`, and `oxvoucherseries` without data.
+      possibilities: oxseo%,oxuser,%logs%
+      
+
+
+### Options:
+
+**plain:**
+
+* Name: `--plain`
+* Shortcut: `-p`
 * Accept value: no
 * Is value required: no
-* Description: Try to delete the cache anyway. [danger or permission denied]
+* Description: print list as comma separated.
 * Default: `false`
 
-route:debug
------------
+**pattern:**
 
-* Description: Returns the route. Which controller and parameters are called.
-* Usage:
-
-  * `route:debug [-c|--copy] [--] <url>`
-
-Returns the route. Which controller and parameters are called.
-
-### Arguments:
-
-**url:**
-
-* Name: url
-* Description: Website URL. Full or Path
-
-### Options:
-
-**copy:**
-
-* Name: `--copy`
-* Shortcut: `-c`
-* Accept value: no
-* Is value required: no
-* Description: Copy file path from the class to the clipboard (only MacOS)
-* Default: `false`
-
-config:get
-----------
-
-* Description: Gets a config value
-* Usage:
-
-  * `config:get [--moduleId [MODULEID]] [--] <variableName>`
-
-Gets a config value
-
-### Arguments:
-
-**variableName:**
-
-* Name: variableName
-* Description: Variable name
-
-### Options:
-
-**moduleId:**
-
-* Name: `--moduleId`
-* Is value required: no
-* Description: <none>
-
-config:shop:set
----------------
-
-* Description: Sets a shop config value
-* Usage:
-
-  * `config:shop:set <variableName> <variableValue>`
-
-Sets a shop config value
-
-### Arguments:
-
-**variableName:**
-
-* Name: variableName
-* Description: Variable name
-
-**variableValue:**
-
-* Name: variableValue
-* Description: Variable value
-
-### Options:
-
-config:set
-----------
-
-* Description: Sets a config value
-* Usage:
-
-  * `config:set [--variableType VARIABLETYPE] [--moduleId [MODULEID]] [--] <variableName> <variableValue>`
-
-Sets a config value
-
-### Arguments:
-
-**variableName:**
-
-* Name: variableName
-* Description: Variable name
-
-**variableValue:**
-
-* Name: variableValue
-* Description: Variable value
-
-### Options:
-
-**variableType:**
-
-* Name: `--variableType`
+* Name: `--pattern`
+* Shortcut: `-t`
 * Is value required: yes
-* Description: Variable type
+* Description: table name pattern test. e.g. oxseo%,oxuser
 
-**moduleId:**
+db:query
+--------
 
-* Name: `--moduleId`
-* Is value required: no
-* Description: <none>
-
-config:multiset
----------------
-
-* Description: Sets multiple config values from yaml file
+* Description: Executes a query
 * Usage:
 
-  * `config:multiset <configfile>`
+  * `db:query [--raw] [--] <query>`
 
-YAML example:
-```yaml
-config:
-  1:
-    blReverseProxyActive: 
-      variableType: bool
-      variableValue: false
-    # simple string type
-    sMallShopURL: http://myshop.dev.local
-    sMallSSLShopURL: http://myshop.dev.local
-    myMultiVal:
-      variableType: aarr
-      variableValue:
-        - /foo/bar/
-        - /bar/foo/
-      # optional module id
-      moduleId: my_module
-  2:
-    blReverseProxyActive: 
-...
-```
-[Example: malls.yml.dist](example/malls.yml.dist)
+Executes an SQL query on the current shop database. Wrap your SQL in quotes.
 
-If you want, you can also specify __a YAML string on the command line instead of a file__, e.g.:
+If your query produces a result (e.g. a SELECT statement), the output will be returned via the table component. Add the raw option for raw output.
 
-```bash
-../vendor/bin/oxrun module:multiset $'config:
-  1:
-    foobar: barfoo
-' --shopId=1
-```    
+Requires php exec and MySQL CLI tools installed on your system.
 
 ### Arguments:
+
+**query:**
+
+* Name: query
+* Description: The query which is to be executed
+
+### Options:
+
+**raw:**
+
+* Name: `--raw`
+* Accept value: no
+* Is value required: no
+* Description: Raw output
+* Default: `false`
+
+log:exceptionlog
+----------------
+
+* Description: Read EXCEPTION_LOG.txt and display entries.
+* Usage:
+
+  * `log:exceptionlog [-l|--lines [LINES]] [-f|--filter [FILTER]] [-r|--raw] [-t|--tail]`
+
+Read EXCEPTION_LOG.txt and display entries.
+
+### Options:
+
+**lines:**
+
+* Name: `--lines`
+* Shortcut: `-l`
+* Is value required: no
+* Description: Number of lines to show
+
+**filter:**
+
+* Name: `--filter`
+* Shortcut: `-f`
+* Is value required: no
+* Description: Filter string to search for
+
+**raw:**
+
+* Name: `--raw`
+* Shortcut: `-r`
+* Accept value: no
+* Is value required: no
+* Description: Show raw text, no table
+* Default: `false`
+
+**tail:**
+
+* Name: `--tail`
+* Shortcut: `-t`
+* Accept value: no
+* Is value required: no
+* Description: Show last lines first
+* Default: `false`
+
+misc:generate:documentation
+---------------------------
+
+* Description: Generate a raw command documentation of the available commands
+* Usage:
+
+  * `misc:generate:documentation`
+
+Generate a raw command documentation of the available commands
+
+### Arguments:
+
+**command:**
+
+* Name: command
+* Description: The command to execute
+
+### Options:
+
+misc:generate:yaml:module
+-------------------------
+
+* Description: Generate a Yaml File for command `module:multiactivate`
+* Usage:
+
+  * `misc:generate:yaml:module [-c|--configfile CONFIGFILE] [-w|--whitelist] [-b|--blacklist]`
+
+Generate a Yaml File for command `module:multiactivate`
+
+### Options:
 
 **configfile:**
 
-* Name: configfile
-* Description: The file containing the config values, see example/malls.yml.dist. The file path is relative to the shop installation_root_path/oxrun_config/. You can also pass a YAML string on the command line.
+* Name: `--configfile`
+* Shortcut: `-c`
+* Is value required: yes
+* Description: The Config file to change or create if not exits
+* Default: `'dev_module.yml'`
+
+**whitelist:**
+
+* Name: `--whitelist`
+* Shortcut: `-w`
+* Accept value: no
+* Is value required: no
+* Description: Takes modules that are always activated. All others remain deactive.
+* Default: `false`
+
+**blacklist:**
+
+* Name: `--blacklist`
+* Shortcut: `-b`
+* Accept value: no
+* Is value required: no
+* Description: Takes modules that always need to be disabled. All others are activated.
+* Default: `false`
+
+misc:generate:yaml:multiset
+---------------------------
+
+* Description: Generate a Yaml File for command `config:multiset`
+* Usage:
+
+  * `misc:generate:yaml:multiset [-c|--configfile CONFIGFILE] [--oxvarname OXVARNAME] [--oxmodule OXMODULE]`
+
+Generate a Yaml File for command `config:multiset`
 
 ### Options:
 
-config:shop:get
----------------
+**configfile:**
 
-* Description: Sets a shop config value
+* Name: `--configfile`
+* Shortcut: `-c`
+* Is value required: yes
+* Description: The Config file to change or create if not exits
+* Default: `'dev_config.yml'`
+
+**oxvarname:**
+
+* Name: `--oxvarname`
+* Is value required: yes
+* Description: Dump configs by oxvarname. One name or as comma separated List
+
+**oxmodule:**
+
+* Name: `--oxmodule`
+* Is value required: yes
+* Description: Dump configs by oxmodule. One name or as comma separated List
+
+misc:phpstorm:metadata
+----------------------
+
+* Description: Generate a PhpStorm metadata file for auto-completion.
 * Usage:
 
-  * `config:shop:get <variableName>`
+  * `misc:phpstorm:metadata [-o|--output-dir OUTPUT-DIR]`
 
-Sets a shop config value
+Generate a PhpStorm metadata file for auto-completion.
+
+### Options:
+
+**output-dir:**
+
+* Name: `--output-dir`
+* Shortcut: `-o`
+* Is value required: yes
+* Description: Writes the metadata for PhpStorm to the specified directory.
+
+module:activate
+---------------
+
+* Description: Activates a module
+* Usage:
+
+  * `module:activate <module>`
+
+Activates a module
 
 ### Arguments:
 
-**variableName:**
+**module:**
 
-* Name: variableName
-* Description: Variable name
+* Name: module
+* Description: Module name
+
+### Options:
+
+module:deactivate
+-----------------
+
+* Description: Deactivates a module
+* Usage:
+
+  * `module:deactivate <module>`
+
+Deactivates a module
+
+### Arguments:
+
+**module:**
+
+* Name: module
+* Description: Module name
 
 ### Options:
 
@@ -566,6 +780,18 @@ Generates a module skeleton
 * Name: `--email`
 * Is value required: yes
 * Description: Email of Author
+
+module:list
+-----------
+
+* Description: Lists all modules
+* Usage:
+
+  * `module:list`
+
+Lists all modules
+
+### Options:
 
 module:multiactivate
 --------------------
@@ -631,56 +857,6 @@ If you want, you can also specify __a YAML string on the command line instead of
 * Description: Skip cache clearing.
 * Default: `false`
 
-module:list
------------
-
-* Description: Lists all modules
-* Usage:
-
-  * `module:list`
-
-Lists all modules
-
-### Options:
-
-module:activate
----------------
-
-* Description: Activates a module
-* Usage:
-
-  * `module:activate <module>`
-
-Activates a module
-
-### Arguments:
-
-**module:**
-
-* Name: module
-* Description: Module name
-
-### Options:
-
-module:deactivate
------------------
-
-* Description: Deactivates a module
-* Usage:
-
-  * `module:deactivate <module>`
-
-Deactivates a module
-
-### Arguments:
-
-**module:**
-
-* Name: module
-* Description: Module name
-
-### Options:
-
 module:reload
 -------------
 
@@ -721,6 +897,34 @@ Lists the shops
 
 ### Options:
 
+route:debug
+-----------
+
+* Description: Returns the route. Which controller and parameters are called.
+* Usage:
+
+  * `route:debug [-c|--copy] [--] <url>`
+
+Returns the route. Which controller and parameters are called.
+
+### Arguments:
+
+**url:**
+
+* Name: url
+* Description: Website URL. Full or Path
+
+### Options:
+
+**copy:**
+
+* Name: `--copy`
+* Shortcut: `-c`
+* Accept value: no
+* Is value required: no
+* Description: Copy file path from the class to the clipboard (only MacOS)
+* Default: `false`
+
 user:create
 -----------
 
@@ -756,93 +960,6 @@ Sets a new password
 * Description: New password
 
 ### Options:
-
-cms:update
-----------
-
-* Description: Updates a cms page
-* Usage:
-
-  * `cms:update [--title [TITLE]] [--content [CONTENT]] [--language LANGUAGE] [--active ACTIVE] [--] <ident>`
-
-Updates a cms page
-
-### Arguments:
-
-**ident:**
-
-* Name: ident
-* Description: Content ident
-
-### Options:
-
-**title:**
-
-* Name: `--title`
-* Is value required: no
-* Description: Content title
-
-**content:**
-
-* Name: `--content`
-* Is value required: no
-* Description: Content body
-
-**language:**
-
-* Name: `--language`
-* Is value required: yes
-* Description: Content language
-
-**active:**
-
-* Name: `--active`
-* Is value required: yes
-* Description: Content active
-
-log:exceptionlog
-----------------
-
-* Description: Read EXCEPTION_LOG.txt and display entries.
-* Usage:
-
-  * `log:exceptionlog [-l|--lines [LINES]] [-f|--filter [FILTER]] [-r|--raw] [-t|--tail]`
-
-Read EXCEPTION_LOG.txt and display entries.
-
-### Options:
-
-**lines:**
-
-* Name: `--lines`
-* Shortcut: `-l`
-* Is value required: no
-* Description: Number of lines to show
-
-**filter:**
-
-* Name: `--filter`
-* Shortcut: `-f`
-* Is value required: no
-* Description: Filter string to search for
-
-**raw:**
-
-* Name: `--raw`
-* Shortcut: `-r`
-* Accept value: no
-* Is value required: no
-* Description: Show raw text, no table
-* Default: `false`
-
-**tail:**
-
-* Name: `--tail`
-* Shortcut: `-t`
-* Accept value: no
-* Is value required: no
-* Description: Show last lines first
-* Default: `false`
 
 views:update
 ------------

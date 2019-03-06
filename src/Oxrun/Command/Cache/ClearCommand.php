@@ -26,7 +26,7 @@ class ClearCommand extends Command implements \Oxrun\Command\EnableInterface
     {
         $this
             ->setName('cache:clear')
-            ->setDescription('Clears the cache')
+            ->setDescription('Clear OXID cache')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Try to delete the cache anyway. [danger or permission denied]');
     }
 
