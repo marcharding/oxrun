@@ -6,27 +6,30 @@ php:
 env:
   - OXID_VERSION="dev-b-6.1-ce"
 
+cache:
+  directories:
+  - $HOME/.composer/cache/files
+
 before_script:
-  - ls -l
   - mkdir -p build/logs
   - composer install
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'
-  - composer create-project --keep-vcs oxid-esales/oxideshop-project oxidesale ${OXID_VERSION}
-  - echo "include __DIR__ . '/../../.travis/oxid_config.inc.php';" >> oxidesale/source/config.inc.php
+  - composer create-project --keep-vcs oxid-esales/oxideshop-project oxid-esale ${OXID_VERSION}
+  - echo "include __DIR__ . '/../../.travis/oxid_config.inc.php';" >> oxid-esale/source/config.inc.php
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'
-  - mysql oxid < oxidesale/source/Setup/Sql/database_schema.sql
-  - mysql oxid < oxidesale/vendor/oxid-esales/oxideshop-demodata-ce/src/demodata.sql
-  - rm -rf oxidesale/source/Setup
-  - oxidesale/vendor/bin/oe-eshop-db_views_generate
-  - rm -rf oxidesale/source/tmp/*
-  - cd oxidesale/source
+  - mysql oxid < oxid-esale/source/Setup/Sql/database_schema.sql
+  - mysql oxid < oxid-esale/vendor/oxid-esales/oxideshop-demodata-ce/src/demodata.sql
+  - rm -rf oxid-esale/source/Setup
+  - oxid-esale/vendor/bin/oe-eshop-db_views_generate
+  - rm -rf oxid-esale/source/tmp/*
+  - cd oxid-esale/source
 
 script:
   - ../../vendor/bin/phpunit -c ../../phpunit.xml --debug --stop-on-error --stop-on-failure
 
-
 after_success:
  - cd ../../
+ - .travis/updateReadmeDoc.sh && .travis/git_push.sh
  - if [[ $TRAVIS_TAG != '' ]]; then php -d phar.readonly=0 build-phar -v"${TRAVIS_TAG}"; fi
  - travis_retry php vendor/bin/php-coveralls -v
 

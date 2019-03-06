@@ -10,7 +10,6 @@ use Symfony\Component\Console\Tester\CommandTester;
 /**
  * Class AnonymizeCommandTest
  * @package Oxrun\Command\Database
- * @group active
  */
 class AnonymizeCommandTest extends TestCase
 {
