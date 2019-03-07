@@ -9,6 +9,7 @@
 namespace Oxrun\Tests\CommandCollection\Aggregator;
 
 use Oxrun\CommandCollection\CacheCheck;
+use Oxrun\CommandCollection\Aggregator;
 use Oxrun\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -40,18 +41,21 @@ class CommunityPassTest extends TestCase
     {
         //Arrange
         @unlink($this->oxid_fs_source . '/../vendor/composer/installed.json');
+        $communityPass = new Aggregator\CommunityPass();
+        $communityPass->setShopDir($this->oxid_fs_source);
 
         //Assert
         $this->expectExceptionMessage('File not found: /composer/installed.json');
 
         //Act
-        new Aggregator\CommunityPass($this->oxid_fs_source);
+        $communityPass->valid();
     }
 
     public function testReadServiceYamlModule()
     {
         //Arrange
-        $communityPass = new Aggregator\CommunityPass($this->oxid_fs_source);
+        $communityPass = new Aggregator\CommunityPass();
+        $communityPass->setShopDir($this->oxid_fs_source);
 
         //Assert
         $this->definition->addMethodCall(Argument::is('addFromDi'), Argument::any())->shouldBeCalled();
@@ -64,7 +68,8 @@ class CommunityPassTest extends TestCase
     {
         //Arrange
         $this->mockShopDir('installed_one_package.json', 'different_spellings_class_name.yml');
-        $communityPass = new Aggregator\CommunityPass($this->oxid_fs_source);
+        $communityPass = new Aggregator\CommunityPass();
+        $communityPass->setShopDir($this->oxid_fs_source);
 
         //Assert
         $this->definition->addMethodCall(Argument::is('addFromDi'), Argument::any())->shouldBeCalledTimes(2);
@@ -76,7 +81,9 @@ class CommunityPassTest extends TestCase
     public function testCheckCacheFiles()
     {
         //Arrange
-        $communityPass = new Aggregator\CommunityPass($this->oxid_fs_source);
+        $communityPass = new Aggregator\CommunityPass();
+        $communityPass->setShopDir($this->oxid_fs_source);
+
         $this->definition->addMethodCall(Argument::is('addFromDi'), Argument::any())->shouldBeCalled();
 
         //Act
@@ -101,7 +108,7 @@ class CommunityPassTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        require_once self::getTestData('HelloWorldCommand.php');
+        require_once self::getTestData('commands/HelloWorldCommand.php');
     }
 
     protected function tearDown()

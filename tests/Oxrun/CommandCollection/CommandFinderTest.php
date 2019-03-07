@@ -13,7 +13,8 @@ use Oxrun\CommandCollection\CommandFinder;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @group active
+ * Class CommandFinderTest
+ * @package Oxrun\Tests\CommandCollection
  */
 class CommandFinderTest extends TestCase
 {

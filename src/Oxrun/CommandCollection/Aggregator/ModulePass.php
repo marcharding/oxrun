@@ -8,9 +8,7 @@
 
 namespace Oxrun\CommandCollection\Aggregator;
 
-use OxidEsales\Eshop\Core\Registry;
 use Oxrun\CommandCollection\Aggregator;
-use Oxrun\CommandCollection\CacheCheck;
 
 /**
  * Class ModulePass
@@ -37,130 +35,53 @@ class ModulePass extends Aggregator
      */
     protected function addModulesCommandDirs()
     {
-        $paths = $this->getPathsOfAvailableModules();
+        $pathToPhpFiles = $this->getPathsOfCommands();
 
-        $pathToPhpFiles = $this->getPhpFilesMatchingPatternForCommandFromGivenPaths($paths);
+        foreach ($pathToPhpFiles as $phpFile) {
+            $classesFromPhpFile = $this->getAllClassesFromPhpFile($phpFile);
 
-        $classes = $this->getAllClassesFromPhpFiles($pathToPhpFiles);
-
-        foreach ($classes as $commandClass) {
-            if (!class_exists($commandClass)) {
-                echo "\nClass $commandClass does not exist!\n";
-                continue;
-            }
-
-            $this->add($commandClass);
+            array_walk(
+                $classesFromPhpFile,
+                function ($class) use ($phpFile) {
+                    $this->add($class, $phpFile);
+                }
+            );
         }
+
     }
 
 
     /**
-     * Return list of paths to all available modules.
-     *
-     * @return string[]
+     * Return list of all Command paths
      */
-    private function getPathsOfAvailableModules()
+    private function getPathsOfCommands()
     {
-        $config = Registry::getConfig();
-        $modulesRootPath = $config->getModulesDir();
+        $moduleDir = $this->shopDir . '/modules';
 
-        $modulePaths = $config->getConfigParam('aModulePaths');
+        $recursiveIteratorIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($moduleDir, \FilesystemIterator::SKIP_DOTS));
+        $regexIterator = new \RegexIterator($recursiveIteratorIterator, '~[^/]+/[^/]+/(Commands|commands|Command)/.+[cC]ommand\.php$~');
 
-        if (!is_dir($modulesRootPath)) {
-            return [];
-        }
-        if (!is_array($modulePaths)) {
-            return [];
-        }
-        $fullModulePaths = array_map(function ($modulePath) use ($modulesRootPath) {
-            return $modulesRootPath . $modulePath;
-        }, array_values($modulePaths));
-        return array_filter($fullModulePaths, function ($fullModulePath) {
-            return is_dir($fullModulePath);
-        });
-    }
-    /**
-     * Return list of PHP files matching `Command` specific pattern.
-     *
-     * @param string $path Path to collect files from
-     *
-     * @return string[]
-     */
-    private function getPhpFilesMatchingPatternForCommandFromGivenPath($path)
-    {
-        $folders = ['Commands','commands','Command'];
-
-        foreach ($folders as $f) {
-            $cPath = $path . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR;
-            if (!is_dir($cPath)) {
-                continue;
-            }
-
-            $files = glob("$cPath*[cC]ommand\.php");
-
-            return $files;
-        }
-
-        return [];
-    }
-
-    /**
-     * Helper method for `getPhpFilesMatchingPatternForCommandFromGivenPath`
-     *
-     * @param string[] $paths
-     *
-     * @return string[]
-     */
-    private function getPhpFilesMatchingPatternForCommandFromGivenPaths($paths)
-    {
-        return $this->getFlatArray(
-            array_map(
-                function ($path) {
-                    return $this->getPhpFilesMatchingPatternForCommandFromGivenPath($path);
-                },
-                $paths
-            )
-        );
-    }
-
-    /**
-     * Helper method for `getAllClassesFromPhpFile`
-     *
-     * @param string[] $pathToPhpFiles
-     *
-     * @return string[]
-     */
-    private function getAllClassesFromPhpFiles($pathToPhpFiles)
-    {
-        return $this->getFlatArray(
-            array_map(
-                function ($pathToPhpFile) {
-                    return $this->getAllClassesFromPhpFile($pathToPhpFile);
-                },
-                $pathToPhpFiles
-            )
-        );
+        return $regexIterator;
     }
 
     /**
      * Get list of defined classes from given PHP file.
      *
-     * @param string $pathToPhpFile
+     * @param \SplFileInfo $pathToPhpFile
      *
      * @return string[]
      */
     private function getAllClassesFromPhpFile($pathToPhpFile)
     {
         $classesBefore = get_declared_classes();
+        $filename = $pathToPhpFile->getBasename('.php');
 
         try {
-
-            CacheCheck::addFile($pathToPhpFile);
             include_once $pathToPhpFile;
 
         } catch (\Throwable $exception) {
-            print "Can not add Command $pathToPhpFile:\n";
-            print $exception->getMessage() . "\n";
+            $this->consoleOutput->writeln("<error>Can not add Command $pathToPhpFile:" . $exception->getMessage());
+            return [];
         }
 
         $classesAfter = get_declared_classes();
@@ -170,27 +91,14 @@ class ModulePass extends Aggregator
         if (count($newClasses) > 1) {
             //try to find the correct class name to use
             //this avoids warnings when module developer use there own command base class, that is not instantiable
-            $name = basename($pathToPhpFile, '.php');
-
             foreach ($newClasses as $newClass) {
-                if ($newClass == $name) {
+                if ($newClass == $filename) {
                     return [$newClass];
                 }
             }
         }
 
+        $this->consoleOutput->writeln("<comment>Class '$filename' was not inside: " . $pathToPhpFile."</comment>");
         return $newClasses;
-    }
-
-    /**
-     * Convert array of arrays to flat list array.
-     *
-     * @param array[] $nonFlatArray
-     *
-     * @return array
-     */
-    private function getFlatArray($nonFlatArray)
-    {
-        return array_reduce($nonFlatArray, 'array_merge', []);
     }
 }

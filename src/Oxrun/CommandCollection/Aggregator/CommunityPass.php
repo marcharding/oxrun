@@ -40,6 +40,7 @@ class CommunityPass extends Aggregator
      * Algorithmus to find the Commands
      *
      * @return void
+     * @throws \Exception
      */
     protected function searchCommands()
     {
@@ -47,8 +48,9 @@ class CommunityPass extends Aggregator
 
         $taggedServices = $this->getContainer()->findTaggedServiceIds('console.command');
 
-        foreach ($taggedServices as $commandClass => $tags) {
-            $this->add($commandClass);
+        foreach ($taggedServices as $id => $tags) {
+            $definition = $this->getContainer()->findDefinition($id);
+            $this->addDefinition($id, $definition);
         }
     }
 

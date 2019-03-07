@@ -10,6 +10,7 @@ namespace Oxrun\CommandCollection;
 use Oxrun\CommandCollection;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -47,12 +48,19 @@ class ContainerCollection implements CommandCollection
     private $commandFinder = null;
 
     /**
+     * @var OutputInterface
+     */
+    private $consoleOutput = null;
+
+    /**
      * ContainerCollection constructor.
      * @param CommandFinder $commandFinder
      */
-    public function __construct(CommandFinder $commandFinder)
+
+    public function __construct(CommandFinder $commandFinder, OutputInterface $output = null)
     {
         $this->commandFinder = $commandFinder;
+        $this->consoleOutput = $output ? : new ConsoleOutput();
     }
 
     /**
@@ -136,8 +144,7 @@ class ContainerCollection implements CommandCollection
                 $aggregators = $this->commandFinder->getPassNeedShopDir();
                 $this->addPassToContainer($aggregators, $symfonyContainer);
             } catch (\Exception $e) {
-                $consoleOutput = new ConsoleOutput();
-                $consoleOutput->writeln('<comment>Command Collection: '.$e->getMessage().'</comment>');
+                $this->consoleOutput->writeln('<comment>Own commands error: '.$e->getMessage().'</comment>');
             }
         }
 
@@ -157,6 +164,7 @@ class ContainerCollection implements CommandCollection
         foreach ($aggregators as $pass) {
             $pass->setShopDir($this->shopDir);
             $pass->setOxrunConfigDir($this->oxrunconfDir);
+            $pass->setConsoleOutput($this->consoleOutput);
             $pass->valid();
 
             $symfonyContainer->addCompilerPass($pass);

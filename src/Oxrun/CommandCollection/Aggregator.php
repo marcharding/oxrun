@@ -9,6 +9,7 @@
 namespace Oxrun\CommandCollection;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -41,6 +42,11 @@ abstract class Aggregator implements CompilerPassInterface
     protected $oxrunConfigDir = '';
 
     /**
+     * @var OutputInterface
+     */
+    protected $consoleOutput = null;
+
+    /**
      * Algorithmus to find the Commands
      *
      * @return void
@@ -70,23 +76,40 @@ abstract class Aggregator implements CompilerPassInterface
      * @param null $filepath
      *
      * @return void
+     * @throws \Exception
      */
     protected function add($commandClass, $filepath = null)
     {
-        if (! $this->isCommandCompatibleClass($commandClass)) {
-            return;
-        }
-
         if ($filepath) {
             CacheCheck::addFile($filepath);
         }
 
-        $definitionCmd = new Definition($commandClass);
-        $definitionCmd->setPublic(false);
+        $id = $commandClass;
 
+        $definitionCmd = new Definition($commandClass);
         $this->container->setDefinition($commandClass, $definitionCmd);
 
-        $this->definition->addMethodCall('addFromDi', [new Reference($commandClass)]);
+        $this->addDefinition($id, $definitionCmd);
+    }
+
+    /**
+     * @param Definition $definitionCmd
+     * @throws \Exception
+     */
+    protected function addDefinition($id, Definition $definitionCmd)
+    {
+        $commandClass = $definitionCmd->getClass();
+
+        if (! $this->isCommandCompatibleClass($commandClass)) {
+            if ($this->consoleOutput) {
+                $this->consoleOutput->writeln("<comment>$commandClass is not a compatible command</comment>");
+            }
+            return;
+        }
+
+        $definitionCmd->setPublic(false);
+
+        $this->definition->addMethodCall('addFromDi', [new Reference($id)]);
     }
 
     /**
@@ -107,13 +130,14 @@ abstract class Aggregator implements CompilerPassInterface
      * @param string $class
      *
      * @return boolean
+     * @throws \Exception
      */
     private function isCommandCompatibleClass($commandClass)
     {
         try {
             new $commandClass;
-        } catch (\Exception $ex) {
-            echo "Error loading class $commandClass.!\n";
+        } catch (\Error $ex) {
+            throw new \Exception("Error loading class '$commandClass'. Trace: " . static::class );
         }
 
         return is_subclass_of($commandClass, Command::class) && $commandClass !== Command::class;
@@ -142,6 +166,17 @@ abstract class Aggregator implements CompilerPassInterface
     public function setOxrunConfigDir(string $oxrunConfigDir)
     {
         $this->oxrunConfigDir = $oxrunConfigDir;
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @return Aggregator
+     */
+    public function setConsoleOutput(OutputInterface $output)
+    {
+        $this->consoleOutput = $output;
+
+        return $this;
     }
 }
 

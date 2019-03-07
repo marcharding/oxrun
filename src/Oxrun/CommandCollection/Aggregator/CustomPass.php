@@ -34,7 +34,7 @@ class CustomPass extends Aggregator
      */
     public function addCustomCommandDir()
     {
-        $commandSourceDir          = $this->oxrunConfigDir. '/commands';
+        $commandSourceDir          = $this->oxrunConfigDir . '/commands';
         if (!file_exists($commandSourceDir)) {
             return;
         }
@@ -42,12 +42,13 @@ class CustomPass extends Aggregator
         $recursiveIteratorIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($commandSourceDir));
         $regexIterator             = new \RegexIterator($recursiveIteratorIterator, '/.*Command\.php$/');
 
+        /** @var \SplFileInfo $commandPath */
         foreach ($regexIterator as $commandPath) {
-            $commandClass = str_replace(array($commandSourceDir, '/', '.php'), array('', '\\', ''), $commandPath);
-            if (!class_exists($commandClass)) {
-                echo "\nClass $commandClass does not exist!\n";
-                continue;
-            }
+            $commandClass = 'Oxrun\\CustomCommand\\';
+            $commandClass .= $commandPath->getBasename('.php');
+
+            include_once $commandPath;
+
             $this->add($commandClass, $commandPath);
         }
     }
