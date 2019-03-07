@@ -113,12 +113,14 @@ class ContainerCollectionTest extends \Oxrun\TestCase
         $this->pass = $this->prophesize(Aggregator::class);
         $this->pass->setShopDir(Argument::any())->willReturn();
         $this->pass->setOxrunConfigDir(Argument::any())->willReturn();
+        $this->pass->setConsoleOutput(Argument::any())->willReturn();
         $this->pass->valid()->willReturn();
         $this->pass->process(Argument::any())->willReturn();
 
         $this->passNeedDir = $this->prophesize(Aggregator::class);
         $this->passNeedDir->setShopDir(Argument::any())->willReturn();
         $this->passNeedDir->setOxrunConfigDir(Argument::any())->willReturn();
+        $this->passNeedDir->setConsoleOutput(Argument::any())->willReturn();
         $this->passNeedDir->valid()->willReturn();
         $this->passNeedDir->process(Argument::any())->willReturn();
 

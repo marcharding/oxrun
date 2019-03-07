@@ -11,6 +11,7 @@ cache:
   - $HOME/.composer/cache/files
 
 before_script:
+  - composer config --list --global
   - mkdir -p build/logs
   - composer install
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'

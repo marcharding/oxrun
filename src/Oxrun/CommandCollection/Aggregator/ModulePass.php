@@ -39,7 +39,6 @@ class ModulePass extends Aggregator
 
         foreach ($pathToPhpFiles as $phpFile) {
             $classesFromPhpFile = $this->getAllClassesFromPhpFile($phpFile);
-
             array_walk(
                 $classesFromPhpFile,
                 function ($class) use ($phpFile) {
@@ -88,17 +87,18 @@ class ModulePass extends Aggregator
 
         $newClasses = array_diff($classesAfter, $classesBefore);
 
-        if (count($newClasses) > 1) {
+        if (count($newClasses)) {
             //try to find the correct class name to use
             //this avoids warnings when module developer use there own command base class, that is not instantiable
+            $quotefilename = preg_quote($filename);
             foreach ($newClasses as $newClass) {
-                if ($newClass == $filename) {
+                if (preg_match("/$quotefilename\$/i", $newClass)) {
                     return [$newClass];
                 }
             }
         }
 
         $this->consoleOutput->writeln("<comment>Class '$filename' was not inside: " . $pathToPhpFile."</comment>");
-        return $newClasses;
+        return [];
     }
 }

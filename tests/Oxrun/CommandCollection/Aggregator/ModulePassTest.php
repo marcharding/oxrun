@@ -20,7 +20,6 @@ use Symfony\Component\DependencyInjection\Definition;
 /**
  * Class ModulePassTest
  * @package Oxrun\CommandCollection\Aggregator
- * @group active
  */
 class ModulePassTest extends \Oxrun\TestCase
 {
@@ -46,9 +45,16 @@ class ModulePassTest extends \Oxrun\TestCase
 
         //Act
         $customCommand->process($this->containerBuilder);
+        $actual = $this->containerBuilder->getDefinitions();
+        $actual = array_keys($actual);
 
         //Assert
-        $this->assertCount(3, CacheCheck::getResource());
+       $this->assertEquals([
+           'command_container',
+           'anynamespace\modulecommand\modulecommand',
+           'mynamespace\customcommand\modulesuncommand',
+           'module\sun\command\modulesunshinecommand',
+       ], $actual );
     }
 
     public function testLoadModuleCommandWithSyntaxError()
@@ -76,14 +82,13 @@ class ModulePassTest extends \Oxrun\TestCase
 
         //Act
         $customCommand->process($this->containerBuilder);
+        $actual = array_keys($this->containerBuilder->getDefinitions());
 
         //Assert
-        $this->assertCount(1, CacheCheck::getResource());
+        $this->assertEquals(['command_container'], $actual );
+        $this->assertCount(0, CacheCheck::getResource());
         $this->assertEquals(
-            ''.
-            'Class \'WrongNameCommand\' was not inside: vfs://installation_root_path/source/modules/tm/planet/Commands/WrongNameCommand.php'. PHP_EOL .
-            'NameCommand is not a compatible command'. PHP_EOL,
-
+            'Class \'WrongNameCommand\' was not inside: vfs://installation_root_path/source/modules/tm/planet/Commands/WrongNameCommand.php'. PHP_EOL,
             $bufferedOutput->fetch());
 
     }
