@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Created by PhpStorm.
+ * User: tobi
+ * Date: 27.11.18
+ * Time: 07:34
+ */
 namespace Oxrun\CommandCollection;
 
 use Oxrun\CommandCollection;
@@ -11,10 +16,8 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 
 /**
- * Created by PhpStorm.
- * User: tobi
- * Date: 27.11.18
- * Time: 07:34
+ * Class ContainerCollection
+ * @package Oxrun\CommandCollection
  */
 class ContainerCollection implements CommandCollection
 {
@@ -22,6 +25,11 @@ class ContainerCollection implements CommandCollection
      * @var string
      */
     private $shopDir = '';
+
+    /**
+     * @var string
+     */
+    private $oxrunconfDir = '';
 
     /**
      * @var string
@@ -34,6 +42,20 @@ class ContainerCollection implements CommandCollection
     private $isFoundShopDir = false;
 
     /**
+     * @var CommandFinder
+     */
+    private $commandFinder = null;
+
+    /**
+     * ContainerCollection constructor.
+     * @param CommandFinder $commandFinder
+     */
+    public function __construct(CommandFinder $commandFinder)
+    {
+        $this->commandFinder = $commandFinder;
+    }
+
+    /**
      * @param \Oxrun\Application $application
      * @throws \Exception
      */
@@ -43,6 +65,7 @@ class ContainerCollection implements CommandCollection
 
         if ($this->isFoundShopDir) {
             $this->shopDir = $application->getShopDir();
+            $this->oxrunconfDir = $application->getOxrunConfigPath();
             $this->template = $this->shopDir . '/../vendor/oxidprojects';
         } else {
             $this->template = sys_get_temp_dir();
@@ -91,7 +114,7 @@ class ContainerCollection implements CommandCollection
                 'class' => 'OxrunCommands',
                 'namespace' => 'oxidprojects',
             ]),
-            Aggregator\CacheCheck::getResource()
+            CacheCheck::getResource()
         );
     }
 
@@ -110,16 +133,33 @@ class ContainerCollection implements CommandCollection
     {
         if ($this->isFoundShopDir) {
             try {
-                //Find Community Commands
-                $symfonyContainer->addCompilerPass(new Aggregator\CommunityPass($this->shopDir));
-
+                $aggregators = $this->commandFinder->getPassNeedShopDir();
+                $this->addPassToContainer($aggregators, $symfonyContainer);
             } catch (\Exception $e) {
                 $consoleOutput = new ConsoleOutput();
                 $consoleOutput->writeln('<comment>Command Collection: '.$e->getMessage().'</comment>');
             }
         }
 
-        //Find Oxrun Commands
-        $symfonyContainer->addCompilerPass(new Aggregator\OxrunPass());
+        //Oxrun Commands
+        $aggregators = $this->commandFinder->getPass();
+        $this->addPassToContainer($aggregators, $symfonyContainer);
+    }
+
+    /**
+     * @param Aggregator[] $aggregators
+     * @param ContainerBuilder $symfonyContainer
+     *
+     * @throws \Exception
+     */
+    protected function addPassToContainer($aggregators, $symfonyContainer)
+    {
+        foreach ($aggregators as $pass) {
+            $pass->setShopDir($this->shopDir);
+            $pass->setOxrunConfigDir($this->oxrunconfDir);
+            $pass->valid();
+
+            $symfonyContainer->addCompilerPass($pass);
+        }
     }
 }

@@ -6,7 +6,7 @@
  * Time: 08:01
  */
 
-namespace Oxrun\CommandCollection\Aggregator;
+namespace Oxrun\Tests\CommandCollection\Aggregator;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;

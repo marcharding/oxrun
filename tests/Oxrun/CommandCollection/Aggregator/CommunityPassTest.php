@@ -8,8 +8,7 @@
 
 namespace Oxrun\Tests\CommandCollection\Aggregator;
 
-use Oxrun\CommandCollection;
-use Oxrun\CommandCollection\Aggregator;
+use Oxrun\CommandCollection\CacheCheck;
 use Oxrun\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -83,7 +82,7 @@ class CommunityPassTest extends TestCase
         //Act
         $communityPass->process($this->containerBuilder);
 
-        $actual = Aggregator\CacheCheck::getResource();
+        $actual = CacheCheck::getResource();
 
         //Assert
         $this->assertCount(2, $actual);
@@ -107,7 +106,7 @@ class CommunityPassTest extends TestCase
 
     protected function tearDown()
     {
-        Aggregator\CacheCheck::clean();
+        CacheCheck::clean();
         parent::tearDown();
     }
 

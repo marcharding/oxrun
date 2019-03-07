@@ -9,7 +9,7 @@
 namespace Oxrun\Tests\CommandCollection;
 
 use Oxrun\Application;
-use Oxrun\CommandCollection\Aggregator\CacheCheck;
+use Oxrun\CommandCollection\CacheCheck;
 use Oxrun\CommandCollection\ContainerCollection;
 use Oxrun\CommandCollection\EnableAdapter;
 use Prophecy\Argument;
