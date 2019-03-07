@@ -25,6 +25,8 @@ $application = new \Oxrun\Application($autoloader, 'oxrun', '@package_version@')
 try {
     $commandFinder = (new CommandFinder())
         ->addRegister(new Aggregator\CommunityPass(), true)
+        ->addRegister(new Aggregator\ModulePass(),true)
+        ->addRegister(new Aggregator\CustomPass(),true)
         ->addRegister(new Aggregator\OxrunPass());
 
     (new ContainerCollection($commandFinder))
