@@ -54,6 +54,11 @@ abstract class Aggregator implements CompilerPassInterface
     abstract protected function searchCommands();
 
     /**
+     * @return string
+     */
+    abstract protected function getPassName();
+
+    /**
      * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
@@ -109,7 +114,7 @@ abstract class Aggregator implements CompilerPassInterface
 
         $definitionCmd->setPublic(false);
 
-        $this->definition->addMethodCall('addFromDi', [new Reference($id)]);
+        $this->definition->addMethodCall('addFromDi', [new Reference($id), $this->getPassName()]);
     }
 
     /**

@@ -18,6 +18,14 @@ use Oxrun\CommandCollection\Aggregator;
 class CustomPass extends Aggregator
 {
     /**
+     * @inheritDoc
+     */
+    protected function getPassName()
+    {
+        return 'oxrun';
+    }
+
+    /**
      * Algorithmus to find the Commands
      *
      * @return void

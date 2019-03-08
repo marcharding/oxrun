@@ -16,6 +16,14 @@ use Oxrun\CommandCollection\Aggregator;
 class OxrunPass extends Aggregator
 {
     /**
+     * @inheritDoc
+     */
+    protected function getPassName()
+    {
+        return null;
+    }
+
+    /**
      * Oxrun Commands
      */
     protected function searchCommands()

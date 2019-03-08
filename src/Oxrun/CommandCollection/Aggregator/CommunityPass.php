@@ -27,6 +27,14 @@ class CommunityPass extends Aggregator
     protected $installed_json = '/composer/installed.json';
 
     /**
+     * @inheritDoc
+     */
+    protected function getPassName()
+    {
+        return 'community';
+    }
+
+    /**
      * @throws \Exception
      */
     public function valid()

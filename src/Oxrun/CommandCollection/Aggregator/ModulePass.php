@@ -17,6 +17,14 @@ use Oxrun\CommandCollection\Aggregator;
 class ModulePass extends Aggregator
 {
     /**
+     * @inheritDoc
+     */
+    protected function getPassName()
+    {
+        return 'oxmodule';
+    }
+
+    /**
      * Algorithmus to find the Commands
      *
      * @return void
