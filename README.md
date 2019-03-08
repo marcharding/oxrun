@@ -50,10 +50,50 @@ Execute oxrun inside your OXID eShop base directory (or subdirectory) if you wan
 
 # Defining your own command
 
-It is possible to adding new console command via `services.yaml` file. For this you have to deposit in your repo a `/services.yaml` file
+There are three methods to add your own commands. 
+
+- 1st method in the OXRUN directory.
+- 2nd method in the OXID module directory.
+- 3rd method over Composer packages.
+
+Each own command is added to a namespace group 'own:'.
+
+### Method: OXRUN directory
+
+The commands are stored in your repo under `oxrun_config/commands/`.
+
+Need the specifications:
+
+- File name must end with `*Command.php`.
+- Classname and filename must match.
+- Class must be in namespace: `Oxrun\CustomCommand`
+- Class must extend from `Symfony\Component\Console\Command\Command`
+
+With the interface `Oxrun\Command\EnableInterface` and the two traits: `\Oxrun\Traits\NeedDatabase` and
+ `\Oxrun\Traits\NoNeedDatabase`. You can enable a command if has a working database connection.
+
+[Example: OwnOxrunCommand.php](example/OwnOxrunCommand.php)
+
+### Method: OXID module directory
+
+The commands are in the module of a OXID eShop: `oxid-esale/source/modules/*/*/`.
+
+Need the specifications:
+
+- Is in a subfolder that reads: `Commands`, `commands` or `Command`
+- File name must end with `*Command.php` or `*command.php`.
+- Classname and filename must match.
+- Namespace does not matter
+- Class must extend from `Symfony\Component\Console\Command\Command`
+
+Recommended path would be: `oxid-esale/source/modules/my/Module/Commands/ExportThingCommand.php`
+
+### Method: Composer packages
+
+It is possible to get command from other composer packages. Via `services.yaml` file. For this you have to deposit in your repo a `/services.yaml` file
 and install it with composer.
 
-That's how she looks
+That's how looks
 
 ```yaml
     services:
@@ -63,12 +103,12 @@ That's how she looks
           - { name: 'console.command' }
 ```
 
-[Template for your command](https://github.com/OXIDprojects/oxrun/blob/composer-command-collector/tests/Oxrun/CommandCollection/testData/HelloWorldCommand.php)
+[Template for your command](example/HelloWorldCommand.php)
 
 Example: https://github.com/OXIDprojects/oxid-module-internals/blob/master/services.yaml
 
 Available commands
-------------------
+==================
 
 ##### cache
   - [cache:clear](#cacheclear)   Clear OXID cache
