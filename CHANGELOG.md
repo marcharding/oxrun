@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v4.0.0-beta]
+
 ### Added new commands
 
 1. `module:multiactivate` activate Module by a Yaml File
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- There are three methods to add your own command. 
 - new option for every command `--shopId` or `-m` select a shop for oxrun
 - command `cache:clear` can now clear the GenericCache and DynamicContentCache in a EE version.
 
