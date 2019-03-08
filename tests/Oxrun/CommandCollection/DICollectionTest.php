@@ -39,11 +39,26 @@ class DICollectionTest extends TestCase
         $oxrunCollection = new CommandCollection\DICollection();
 
         //Act
-        $oxrunCollection->addFromDi(new Command('test'));
+        $oxrunCollection->addFromDi(new Command('test'), '');
         $oxrunCollection->addCommandTo($this->app->reveal());
 
         //Assert
         $this->app->add(Argument::type(CommandCollection\EnableAdapter::class))->shouldHaveBeenCalled();
+    }
+
+    public function testAddAlias()
+    {
+        //Arrange
+        $oxrunCollection = new CommandCollection\DICollection();
+        $command = new Command('test');
+        $command->setAliases(['was:ja']);
+
+        //Act
+        $oxrunCollection->addFromDi($command, 'unit');
+
+        //Assert
+        $actual = $command->getAliases();
+        $this->assertEquals(['was:ja', 'own:unit:test'], $actual);
     }
 
     protected function setUp()

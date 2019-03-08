@@ -160,6 +160,14 @@ class UnitCommand extends Aggregator
     /**
      * @inheritDoc
      */
+    protected function getPassName()
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function searchCommands()
     {
         $this->add($this->commandName);

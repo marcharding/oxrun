@@ -8,10 +8,9 @@ env:
 
 cache:
   directories:
-  - $HOME/.composer/cache/files
+  - $HOME/.composer/cache
 
 before_script:
-  - composer config --list --global
   - mkdir -p build/logs
   - composer install
   - mysql -e 'CREATE DATABASE IF NOT EXISTS `oxid`;'
