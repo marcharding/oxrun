@@ -92,7 +92,7 @@ class GenerateDocumentationCommand extends Command implements \Oxrun\Command\Ena
         $commandOutput = $commandTester->getDisplay();
         $commandOutput = json_decode($commandOutput);
         $output->writeLn("Available commands");
-        $output->writeLn("------------------" . PHP_EOL);
+        $output->writeLn("==================" . PHP_EOL);
 
         $description = [];
         array_walk($commandOutput->commands, function ($item) use (&$description) {

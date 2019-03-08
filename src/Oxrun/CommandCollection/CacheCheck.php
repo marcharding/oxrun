@@ -6,7 +6,7 @@
  * Time: 21:04
  */
 
-namespace Oxrun\CommandCollection\Aggregator;
+namespace Oxrun\CommandCollection;
 
 use Symfony\Component\Config\Resource\FileResource;
 

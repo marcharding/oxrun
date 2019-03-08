@@ -6,8 +6,10 @@
  * Time: 08:01
  */
 
-namespace Oxrun\CommandCollection\Aggregator;
+namespace Oxrun\Tests\CommandCollection\Aggregator;
 
+use Oxrun\CommandCollection\Aggregator\OxrunPass;
+use Oxrun\CommandCollection\CacheCheck;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\MethodProphecy;
@@ -41,6 +43,9 @@ class OxrunPassTest extends TestCase
 
         //Act
         $oxrunPass->process($this->containerBuilder);
+
+        //Assert
+        $this->assertEmpty(CacheCheck::getResource());
     }
 
     protected function setUp()
@@ -50,5 +55,7 @@ class OxrunPassTest extends TestCase
 
         $this->containerBuilder = new ContainerBuilder();
         $this->containerBuilder->setDefinition('command_container', $this->definition->reveal());
+
+        CacheCheck::clean();
     }
 }

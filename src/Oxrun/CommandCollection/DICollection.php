@@ -10,6 +10,7 @@ namespace Oxrun\CommandCollection;
 
 use Oxrun\Application;
 use Oxrun\CommandCollection;
+use Symfony\Component\Console\Command\Command;
 
 /**
  * Class DICollection
@@ -35,10 +36,17 @@ class DICollection implements CommandCollection
     }
 
     /**
-     * @param $command
+     * @param Command $command
+     * @param $foundPass
      */
-    public function addFromDi($command)
+    public function addFromDi($command, $foundPass)
     {
+        if ($foundPass) {
+            $aliases = $command->getAliases();
+            $aliases[] = 'own:'.$foundPass.':'.$command->getName();
+            $command->setAliases($aliases);
+        }
+
         $this->commands[] = $command;
     }
 }

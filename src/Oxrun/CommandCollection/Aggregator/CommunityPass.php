@@ -10,83 +10,77 @@ namespace Oxrun\CommandCollection\Aggregator;
 
 use Composer\Json\JsonFile;
 use Composer\Repository\InstalledFilesystemRepository;
+use Oxrun\CommandCollection\Aggregator;
+use Oxrun\CommandCollection\CacheCheck;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class CommunityPass
  * @package Oxrun\Helper
  */
-class CommunityPass implements CompilerPassInterface
+class CommunityPass extends Aggregator
 {
-    /**
-     * @var string
-     */
-    private $shopDir = '';
-
     /**
      * @var string
      */
     protected $installed_json = '/composer/installed.json';
 
     /**
-     * CommunityPass constructor.
-     * @param string $shopDir
-     *
-     * @throws \Exception
+     * @inheritDoc
      */
-    public function __construct($shopDir)
+    protected function getPassName()
     {
-        $this->shopDir = $shopDir;
-        $this->valid();
+        return 'community';
     }
 
     /**
-     * @param ContainerBuilder $container
      * @throws \Exception
      */
-    public function process(ContainerBuilder $container)
+    public function valid()
     {
-        // always first check if the primary service is defined
-        if (!$container->has('command_container')) {
-            return;
+        if (!file_exists($this->getInstalledJsonPath())) {
+            throw new \Exception('File not found: ' . $this->installed_json . '. (usage: composer install)');
         }
+    }
 
-        $definition = $container->findDefinition('command_container');
+    /**
+     * Algorithmus to find the Commands
+     *
+     * @return void
+     * @throws \Exception
+     */
+    protected function searchCommands()
+    {
+        $this->findServicesYaml();
 
-        $this->findServicesYaml($container);
-
-        $taggedServices = $container->findTaggedServiceIds('console.command');
+        $taggedServices = $this->getContainer()->findTaggedServiceIds('console.command');
 
         foreach ($taggedServices as $id => $tags) {
-            $defCommand = $container->findDefinition($id);
-            $defCommand->setPublic(false);
-
-            $definition->addMethodCall('addFromDi', [new Reference($id)]);
+            $definition = $this->getContainer()->findDefinition($id);
+            $this->addDefinition($id, $definition);
         }
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @throws \Exception
+     * @return void
      */
-    protected function findServicesYaml(ContainerBuilder $container)
+    protected function findServicesYaml()
     {
-        $OXID_VENDOR_PATH = $this->shopDir . '/../vendor/';
+        $oxid_vendor = $this->shopDir . '/../vendor/';
+
+        $loader = new YamlFileLoader($this->getContainer(), new FileLocator());
+
         $installed_json = $this->getInstalledJsonPath();
 
         CacheCheck::addFile($installed_json);
 
         $localRepository = new InstalledFilesystemRepository(new JsonFile($installed_json));
+
         $packages = $localRepository->getPackages();
 
-        $loader = new YamlFileLoader($container, new FileLocator());
-
         foreach ($packages as $package) {
-            $serviceFile = $OXID_VENDOR_PATH . $package->getName() . '/services.yaml';
+            $serviceFile = $oxid_vendor . $package->getName() . '/services.yaml';
             if (file_exists($serviceFile)) {
                 CacheCheck::addFile($serviceFile);
                 $loader->load($serviceFile);
@@ -102,15 +96,5 @@ class CommunityPass implements CompilerPassInterface
         $installed_json = $this->shopDir . '/../vendor/' . $this->installed_json;
 
         return $installed_json;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    protected function valid()
-    {
-        if (!file_exists($this->getInstalledJsonPath())) {
-            throw new \Exception('File not found: ' . $this->installed_json . '. (usage: composer install)');
-        }
     }
 }

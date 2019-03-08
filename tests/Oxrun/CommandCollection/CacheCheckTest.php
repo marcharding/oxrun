@@ -6,9 +6,9 @@
  * Time: 21:39
  */
 
-namespace Oxrun\Tests\CommandCollection\Aggregator;
+namespace Oxrun\Tests\CommandCollection;
 
-use Oxrun\CommandCollection\Aggregator\CacheCheck;
+use Oxrun\CommandCollection\CacheCheck;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Resource\FileResource;
 

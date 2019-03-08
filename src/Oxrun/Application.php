@@ -193,7 +193,6 @@ class Application extends BaseApplication
         return false;
     }
 
-
     /**
      * @return mixed|string
      * @throws \Exception
