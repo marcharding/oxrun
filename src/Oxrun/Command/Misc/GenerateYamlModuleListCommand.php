@@ -85,7 +85,7 @@ class GenerateYamlModuleListCommand extends Command implements EnableInterface
             unset($yaml['whitelist']);
         }
 
-        file_put_contents($path, Yaml::dump($yaml, 3, 2));
+        file_put_contents($path, Yaml::dump($yaml, 5, 2));
 
         $output->writeln("<comment>Module saved use `oxrun module:multiactivate ".basename($path)."`</comment>");
     }
