@@ -104,9 +104,9 @@ class ModulePass extends Aggregator
                     return [$newClass];
                 }
             }
+            $this->consoleOutput->writeln("<comment>Class '$filename' was not inside: " . $pathToPhpFile."</comment>");
         }
 
-        $this->consoleOutput->writeln("<comment>Class '$filename' was not inside: " . $pathToPhpFile."</comment>");
         return [];
     }
 }
