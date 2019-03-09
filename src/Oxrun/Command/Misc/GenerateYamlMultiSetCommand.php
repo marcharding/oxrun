@@ -97,7 +97,7 @@ class GenerateYamlMultiSetCommand extends Command implements \Oxrun\Command\Enab
 
         ksort($yaml['config']);
 
-        file_put_contents($path, Yaml::dump($yaml, 2, 4, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK & Yaml::DUMP_OBJECT  & Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE));
+        file_put_contents($path, Yaml::dump($yaml, 5, 2));
 
         $output->writeln("<comment>Config saved. use `oxrun config:multiset ".basename($path)."`</comment>");
     }
