@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v4.0.0-beta]
+## [v4.0.0-beta.2] 2019-03-20
 
 ### Added new commands
 
@@ -35,6 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deployment Docker. The OXID eSale source code is outside of the Container.
 - Now starts 2x faster. The first start will collect the command and save it as a DI container in `oxide-esale/vendor/oxideprojects/OxrunCommands.php`. 
 - README.md has now a "table of content" a list of commands. And will autogenerate by travis.
+
+### Fixed
+
+- The oxrun::component can now be integrated via composer require.
 
 ## 3.3.0 - 2018-12-02
 
