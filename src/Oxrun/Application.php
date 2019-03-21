@@ -176,7 +176,7 @@ class Application extends BaseApplication
         if (is_file($oxBootstrap)) {
             // is it the oxid bootstrap.php?
             if (strpos(file_get_contents($oxBootstrap), 'OX_BASE_PATH') !== false) {
-                $this->shopDir = realpath(dirname($oxBootstrap));
+                $this->shopDir = (new \SplFileInfo(dirname($oxBootstrap)))->getRealPath();
 
                 include_once $oxBootstrap;
 
