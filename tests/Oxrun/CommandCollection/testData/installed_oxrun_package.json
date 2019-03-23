@@ -1,0 +1,64 @@
+[
+  {
+    "name": "oxidprojects/oxrun",
+    "version": "4.0.0-beta.2",
+    "version_normalized": "4.0.0.0-beta2",
+    "source": {
+      "type": "git",
+      "url": "https://github.com/OXIDprojects/oxrun.git",
+      "reference": "c9e99cd588c63bf997d1d0d98c83453bdf7e4f97"
+    },
+    "dist": {
+      "type": "zip",
+      "url": "https://api.github.com/repos/OXIDprojects/oxrun/zipball/c9e99cd588c63bf997d1d0d98c83453bdf7e4f97",
+      "reference": "c9e99cd588c63bf997d1d0d98c83453bdf7e4f97",
+      "shasum": ""
+    },
+    "require": {
+      "composer/composer": "^1",
+      "guzzlehttp/guzzle": "^6.0",
+      "raulfraile/distill": "0.9.*",
+      "symfony/config": "^3",
+      "symfony/console": "^2",
+      "symfony/dependency-injection": "^3",
+      "symfony/finder": "^2",
+      "symfony/yaml": "^2"
+    },
+    "require-dev": {
+      "mikey179/vfsstream": "^1.6",
+      "php-coveralls/php-coveralls": "^2",
+      "phpunit/phpunit": "^6",
+      "symfony/var-dumper": "^3"
+    },
+    "suggest": {
+      "oxid-community/moduleinternals": "To has more command",
+      "oxid-professional-services/oxid-console": "a other console cli"
+    },
+    "time": "2019-03-20T13:03:07+00:00",
+    "bin": [
+      "bin/oxrun"
+    ],
+    "type": "library",
+    "installation-source": "dist",
+    "autoload": {
+      "psr-4": {
+        "": [
+          "src",
+          "tests"
+        ]
+      }
+    },
+    "notification-url": "https://packagist.org/downloads/",
+    "license": [
+      "MIT"
+    ],
+    "authors": [],
+    "description": "Oxrun provides a cli toolset for the OXID eShop v6.x",
+    "homepage": "https://github.com/oxidprojects/oxrun",
+    "keywords": [
+      "OXID",
+      "cli",
+      "installer"
+    ]
+  }
+]

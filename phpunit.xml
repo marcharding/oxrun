@@ -11,7 +11,7 @@
   <logging>
     <!--<log type="coverage-html" target="build/logs/html" lowUpperBound="35" highLowerBound="70"/>-->
     <log type="coverage-clover" target="build/logs/clover.xml"/>
-  </logging>ech
+  </logging>
   <filter>
     <whitelist processUncoveredFilesFromWhitelist="true">
       <directory suffix=".php">src</directory>

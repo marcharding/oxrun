@@ -3,3 +3,4 @@ clover.xml
 vendor
 ./oxid-esale
 /build
+composer.lock
