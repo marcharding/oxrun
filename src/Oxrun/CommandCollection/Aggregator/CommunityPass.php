@@ -27,6 +27,13 @@ class CommunityPass extends Aggregator
     protected $installed_json = '/composer/installed.json';
 
     /**
+     * @var array
+     */
+    protected $ignorePackage = [
+        'oxidprojects/oxrun'
+    ];
+
+    /**
      * @inheritDoc
      */
     protected function getPassName()
@@ -80,7 +87,13 @@ class CommunityPass extends Aggregator
         $packages = $localRepository->getPackages();
 
         foreach ($packages as $package) {
-            $serviceFile = $oxid_vendor . $package->getName() . '/services.yaml';
+            $package_name = $package->getName();
+
+            if (in_array($package_name, $this->ignorePackage)) {
+                continue;
+            }
+
+            $serviceFile = $oxid_vendor . $package_name . '/services.yaml';
             if (file_exists($serviceFile)) {
                 CacheCheck::addFile($serviceFile);
                 $loader->load($serviceFile);

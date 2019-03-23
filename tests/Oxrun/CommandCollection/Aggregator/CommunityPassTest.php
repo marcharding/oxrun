@@ -12,6 +12,7 @@ use Oxrun\CommandCollection\CacheCheck;
 use Oxrun\CommandCollection\Aggregator;
 use Oxrun\TestCase;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -33,7 +34,7 @@ class CommunityPassTest extends TestCase
     private $containerBuilder;
 
     /**
-     * @var Definition|ObjectProphecy
+     * @var Definition|ObjectProphecy|MethodProphecy
      */
     private $definition;
 
@@ -93,6 +94,29 @@ class CommunityPassTest extends TestCase
 
         //Assert
         $this->assertCount(2, $actual);
+    }
+
+    public function testDontLoadOxrunCommands()
+    {
+        //Arrange
+        $oxid_fs['vendor']['composer']['installed.json'] = file_get_contents(self::getTestData('installed_oxrun_package.json'));
+        $oxid_fs['vendor']['oxidprojects']['oxrun']['services.yaml'] = file_get_contents(self::getTestData('service_yml/standard.yml'));
+
+        $oxid_fs_source = $this->fillShopDir($oxid_fs)->getVfsStreamUrl();
+
+        $communityPass = new Aggregator\CommunityPass();
+        $communityPass->setShopDir($oxid_fs_source);
+
+
+        $this->definition->addMethodCall(Argument::is('addFromDi'), Argument::any())->shouldNotBeCalled();
+
+        //Act
+        $communityPass->process($this->containerBuilder);
+
+        $actual = CacheCheck::getResource();
+
+        //Assert
+        $this->assertCount(1, $actual);
     }
 
     protected function setUp()
