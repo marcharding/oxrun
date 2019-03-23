@@ -20,7 +20,8 @@ class ActivateCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'oepaypal'
+                'module' => 'oepaypal',
+                '--shopId' => 1
             )
         );
 
@@ -30,7 +31,8 @@ class ActivateCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'oepaypal'
+                'module' => 'oepaypal',
+                '--shopId' => 1
             )
         );
 
@@ -41,7 +43,8 @@ class ActivateCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'oepaypal'
+                'module' => 'oepaypal',
+                '--shopId' => 1
             )
         );
 
@@ -51,7 +54,8 @@ class ActivateCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'not_and_existing_module'
+                'module' => 'not_and_existing_module',
+                '--shopId' => 1
             )
         );
 

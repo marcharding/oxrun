@@ -19,7 +19,8 @@ class DeactivateCommandTest extends TestCase
         $commandTester->execute(
             array(
                 'command' => $command->getName(),
-                'module' => 'oepaypal'
+                'module' => 'oepaypal',
+                '--shopId' => 1
             )
         );
 

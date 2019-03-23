@@ -95,8 +95,7 @@ class Application extends BaseApplication
                 '--shopId',
                 '-m',
                 InputOption::VALUE_OPTIONAL,
-                'Shop Id (EE Relevant)',
-                1
+                'Shop Id (EE Relevant)'
             )
         );
 
