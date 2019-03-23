@@ -10,13 +10,16 @@ fi
 
 if [ ! -f "${DOCKER_DOCUMENT_ROOT}/config.inc.php" ]; then
 
+    /usr/local/bin/composer selfupdate
+
     echo "Install Shop";
 
     install_dir=$(dirname ${DOCKER_DOCUMENT_ROOT})
 
     echo "Download 'oxid-esales/oxideshop-project:${OXID_SHOP_VERSION}'";
 
-    composer create-project --no-dev --keep-vcs --working-dir=/ \
+
+    php -d memory_limit=4G /usr/local/bin/composer create-project --no-dev --keep-vcs --working-dir=/tmp \
         oxid-esales/oxideshop-project /tmp/preinstall \
         ${OXID_SHOP_VERSION}
 
