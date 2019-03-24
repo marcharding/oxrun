@@ -24,7 +24,9 @@ Here is a bash snippet which automatically downloads the latest release from git
 
     curl -LOk `curl --silent https://api.github.com/repos/OXIDprojects/oxrun/releases/latest | awk '/browser_download_url/ { print $2 }' | sed 's/"//g'`
 
-You can oxrun now via `php oxrun.phar`
+or you can also install oxrun by simply downloading the phar file from the [release tab](https://github.com/OXIDprojects/oxrun/releases).
+
+Start oxrun now via `php oxrun.phar`
 
 Alternatively you can also make the phar itself executable and copy it to your /usr/local/bin/ directory for global usage.
 
@@ -38,9 +40,6 @@ You can then run oxrun by just calling `oxrun`
 `composer require oxidprojects/oxrun`.
 
 You can then use oxrun by calling `vendor/bin/oxrun` or add `vendor/bin` to your $PATH to be able to just call `oxrun`.
-
-You can also install oxrun by simply downloading the phar file from the release tab.
-
 
 # Usage
 
