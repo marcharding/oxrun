@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v4.0.0-beta.3] 2019-03-23
+## [v4.0.0-beta.4] 2019-03-24
 
 ### Added new commands
 
@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The oxrun::component can now be integrated via composer require.
 - Oxrun can now work within a composing environment
 - Oxrun::commands are not added again, from service.yaml
+- Commands `module:multiactivate` and `config:multiset` run through all defined subshops without shopId.
 
 ## 3.3.0 - 2018-12-02
 
