@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Option `--oxmodule` of command `misc:generate:yaml:config` can only take the module name or completely written out.
+  `--oxmodule=module:myModule` and `--oxmodule=myModule` are same.
+- Rename command `misc:generate:yaml:multiset` to `misc:generate:yaml:config` to better distinguish 
+  between `yaml:modules` and `yaml:multiset`.
+  
+### Deprecated
+  
+- command `misc:generate:yaml:multiset` was replaced by `misc:generate:yaml:config`
+
 ## [v4.0.0] 2019-03-24
 
 ### Added new commands
