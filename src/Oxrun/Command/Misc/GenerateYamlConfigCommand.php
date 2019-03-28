@@ -122,7 +122,7 @@ class GenerateYamlConfigCommand extends Command implements \Oxrun\Command\Enable
         }
 
         if ($option = $input->getOption('oxmodule')) {
-            $SQL .= $this->andWhere('oxmodule', $option);
+            $SQL .= $this->andWhere('oxmodule', $option, 'module:');
         }
 
         $dbConf = DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC)->getAll($SQL, [$shopId]);
@@ -152,13 +152,18 @@ class GenerateYamlConfigCommand extends Command implements \Oxrun\Command\Enable
     }
 
     /**
-     * @param $column
+     * @param string $column
+     * @param string $input
+     * @param string $prefix Automatically sets a prefix if it does not exist.
      * @return string
      */
-    protected function andWhere($column, $input)
+    protected function andWhere($column, $input, $prefix = '')
     {
         $list = explode(',', $input);
         $list = array_map('trim', $list);
+        if ($prefix) {
+            $list = array_map(function ($item) use ($prefix) { return strpos($item, $prefix) === false ? $prefix . $item : $item; }, $list);
+        }
         $list = DatabaseProvider::getDb()->quoteArray($list);
         $list = implode(',', $list);
 

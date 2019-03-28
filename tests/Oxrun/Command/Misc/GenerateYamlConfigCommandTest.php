@@ -155,6 +155,45 @@ class GenerateYamlConfigCommandTest extends TestCase
         $this->assertEquals($expect, $actual);
     }
 
+    public function testExportModullVariableOnlyModulname()
+    {
+        $app = new Application();
+        $app->add(new EnableAdapter(new GenerateYamlConfigCommand()));
+
+        Registry::getConfig()->saveShopConfVar('str', 'unitModuleB', 'abcd1', 1, 'module:myModuleName');
+        Registry::getConfig()->saveShopConfVar('str', 'unitModuleZ', 'abcd2', 1, 'module:myModuleOption');
+
+        $app->checkBootstrapOxidInclude($this->fillShopDir([])->getVirtualBootstrap());
+
+        $command = $app->find('misc:generate:yaml:config');
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(
+            array(
+                'command' => $command->getName(),
+                '--oxmodule' => 'myModuleName,module:myModuleOption',
+            )
+        );
+
+        $actual = Yaml::parse(file_get_contents($app->getOxrunConfigPath() . 'dev_config.yml'));
+        $expect = ['config' => [
+            '1' => [
+                'unitModuleB' => [
+                    'variableType' => 'str',
+                    'variableValue' => 'abcd1',
+                    'moduleId' => 'module:myModuleName'
+                ],
+                'unitModuleZ' => [
+                    'variableType' => 'str',
+                    'variableValue' => 'abcd2',
+                    'moduleId' => 'module:myModuleOption'
+                ]
+            ]
+        ]];
+
+        $this->assertEquals($expect, $actual);
+    }
+
     protected function tearDown()
     {
         if (self::$unlinkFile) {
