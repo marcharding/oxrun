@@ -22,7 +22,7 @@ use Symfony\Component\Yaml\Yaml;
  * Class GenerateYamlMultiSetCommand
  * @package Oxrun\Command\Misc
  */
-class GenerateYamlMultiSetCommand extends Command implements \Oxrun\Command\EnableInterface
+class GenerateYamlConfigCommand extends Command implements \Oxrun\Command\EnableInterface
 {
     use NeedDatabase;
 
@@ -56,11 +56,12 @@ class GenerateYamlMultiSetCommand extends Command implements \Oxrun\Command\Enab
     protected function configure()
     {
         $this
-            ->setName('misc:generate:yaml:multiset')
+            ->setName('misc:generate:yaml:config')
             ->addOption('configfile', 'c', InputOption::VALUE_REQUIRED, 'The Config file to change or create if not exits', 'dev_config.yml')
             ->addOption('oxvarname', '', InputOption::VALUE_REQUIRED, 'Dump configs by oxvarname. One name or as comma separated List')
             ->addOption('oxmodule', '', InputOption::VALUE_REQUIRED, 'Dump configs by oxmodule. One name or as comma separated List')
-            ->setDescription('Generate a Yaml File for command `config:multiset`');
+            ->setDescription('Generate a Yaml File for command `config:multiset`')
+            ->setAliases(['misc:generate:yaml:multiset']); /* @deprecated name: misc:generate:yaml:multiset */
     }
 
     /**
