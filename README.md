@@ -129,8 +129,9 @@ Available commands
   - [log:exceptionlog](#logexceptionlog)   Read EXCEPTION_LOG.txt and display entries.
 ##### misc
   - [misc:generate:documentation](#miscgeneratedocumentation)   Generate a raw command documentation of the available commands
+  - [misc:generate:yaml:config](#miscgenerateyamlconfig)   Generate a Yaml File for command `config:multiset`
   - [misc:generate:yaml:module](#miscgenerateyamlmodule)   Generate a Yaml File for command `module:multiactivate`
-  - [misc:generate:yaml:multiset](#miscgenerateyamlmultiset)   Generate a Yaml File for command `config:multiset`
+  - [misc:generate:yaml:multiset](#miscgenerateyamlmultiset)   
   - [misc:phpstorm:metadata](#miscphpstormmetadata)   Generate a PhpStorm metadata file for auto-completion.
 ##### module
   - [module:activate](#moduleactivate)   Activates a module
@@ -643,6 +644,39 @@ Generate a raw command documentation of the available commands
 
 ### Options:
 
+misc:generate:yaml:config
+-------------------------
+
+* Description: Generate a Yaml File for command `config:multiset`
+* Usage:
+
+  * `misc:generate:yaml:config [-c|--configfile CONFIGFILE] [--oxvarname OXVARNAME] [--oxmodule OXMODULE]`
+  * `misc:generate:yaml:multiset`
+
+Generate a Yaml File for command `config:multiset`
+
+### Options:
+
+**configfile:**
+
+* Name: `--configfile`
+* Shortcut: `-c`
+* Is value required: yes
+* Description: The Config file to change or create if not exits
+* Default: `'dev_config.yml'`
+
+**oxvarname:**
+
+* Name: `--oxvarname`
+* Is value required: yes
+* Description: Dump configs by oxvarname. One name or as comma separated List
+
+**oxmodule:**
+
+* Name: `--oxmodule`
+* Is value required: yes
+* Description: Dump configs by oxmodule. One name or as comma separated List
+
 misc:generate:yaml:module
 -------------------------
 
@@ -681,13 +715,14 @@ Generate a Yaml File for command `module:multiactivate`
 * Description: Takes modules that always need to be disabled. All others are activated.
 * Default: `false`
 
-misc:generate:yaml:multiset
----------------------------
+misc:generate:yaml:config
+-------------------------
 
 * Description: Generate a Yaml File for command `config:multiset`
 * Usage:
 
-  * `misc:generate:yaml:multiset [-c|--configfile CONFIGFILE] [--oxvarname OXVARNAME] [--oxmodule OXMODULE]`
+  * `misc:generate:yaml:config [-c|--configfile CONFIGFILE] [--oxvarname OXVARNAME] [--oxmodule OXMODULE]`
+  * `misc:generate:yaml:multiset`
 
 Generate a Yaml File for command `config:multiset`
 

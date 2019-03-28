@@ -11,7 +11,7 @@ namespace Oxrun\Command;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Registry;
 use Oxrun\Application;
-use Oxrun\Command\Misc\GenerateYamlMultiSetCommand;
+use Oxrun\Command\Misc\GenerateYamlConfigCommand;
 use Oxrun\CommandCollection\EnableAdapter;
 use Oxrun\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -21,16 +21,16 @@ use Symfony\Component\Yaml\Yaml;
  * Class GenerateYamlMultiSetCommandTest
  * @package Oxrun\Command
  */
-class GenerateYamlMultiSetCommandTest extends TestCase
+class GenerateYamlConfigCommandTest extends TestCase
 {
     protected static $unlinkFile = null;
 
     public function testExecute()
     {
         $app = new Application();
-        $app->add(new EnableAdapter(new GenerateYamlMultiSetCommand()));
+        $app->add(new EnableAdapter(new GenerateYamlConfigCommand()));
 
-        $command = $app->find('misc:generate:yaml:multiset');
+        $command = $app->find('misc:generate:yaml:config');
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
@@ -48,7 +48,7 @@ class GenerateYamlMultiSetCommandTest extends TestCase
     public function testExportListOfVariabels()
     {
         $app = new Application();
-        $app->add(new EnableAdapter(new GenerateYamlMultiSetCommand()));
+        $app->add(new EnableAdapter(new GenerateYamlConfigCommand()));
 
         Registry::getConfig()->saveShopConfVar('str', 'unitVarB', 'abcd1');
         Registry::getConfig()->saveShopConfVar('str', 'unitVarC', 'cdef1');
@@ -58,7 +58,7 @@ class GenerateYamlMultiSetCommandTest extends TestCase
         $app->checkBootstrapOxidInclude($this->fillShopDir($shopDir)->getVirtualBootstrap());
 
 
-        $command = $app->find('misc:generate:yaml:multiset');
+        $command = $app->find('misc:generate:yaml:config');
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
@@ -83,14 +83,14 @@ class GenerateYamlMultiSetCommandTest extends TestCase
     public function testExportModullVariable()
     {
         $app = new Application();
-        $app->add(new EnableAdapter(new GenerateYamlMultiSetCommand()));
+        $app->add(new EnableAdapter(new GenerateYamlConfigCommand()));
 
         Registry::getConfig()->saveShopConfVar('str', 'unitModuleB', 'abcd1', 1, 'module:unitTest');
         Registry::getConfig()->saveShopConfVar('str', 'unitModuleW', 'cdef1', 1, 'module:unitNext');
 
         $app->checkBootstrapOxidInclude($this->fillShopDir([])->getVirtualBootstrap());
 
-        $command = $app->find('misc:generate:yaml:multiset');
+        $command = $app->find('misc:generate:yaml:config');
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
@@ -122,14 +122,14 @@ class GenerateYamlMultiSetCommandTest extends TestCase
     public function testExportModulVariableNameAndShop2()
     {
         $app = new Application();
-        $app->add(new EnableAdapter(new GenerateYamlMultiSetCommand()));
+        $app->add(new EnableAdapter(new GenerateYamlConfigCommand()));
 
         Registry::getConfig()->saveShopConfVar('str', 'unitSecondShopName', 'Mars', 2, 'module:unitMars');
         Registry::getConfig()->saveShopConfVar('str', 'unitEgal',           'none', 2, 'module:unitMars');
 
         $app->checkBootstrapOxidInclude($this->fillShopDir([])->getVirtualBootstrap());
 
-        $command = $app->find('misc:generate:yaml:multiset');
+        $command = $app->find('misc:generate:yaml:config');
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
@@ -148,6 +148,45 @@ class GenerateYamlMultiSetCommandTest extends TestCase
                     'variableType' => 'str',
                     'variableValue' => 'Mars',
                     'moduleId' => 'module:unitMars'
+                ]
+            ]
+        ]];
+
+        $this->assertEquals($expect, $actual);
+    }
+
+    public function testExportModullVariableOnlyModulname()
+    {
+        $app = new Application();
+        $app->add(new EnableAdapter(new GenerateYamlConfigCommand()));
+
+        Registry::getConfig()->saveShopConfVar('str', 'unitModuleB', 'abcd1', 1, 'module:myModuleName');
+        Registry::getConfig()->saveShopConfVar('str', 'unitModuleZ', 'abcd2', 1, 'module:myModuleOption');
+
+        $app->checkBootstrapOxidInclude($this->fillShopDir([])->getVirtualBootstrap());
+
+        $command = $app->find('misc:generate:yaml:config');
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(
+            array(
+                'command' => $command->getName(),
+                '--oxmodule' => 'myModuleName,module:myModuleOption',
+            )
+        );
+
+        $actual = Yaml::parse(file_get_contents($app->getOxrunConfigPath() . 'dev_config.yml'));
+        $expect = ['config' => [
+            '1' => [
+                'unitModuleB' => [
+                    'variableType' => 'str',
+                    'variableValue' => 'abcd1',
+                    'moduleId' => 'module:myModuleName'
+                ],
+                'unitModuleZ' => [
+                    'variableType' => 'str',
+                    'variableValue' => 'abcd2',
+                    'moduleId' => 'module:myModuleOption'
                 ]
             ]
         ]];
