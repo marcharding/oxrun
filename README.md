@@ -650,7 +650,7 @@ misc:generate:yaml:config
 * Description: Generate a Yaml File for command `config:multiset`
 * Usage:
 
-  * `misc:generate:yaml:config [-c|--configfile CONFIGFILE] [--oxvarname OXVARNAME] [--oxmodule OXMODULE]`
+  * `misc:generate:yaml:config [-c|--configfile CONFIGFILE] [--oxvarname OXVARNAME] [--oxmodule OXMODULE] [-d|--no-descriptions] [-l|--language LANGUAGE]`
   * `misc:generate:yaml:multiset`
 
 Generate a Yaml File for command `config:multiset`
@@ -676,6 +676,23 @@ Generate a Yaml File for command `config:multiset`
 * Name: `--oxmodule`
 * Is value required: yes
 * Description: Dump configs by oxmodule. One name or as comma separated List
+
+**no-descriptions:**
+
+* Name: `--no-descriptions`
+* Shortcut: `-d`
+* Accept value: no
+* Is value required: no
+* Description: No descriptions are added.
+* Default: `false`
+
+**language:**
+
+* Name: `--language`
+* Shortcut: `-l`
+* Is value required: yes
+* Description: Speech selection of the descriptions.
+* Default: `0`
 
 misc:generate:yaml:module
 -------------------------
@@ -721,7 +738,7 @@ misc:generate:yaml:config
 * Description: Generate a Yaml File for command `config:multiset`
 * Usage:
 
-  * `misc:generate:yaml:config [-c|--configfile CONFIGFILE] [--oxvarname OXVARNAME] [--oxmodule OXMODULE]`
+  * `misc:generate:yaml:config [-c|--configfile CONFIGFILE] [--oxvarname OXVARNAME] [--oxmodule OXMODULE] [-d|--no-descriptions] [-l|--language LANGUAGE]`
   * `misc:generate:yaml:multiset`
 
 Generate a Yaml File for command `config:multiset`
@@ -747,6 +764,23 @@ Generate a Yaml File for command `config:multiset`
 * Name: `--oxmodule`
 * Is value required: yes
 * Description: Dump configs by oxmodule. One name or as comma separated List
+
+**no-descriptions:**
+
+* Name: `--no-descriptions`
+* Shortcut: `-d`
+* Accept value: no
+* Is value required: no
+* Description: No descriptions are added.
+* Default: `false`
+
+**language:**
+
+* Name: `--language`
+* Shortcut: `-l`
+* Is value required: yes
+* Description: Speech selection of the descriptions.
+* Default: `0`
 
 misc:phpstorm:metadata
 ----------------------
