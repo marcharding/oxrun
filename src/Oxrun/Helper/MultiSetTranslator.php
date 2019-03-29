@@ -20,14 +20,17 @@ use Symfony\Component\Yaml\Yaml;
 class MultiSetTranslator
 {
     /**
-     * @var SymfonyFileInfo
+     * @var int
      */
-    private $configPath;
+    private $ident;
 
     /**
-     * @var string
+     * @inheritDoc
      */
-    private $ymltxt = '';
+    public function __construct($ident = 2)
+    {
+        $this->ident = str_repeat(' ',$ident * 2);
+    }
 
     /**
      * @param string $filepath
@@ -35,18 +38,12 @@ class MultiSetTranslator
      *
      * @return $this
      */
-    public function configFile($filepath, $langId)
+    public function configFile($yamltxt, $langId)
     {
-        $this->configPath = new SymfonyFileInfo($filepath, null, null);
-
-        if ($this->configPath->isFile() == false) {
-            throw new FileNotFoundException($filepath);
-        }
-
-        $yamltxt = $this->configPath->getContents();
         $configs = Yaml::parse($yamltxt);
+
         if (!isset($configs['config']) || !is_array($configs['config'])) {
-            throw new \Exception($this->configPath->getBasename() . ' has not a config section');
+            throw new \Exception('YAML has not a config section');
         }
 
         $configs = $configs['config'];
@@ -56,7 +53,7 @@ class MultiSetTranslator
 
         foreach ($configs as $shopId) {
             foreach ($shopId as $varname => $value) {
-                $searchName = "    {$varname}:";
+                $searchName = "{$this->ident}{$varname}:";
 
                 //Don't translate agean
                 if (isset($translated[$searchName])) {
@@ -91,24 +88,17 @@ class MultiSetTranslator
                     continue;
                 }
 
-                $translated[$searchName] = "    # {$description}\n{$searchName}" ;
+                $comment = "{$this->ident}# ";
+                $description = preg_replace('/<br\/?>/', PHP_EOL . $comment, $description);
+                $description = strip_tags($description);
+
+                $translated[$searchName] = "{$comment}{$description}".PHP_EOL."{$searchName}" ;
             }
         }
 
-        $this->ymltxt = str_replace(array_keys($translated), array_values($translated), $yamltxt);
+        $translated_ymltxt = str_replace(array_keys($translated), array_values($translated), $yamltxt);
 
-        return $this;
-    }
-
-    /**
-     * Save config file
-     */
-    public function save()
-    {
-        if ($this->ymltxt) {
-            $filename = $this->configPath->getPathname();
-            file_put_contents($filename, $this->ymltxt);
-        }
+        return $translated_ymltxt ? : $yamltxt;
     }
 
     /**

@@ -28,50 +28,33 @@ class MultiSetTranslatorTest extends TestCase
         if (!defined('OX_BASE_PATH')) (new Application())->bootstrapOxid(false);
     }
 
-    public function testConfigNotFound()
-    {
-        //Arrange
-        $multiSetTranslator = new MultiSetTranslator();
-
-        //Assert
-        $this->expectException(FileNotFoundException::class);
-
-        //Act
-        $multiSetTranslator->configFile('irgendwas_datei.yml', 0);
-    }
-
     public function testYamlHasNotAConfigSection()
     {
         //Arrange
         $multiSetTranslator = new MultiSetTranslator();
-        $vfs = vfsStream::setup('oxrun', 0755, [
-            "config.yml" => 'andere: "config"',
-        ])->url();
+
+        $ymltxt = 'andere: "config"';
 
         //Assert
         $this->expectException(\Exception::class);
 
         //Act
-        $multiSetTranslator->configFile($vfs.'/config.yml', 0);
+        $multiSetTranslator->configFile($ymltxt, 0);
     }
 
     public function testTranslateConfig()
     {
         //Arrange
-        $multiSetTranslator = new MultiSetTranslator();
+        $multiSetTranslator = new MultiSetTranslator(2);
 
-        $vfs = vfsStream::setup('oxrun', 0755, [
-            "actual.yml" => file_get_contents(__DIR__.'/testData/plan_config.yml'),
-            "expect.yml" => file_get_contents(__DIR__.'/testData/translated_config.yml'),
-        ])->url();
+        $ymltxt = file_get_contents(__DIR__.'/testData/plan_config.yml');
+        $expect = file_get_contents(__DIR__.'/testData/translated_config.yml');
 
         //Act
-        $multiSetTranslator
-            ->configFile($vfs . '/actual.yml', 0)
-            ->save();
+        $actual = $multiSetTranslator->configFile($ymltxt, 0);
 
         //Assert
-        $this->assertFileEquals($vfs . '/expect.yml', $vfs . '/actual.yml');
+        $this->assertEquals($expect, $actual);
     }
 
 }

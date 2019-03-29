@@ -19,3 +19,6 @@ config:
       variableValue:
         - '10'
       moduleId: 'theme:flow'
+    OeGdprOptinContactFormMethod:
+      variableType: str
+      variableValue: "ist leer"

@@ -18,9 +18,14 @@ config:
     grid:
       variableType: str
       variableValue: "Was anderes"
-    # Anzahl der Artikel, die in einer Artikelliste pro Seite angezeigt werden können<br>Warnung: Eine große Anzahl von Artikeln pro Seite (über 100) kann erhebliche Performance-Probleme verursachen!
+    # Anzahl der Artikel, die in einer Artikelliste pro Seite angezeigt werden können
+    # Warnung: Eine große Anzahl von Artikeln pro Seite (über 100) kann erhebliche Performance-Probleme verursachen!
     aNrofCatArticles:
       variableType: arr
       variableValue:
         - '10'
       moduleId: 'theme:flow'
+    # 
+    OeGdprOptinContactFormMethod:
+      variableType: str
+      variableValue: "ist leer"
