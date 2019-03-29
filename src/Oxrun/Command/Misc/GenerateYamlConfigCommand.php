@@ -11,6 +11,7 @@ namespace Oxrun\Command\Misc;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Registry;
 use Oxrun\Helper\MulitSetConfigConverter;
+use Oxrun\Helper\MultiSetTranslator;
 use Oxrun\Traits\NeedDatabase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -60,6 +61,8 @@ class GenerateYamlConfigCommand extends Command implements \Oxrun\Command\Enable
             ->addOption('configfile', 'c', InputOption::VALUE_REQUIRED, 'The Config file to change or create if not exits', 'dev_config.yml')
             ->addOption('oxvarname', '', InputOption::VALUE_REQUIRED, 'Dump configs by oxvarname. One name or as comma separated List')
             ->addOption('oxmodule', '', InputOption::VALUE_REQUIRED, 'Dump configs by oxmodule. One name or as comma separated List')
+            ->addOption('no-descriptions', '-d', InputOption::VALUE_NONE, 'No descriptions are added.')
+            ->addOption('language', '-l', InputOption::VALUE_REQUIRED, 'Speech selection of the descriptions.', 0)
             ->setDescription('Generate a Yaml File for command `config:multiset`')
             ->setAliases(['misc:generate:yaml:multiset']); /* @deprecated name: misc:generate:yaml:multiset */
     }
@@ -98,7 +101,13 @@ class GenerateYamlConfigCommand extends Command implements \Oxrun\Command\Enable
 
         ksort($yaml['config']);
 
-        file_put_contents($path, Yaml::dump($yaml, 5, 2));
+        $yamltxt = Yaml::dump($yaml, 5, 2);
+        if ($input->getOption('no-descriptions') == false) {
+            $multiSetTranslator = new MultiSetTranslator(2);
+            $yamltxt = $multiSetTranslator->configFile($yamltxt, $input->getOption('language'));
+        }
+
+        file_put_contents($path, $yamltxt);
 
         $output->writeln("<comment>Config saved. use `oxrun config:multiset ".basename($path)."`</comment>");
     }
