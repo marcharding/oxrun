@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Add
+- Configuration YAML is more readable, through the description texts. [see](https://github.com/OXIDprojects/oxrun/blob/master/tests/Oxrun/Helper/testData/translated_config.yml#L9)
+
 ### Changed
 
 - Option `--oxmodule` of command `misc:generate:yaml:config` can only take the module name or completely written out.
