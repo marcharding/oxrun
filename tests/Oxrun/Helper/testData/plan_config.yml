@@ -1,0 +1,24 @@
+config:
+  1:
+    aCsvSeparator:
+      variableType: arr
+      variableValue:
+        - 'EUR@ 1.00@ ,@ .@ €@ 2'
+        - 'aCsvSeparator:'
+    snpuserlistheader:
+      variableType: arr
+      variableValue:
+        - "Was auch immmer"
+        - "Was auch immmer"
+    infogrid: "Hier geht was"
+    grid:
+      variableType: str
+      variableValue: "Was anderes"
+    aNrofCatArticles:
+      variableType: arr
+      variableValue:
+        - '10'
+      moduleId: 'theme:flow'
+    OeGdprOptinContactFormMethod:
+      variableType: str
+      variableValue: "ist leer"
