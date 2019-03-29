@@ -1,0 +1,26 @@
+config:
+  1:
+    # CSV-Trennzeichen beim Im- und Export
+    aCsvSeparator:
+      variableType: arr
+      variableValue:
+        - 'EUR@ 1.00@ ,@ .@ €@ 2'
+        - 'aCsvSeparator:'
+    # Benutzerliste
+    snpuserlistheader:
+      variableType: arr
+      variableValue:
+        - "Was auch immmer"
+        - "Was auch immmer"
+    # Galerie zweispaltig
+    infogrid: "Hier geht was"
+    # Galerie
+    grid:
+      variableType: str
+      variableValue: "Was anderes"
+    # Anzahl der Artikel, die in einer Artikelliste pro Seite angezeigt werden können<br>Warnung: Eine große Anzahl von Artikeln pro Seite (über 100) kann erhebliche Performance-Probleme verursachen!
+    aNrofCatArticles:
+      variableType: arr
+      variableValue:
+        - '10'
+      moduleId: 'theme:flow'
