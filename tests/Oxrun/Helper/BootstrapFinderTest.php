@@ -140,11 +140,32 @@ class BootstrapFinderTest extends TestCase
         $autoloader->register(Argument::is(true))->shouldHaveBeenCalled();
     }
 
+    public function testOxrunIsPackageIntoOxidCompose()
+    {
+        //Arrange
+        $bootstrapFinderPHP = file_get_contents( __DIR__ . '/../../../src/Oxrun/Helper/BootstrapFinder.php');
+        $bootstrapFinderPHP = str_replace('namespace Oxrun\\Helper;', 'namespace Oxrun\\Test\\Mock\\Helper;',  $bootstrapFinderPHP);
+        file_put_contents(__DIR__.'/testData/eShopDir/vendor/oxidprojects/oxrun/src/Oxrun/Helper/BootstrapFinder.php', $bootstrapFinderPHP);
+        include_once __DIR__.'/testData/eShopDir/vendor/oxidprojects/oxrun/src/Oxrun/Helper/BootstrapFinder.php';
+
+        $bootstrapFinder = new \Oxrun\Test\Mock\Helper\BootstrapFinder(null);
+
+        //Act
+        $actual = $bootstrapFinder->isFound();
+        $actual_path = $bootstrapFinder->getShopDir();
+
+        //Assert
+        $this->assertTrue($actual);
+        $this->assertEquals(__DIR__ . '/testData/eShopDir/source', $actual_path);
+    }
+
+
     protected function tearDown()
     {
         parent::tearDown();
         putenv('OXID_SHOP_DIR=');
         $_SERVER['argv'] = [];
+        @unlink(__DIR__.'/testData/eShopDir/vendor/oxidprojects/oxrun/src/Oxrun/Helper/BootstrapFinder.php');
     }
 
     /**

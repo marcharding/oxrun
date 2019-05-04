@@ -8,9 +8,12 @@
 
 namespace Oxrun\Helper;
 
-
 use Symfony\Component\Console\Input\ArgvInput;
 
+/**
+ * Class BootstrapFinder
+ * @package Oxrun\Helper
+ */
 class BootstrapFinder
 {
     /**
@@ -41,8 +44,14 @@ class BootstrapFinder
             return $findByArgument;
         }
 
-        if ($oxid_dir = getenv('OXID_SHOP_DIR')) {
-            return $this->searchingBootstrap($oxid_dir);
+        $findByEnv = $this->findByEnvironmentVariable();
+        if ($findByEnv !== null) {
+            return $findByEnv;
+        }
+
+        $findAsPackage = $this->findAsOxidPackage();
+        if ($findAsPackage !== null) {
+            return $findAsPackage;
         }
 
         return $this->searchingBootstrap(getcwd());
@@ -75,6 +84,42 @@ class BootstrapFinder
         }
 
         return false;
+    }
+
+    /**
+     * @return bool|null
+     */
+    protected function findByEnvironmentVariable()
+    {
+        $oxid_dir = getenv('OXID_SHOP_DIR');
+
+        if ($oxid_dir == '') {
+            return null;
+        }
+
+        return $this->searchingBootstrap($oxid_dir);
+    }
+
+    /**
+     * If oxrun installed in the same composer package as oxid eshop.
+     * So the path to bootstrap.php is logic.
+     *
+     * @return bool|null
+     */
+    public function findAsOxidPackage()
+    {
+        if (\Phar::running() != '') {
+            return null; // oxrun is a phar script
+        }
+
+        //hard core place              /vendor/oxidprojects/oxrun/src/Oxrun/Helper/./source/bootstrap.php
+        $standardOxidPath = __DIR__ . '/../../../../../../source/bootstrap.php';
+
+        if (!is_file($standardOxidPath)) {
+            return null;
+        }
+
+        return $this->checkBootstrapAndInclude($standardOxidPath);
     }
 
     /**
