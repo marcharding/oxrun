@@ -13,11 +13,12 @@ if (is_file(__DIR__ . '/../vendor/autoload.php')) {
 
 $application = new \Oxrun\Application($autoloader, 'oxrun', '@package_version@');
 
-$commandSourceDir          = __DIR__ . '/../src/';
+$commandSourceDir          = str_replace('\\', '/', __DIR__) . '/../src/';
 $recursiveIteratorIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($commandSourceDir));
 $regexIterator             = new RegexIterator($recursiveIteratorIterator, '/.*Command\.php$/');
 
 foreach ($regexIterator as $commandPath) {
+    $commandPath =  str_replace('\\', '/', $commandPath);
     $commandClass = str_replace(array($commandSourceDir, '/', '.php'), array('', '\\', ''), $commandPath);
     $application->add(new $commandClass);
 }
