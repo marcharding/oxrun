@@ -38,10 +38,10 @@ HELP;
     }
 
     /**
-     * Returns the query string with escaped ' characters so it can be used
+     * Returns the query string with escaped " characters so it can be used
      * within the mysql -e argument.
      *
-     * The -e argument is enclosed by single quotes. As you can't escape
+     * The -e argument is enclosed by double quotes. As you can't escape
      * the single quote within the single quote, you have to end the quote,
      * then escape the single quote character and reopen the quote.
      *
@@ -50,7 +50,8 @@ HELP;
      */
     protected function getEscapedSql($query)
     {
-        return str_replace("'", "'\''", $query);
+
+        return str_replace('"', '\"', $query);
     }
 
     /**
@@ -70,7 +71,7 @@ HELP;
         }
 
         $exec = sprintf(
-            "mysql -h%s %s -u%s %s -e '%s' 2>&1",
+            'mysql -h%s %s -u%s %s -e "%s" 2>&1',
             \oxRegistry::getConfig()->getConfigParam('dbHost'),
             $dbPwd,
             \oxRegistry::getConfig()->getConfigParam('dbUser'),
