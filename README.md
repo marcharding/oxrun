@@ -153,7 +153,7 @@ config:set
 config:shop:get
 ---------------
 
-* Description: Sets a shop config value
+* Description: Gets a shop config value
 * Usage: `config:shop:get [--shopId[="..."]] variableName`
 
 ### Arguments:
